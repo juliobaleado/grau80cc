@@ -1546,8 +1546,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const [hx, hy] = s.head || [0.3, 1.3], ca = Math.cos(s.th), sa = Math.sin(s.th);
     const ax = BX + (hx * ca - hy * sa) * S, ay = yC - R * S - (hx * sa + hy * ca) * S - 0.42 * S;
     if (s.mode !== 'ready') drawAngle(ax, Math.max(ui.hud.offsetHeight + 34, ay));
-    if (s.chapa > 0) drawChapa(ax + 0.55 * S, ay + 0.18 * S, Math.min(1, s.chapa / 0.25));
     drawInstr(BX + 1.75 * S, yC - 1.0 * S, S);
+    // o balão vem por último pra ficar por cima do velocímetro
+    if (s.chapa > 0) drawChapa(ax + 0.55 * S, ay + 0.18 * S, Math.min(1, s.chapa / 0.25));
   }
 
   // pastelaria de onde ele sai: fachada com barrado de azulejo, balcão com estufa de pastel, toldo listrado e placa;
