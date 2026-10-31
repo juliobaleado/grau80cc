@@ -200,6 +200,8 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
   }
   #startScreen .card { max-width: 400px; gap: 10px; }
   #startScreen .card h1 { font-size: 40px; }
+  .board { width: 180px; top: 8px; padding: 6px 10px 8px; gap: 3px; }
+  .board li { font-size: 13px; gap: 4px; }
   #startScreen .card p, #startScreen .hint { display: none; }
   #startScreen .eyebrow { font-size: 11px; }
   #startScreen .go { font-size: 17px; padding: 8px 16px 10px; }
@@ -219,6 +221,26 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .result small { font-family: var(--hud); font-size: 28px; color: var(--muted); }
 .meta { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 17px; color: var(--muted); }
 .meta strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.board { position: absolute; top: 16px; left: max(16px, env(safe-area-inset-left, 0px)); width: 230px; pointer-events: auto;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 12px;
+  background: rgba(8, 18, 24, .8); border: 1px solid rgba(255, 181, 71, .45); border-radius: 3px; }
+.board .label { color: var(--sodium); }
+.board ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; counter-reset: pos; }
+.board li { display: grid; grid-template-columns: 22px 1fr auto; gap: 6px; align-items: baseline; font-size: 15px; font-weight: 600; counter-increment: pos; }
+.board li::before { content: counter(pos) "º"; color: var(--muted); font-size: 13px; }
+.board li b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.board li span { font-variant-numeric: tabular-nums; color: var(--sodium); }
+.board li.me b { color: var(--sodium); }
+.board li.board-msg { display: block; color: var(--muted); font-weight: 500; }
+.board li.board-msg::before { content: none; }
+.gsend { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--sodium); border-radius: 3px; background: rgba(255, 181, 71, .08); }
+.gsend .label { color: var(--sodium); }
+.gsend-row { display: flex; gap: 8px; }
+.gsend input { flex: 1; min-width: 0; font: 600 18px var(--hud); color: var(--ink); background: rgba(243, 239, 230, .08); border: 1px solid rgba(243, 239, 230, .3); border-radius: 2px; padding: 6px 10px; user-select: text; -webkit-user-select: text; }
+.gsend input:focus { outline: 2px solid var(--sodium); outline-offset: 1px; }
+.gsend .go { font-size: 18px; padding: 6px 16px 8px; }
+.gmsg { font-size: 14px; color: var(--muted); min-height: 1em; }
+@media (max-width: 760px) { .board { width: 190px; top: 10px; } .board li { font-size: 13px; } }
 .record { align-self: flex-start; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; font-size: 13px; background: var(--ok); color: var(--night); padding: 3px 8px; border-radius: 2px; }
 .go {
   align-self: flex-start; font: 400 24px var(--display); color: var(--night); background: var(--sodium);
@@ -299,6 +321,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   <div class="ach" id="ach"><span class="label" id="achWhy">Conquista desbloqueada</span><strong id="achName"></strong></div>
 
   <div class="screen" id="startScreen">
+    <aside class="board" aria-label="Placar global">
+      <span class="label">Placar global · top 10</span>
+      <ol id="boardList"><li class="board-msg">Carregando…</li></ol>
+    </aside>
     <div class="card">
       <span class="eyebrow">Motor 2 tempos · 80 cc</span>
       <h1>Grau 80cc</h1>
@@ -331,6 +357,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <span class="label" id="endLabel">Distância empinando</span>
       <div class="result" id="endDist">0.0<small> m</small></div>
       <span class="record" id="endRecord" hidden>Novo recorde</span>
+      <form class="gsend" id="gSend" hidden>
+        <span class="label">Entrou no top 10 global! Bota teu nome</span>
+        <div class="gsend-row">
+          <input id="gName" maxlength="16" placeholder="Teu nome" autocomplete="nickname" enterkeyhint="send" aria-label="Teu nome no placar">
+          <button class="go" type="submit" id="gBtn">Enviar</button>
+        </div>
+        <span class="gmsg" id="gMsg" aria-live="polite"></span>
+      </form>
       <div class="meta">
         <span>Recorde <strong id="endBest">0.0 m</strong></span>
         <span id="endCountRow" hidden>Empinadas <strong id="endCount">0</strong></span>
@@ -408,7 +442,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     return {
       mode: 'ready', x: 0, v: 0, th: 0, om: 0, rpm: IDLE, thr: 0, brk: 0, wheel: 0,
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
-      last: 0, runBest: 0, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, cut: 0, flame: 0,
+      last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
       law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
@@ -448,6 +482,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (titleTaps.length >= 5) { titleTaps = []; toggleCheat(); }
   });
   addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
     if (e.code === 'Escape') { e.preventDefault(); if (s.mode !== 'ready') toStart(); return; }
@@ -525,6 +560,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (s.mode === 'ride' && s.active) recordWheelie();
     s = fresh(); paused = false;
     ui.pause.hidden = true; ui.end.hidden = true; ui.start.hidden = false;
+    loadBoard();
     keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput();
     $('goStart').focus();
   }
@@ -721,7 +757,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const d = s.wDist;
     s.active = false; s.wDist = 0;
     if (d < 1) return null;
-    s.count++; s.last = d; s.runBest = Math.max(s.runBest, d);
+    s.count++; s.last = d;
+    if (d > s.runBest) { s.runBest = d; s.runTime = s.wTime; }
     const rec = !cheat && d > best + 0.05; // no modo teste nada vira recorde
     if (rec) { best = bests[gameMode] = d; s.newRecord = true; try { localStorage.setItem(BEST_KEY[gameMode], best.toFixed(2)); } catch (e) {} }
     return { d, rec };
@@ -738,6 +775,56 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     uno: ['O Uno ganhou o racha', 'Levou Benga']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
+  // placar global (Supabase): qualquer um lê o top 10 e envia o recorde; o banco barra média acima de 90 km/h
+  const SB = { url: 'https://heimruhhkkqtjbrwhcvr.supabase.co/rest/v1/placar', key: 'sb_publishable_WJcCRrGAeHAdwf34hX48Tg_NtuxUkX5' };
+  let board = null, myName = '';
+  try { myName = localStorage.getItem('grau80-nome') || ''; } catch (e) {}
+  async function loadBoard() {
+    try {
+      const r = await fetch(SB.url + '?select=nome,metros&order=metros.desc&limit=80', { headers: { apikey: SB.key } });
+      if (!r.ok) throw new Error(r.status);
+      const seen = new Set();
+      // cada nome aparece uma vez só, com o melhor grau dele
+      board = (await r.json()).filter(x => { const k = x.nome.trim().toLowerCase(); return !seen.has(k) && seen.add(k); }).slice(0, 10);
+    } catch (e) { board = null; }
+    renderBoard();
+  }
+  function renderBoard() {
+    const ol = $('boardList'); ol.textContent = '';
+    const msg = t => { const li = document.createElement('li'); li.className = 'board-msg'; li.textContent = t; ol.appendChild(li); };
+    if (!board) return msg('Sem conexão com o placar.');
+    if (!board.length) return msg('Ninguém ainda. Bora ser o primeiro!');
+    for (const x of board) {
+      const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
+      b.textContent = x.nome; sp.textContent = Number(x.metros).toFixed(1) + ' m';
+      if (myName && x.nome.trim().toLowerCase() === myName.trim().toLowerCase()) li.className = 'me';
+      li.append(b, sp); ol.appendChild(li);
+    }
+  }
+  const boardQualifies = d => !board || board.length < 10 || d > Number(board[board.length - 1].metros);
+  $('gName').value = myName;
+  $('gSend').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = $('gName').value.trim().slice(0, 16);
+    if (!nome) { $('gMsg').textContent = 'Bota um nome aí.'; $('gName').focus(); return; }
+    if (s.sent || cheat) return;
+    $('gBtn').disabled = true; $('gMsg').textContent = 'Enviando…';
+    try {
+      const r = await fetch(SB.url, { method: 'POST', headers: { apikey: SB.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ nome, metros: +s.runBest.toFixed(1), segundos: Math.max(0.1, +s.runTime.toFixed(1)), bike: MODEL }) });
+      if (!r.ok) throw new Error(r.status);
+      s.sent = true; myName = nome;
+      try { localStorage.setItem('grau80-nome', nome); } catch (e2) {}
+      $('gMsg').textContent = 'Tá no placar global!';
+      $('gName').disabled = true; $('gBtn').disabled = true;
+      loadBoard();
+    } catch (err) {
+      $('gMsg').textContent = 'Não deu pra enviar. Confere a internet e tenta de novo.';
+      $('gBtn').disabled = false;
+    }
+  });
+  loadBoard();
+
   function finish(how) {
     const L = s.law;
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
@@ -756,6 +843,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     ui.endCount.textContent = s.count;
     ui.endBest.textContent = best.toFixed(1) + ' m';
     ui.endTop.textContent = Math.round(s.top * 3.6) + ' km/h';
+    // placar global: só no Motoca, nunca no modo teste, e só se entrou no top 10
+    const canSend = gameMode === 'motoca' && !cheat && s.runBest >= 3 && boardQualifies(s.runBest);
+    $('gSend').hidden = !canSend;
+    $('gBtn').disabled = false; $('gName').disabled = false; $('gMsg').textContent = '';
     setTimeout(() => { if (s.mode === 'over') { ui.end.hidden = false; $('goAgain').focus(); } }, 900);
   }
 
@@ -825,8 +916,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         }
       }
       if (riding && s.mode === 'ride') {
-        if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; }
-        if (s.active) { s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
+        if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; }
+        if (s.active) { s.wTime += h; s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
         if (s.th > CRASH) finish('flip');
       }
     } else {
