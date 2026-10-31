@@ -387,7 +387,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
       law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
-             uno: null, unoDone: false, thief: null, thiefDone: false },
+             uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false },
       kite: null, kiteDone: false, sparks: [], scrape: 0,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
       bumps: [], nextBump: 30, parts: [], smokeAcc: 0
@@ -591,7 +591,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     { id: 'grau30', why: 'Primeiros 30 m de grau', name: 'Acima de mim só Deus e a roda da frente', test: () => s.active && s.wDist >= 30 },
     { id: 'grau100', why: '100 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
     { id: 'grau200', why: '200 m de grau com a viatura na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
-    { id: 'grau300', why: '300 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped }
+    { id: 'grau300', why: '300 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped },
+    { id: 'grau500', why: '500 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
+    { id: 'grau700', why: '700 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped }
   ];
   let unlocked = {};
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
@@ -665,7 +667,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     gang: ['Os caramelo venceram', 'Caiu no beco da mordida'],
     car: ['A viatura encostou', 'Pegaro os lanche'],
     rocam: ['A Rocam encostou', 'É só trocar ideia'],
-    thief: ['Os cara encostou', 'Perdeu, perdeu']
+    thief: ['Os cara encostou', 'Perdeu Playboy'],
+    uno: ['O Uno ganhou o racha', 'Levou Benga']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
   function finish(how) {
@@ -673,6 +676,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
       : L.bikes.some(b => b.state === 'chase') ? 'rocam'
       : L.car && L.car.state === 'chase' ? 'car'
+      : L.uno && L.uno.state === 'race' ? 'uno'
       : gangChasing() ? 'gang' : how;
     s.mode = 'over'; s.reason = how;
     recordWheelie();
@@ -931,9 +935,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (u.state === 'race') {
         if (!riding) u.state = 'stop';
         else if (s.wDist >= 500) {
-          u.state = 'blown'; u.t = 0; L.unoDone = true;
+          u.state = 'blown'; u.t = 0; L.unoDone = true; L.unoBeaten = true;
           if (nodes && !muted && !paused) { backfire(ac.currentTime + 0.01, 1.6); backfire(ac.currentTime + 0.16, 1.1); }
-          flash('Fundiu o motor do Uno!');
+          flash('Fundiu o motor do Uno!'); checkAch();
         }
         const tx = s.x + 1.3 + 1.6 * Math.sin(u.t * 0.7);
         u.v += (Math.min(s.v + 6, Math.max(s.v - 4, s.v + (tx - u.x) * 1.2)) - u.v) * Math.min(1, h * 2);
@@ -963,9 +967,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (th.state === 'chase') {
         if (!riding) th.state = 'stop';
         else if (s.wDist >= 700) {
-          th.state = 'flee'; th.t = 0; L.thiefDone = true;
+          th.state = 'flee'; th.t = 0; L.thiefDone = true; L.thiefEscaped = true;
           L.bikes = [0, 1, 2].map(i => ({ x: s.x - 14 - i * 2.5, v: s.v + 8, gap: 0, lane: [0.22, 0.1, 0][i], state: 'hunt', t: 0, phase: i * 0.5 }));
-          flash('Sujou! A Rocam chegou');
+          flash('Sujou! A Rocam chegou'); checkAch();
         }
         const tx = s.x - 1.5 - 0.5 * Math.sin(th.t * 1.3);
         th.v += (Math.min(s.v + 7, s.v + (tx - th.x) * 1.5) - th.v) * Math.min(1, h * 3);
