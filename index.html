@@ -445,7 +445,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     return {
       mode: 'ready', x: 0, v: 0, th: 0, om: 0, rpm: IDLE, thr: 0, brk: 0, wheel: 0,
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
-      last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, cut: 0, flame: 0,
+      last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, achSeen: {}, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
       law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
@@ -473,7 +473,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   function toggleCheat() {
     cheat = !cheat;
     ui.dist.style.pointerEvents = cheat ? 'auto' : '';
-    flash(cheat ? 'Modo teste ligado' : 'Modo teste desligado');
+    flash(cheat ? 'Modo teste ligado: tudo liberado' : 'Modo teste desligado');
+    renderAchList(); renderGarage();
     $('hudMode').textContent = (gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? ' · teste' : '');
   }
   // no modo teste, N ou tocar no número do grau pula 100 m
@@ -723,18 +724,25 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
   let achTimer = 0;
   function renderAchList() {
-    const got = ACHS.filter(a => unlocked[a.id]);
+    // no modo teste aparecem todas, pra ver tudo que o jogo tem
+    const got = cheat ? ACHS : ACHS.filter(a => unlocked[a.id]);
     $('achList').hidden = !got.length;
+    $('achList').querySelector('.label').textContent = cheat ? 'Conquistas · modo teste (todas)' : 'Conquistas';
     $('achItems').textContent = got.map(a => '★ ' + a.name).join('  ·  ');
   }
   function checkAch() {
-    if (gameMode !== 'motoca' || cheat) return;
+    if (gameMode !== 'motoca') return;
     for (const a of ACHS) {
-      if (unlocked[a.id] || !a.test()) continue;
-      unlocked[a.id] = true;
-      try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
+      // modo teste: o aviso aparece toda volta que conseguir, mas nada é gravado
+      if (cheat ? s.achSeen[a.id] : unlocked[a.id]) continue;
+      if (!a.test()) continue;
+      if (cheat) s.achSeen[a.id] = true;
+      else {
+        unlocked[a.id] = true;
+        try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
+      }
       const bike = Object.values(LOOKS.model.opts).find(o => o.lock === a.id);
-      $('achWhy').textContent = 'Conquista desbloqueada · ' + a.why + (bike ? ' · liberou a ' + bike.name : '');
+      $('achWhy').textContent = (cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? ' · liberou a ' + bike.name : '');
       $('achName').textContent = a.name;
       $('ach').classList.add('show');
       clearTimeout(achTimer); achTimer = setTimeout(() => $('ach').classList.remove('show'), 4500);
@@ -2106,7 +2114,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'caicara', frame: 'agua' };
   try { Object.assign(pick, JSON.parse(localStorage.getItem('grau80-look') || '{}')); } catch (e) {}
   let HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL;
-  const isLocked = (k, o) => o.lock && !unlocked[o.lock];
+  const isLocked = (k, o) => o.lock && !cheat && !unlocked[o.lock]; // modo teste libera tudo
   function applyLook() {
     const m = LOOKS.model.opts[pick.model];
     if (!m || isLocked('model', m)) { pick.model = 'caicara'; pick.frame = 'agua'; }
