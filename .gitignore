@@ -1,0 +1,6 @@
+# só o site vai pro GitHub; app, chave de assinatura, APK e AAB ficam fora
+/*
+!/index.html
+!/README.md
+!/.nojekyll
+!/.gitignore
