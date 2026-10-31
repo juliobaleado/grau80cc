@@ -4,6 +4,9 @@
 !/README.md
 !/.nojekyll
 !/.gitignore
+!/manifest.webmanifest
+!/icon-192.png
+!/icon-512.png
 
 # versão local de teste com a Titan 99 liberada (não sobe pro GitHub)
 /cb99.html
