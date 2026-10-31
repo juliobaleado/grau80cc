@@ -422,6 +422,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const LIMIT = 9400; // corte de giro (85.5% do conta-giros)
 
   const power = rpm => 0.15 + 0.85 * Math.exp(-(((rpm - 7800) / 1900) ** 2));
+  // 160 4 tempos: força mais cheia e larga, do meio do giro até o corte
+  const power4 = rpm => 0.3 + 0.7 * Math.exp(-(((rpm - 8200) / 3000) ** 2));
+  const powerNow = rpm => (MODEL === 'bruno' ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   const BEST_KEY = { motoca: 'grau80-best', livre: 'grau80-best-livre' };
@@ -612,7 +615,22 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1900;
       const sirenG = ac.createGain(); sirenG.gain.value = 0;
       so.connect(slp).connect(sirenG).connect(ac.destination); so.start();
-      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG };
+      // 4 tempos monocilíndrico sem filtro: uma explosão a cada 2 voltas (pulso estreito = "bu-bu-bu" grosso),
+      // corpo grave por baixo e o ronco rouco da admissão aberta, que cresce com o acelerador
+      const nh = 40, re = new Float32Array(nh), im = new Float32Array(nh);
+      for (let k = 1; k < nh; k++) re[k] = 2 * Math.sin(Math.PI * k * 0.14) / (Math.PI * k);
+      const p4 = ac.createOscillator(); p4.setPeriodicWave(ac.createPeriodicWave(re, im));
+      const sub4 = ac.createOscillator(); sub4.type = 'sine';
+      const sub4G = ac.createGain(); sub4G.gain.value = 0.55;
+      const lp4 = ac.createBiquadFilter(); lp4.type = 'lowpass'; lp4.Q.value = 3;
+      const honk = ac.createBiquadFilter(); honk.type = 'bandpass'; honk.Q.value = 5;
+      const honkG = ac.createGain(); honkG.gain.value = 0;
+      const out4 = ac.createGain(); out4.gain.value = 0;
+      p4.connect(lp4); sub4.connect(sub4G).connect(lp4); lp4.connect(out4);
+      p4.connect(honk).connect(honkG).connect(out4);
+      out4.connect(ac.destination);
+      p4.start(); sub4.start();
+      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4 };
       if (muted) ac.suspend();
     } catch (e) { ac = null; }
   }
@@ -625,13 +643,28 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   });
   function updateAudio() {
     if (!nodes || muted) return;
-    const t = ac.currentTime, f = s.rpm / 60;
+    const t = ac.currentTime, f = s.rpm / 60, four = MODEL === 'bruno';
     nodes.o1.frequency.setTargetAtTime(f, t, 0.03);
     nodes.o2.frequency.setTargetAtTime(f * 2.02, t, 0.03);
     nodes.filt.frequency.setTargetAtTime(350 + s.rpm * 0.22 + s.thr * 600, t, 0.04);
+    // 4 tempos: explosão a cada 2 voltas (rpm / 120), um pouco de irregularidade na lenta
+    const ff = s.rpm / 120 * (1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0));
+    nodes.p4.frequency.setTargetAtTime(ff, t, 0.03);
+    nodes.sub4.frequency.setTargetAtTime(ff, t, 0.03);
+    nodes.lp4.frequency.setTargetAtTime(260 + s.rpm * 0.11 + s.thr * 500, t, 0.04);
+    nodes.honk.frequency.setTargetAtTime(330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
+    nodes.honkG.gain.setTargetAtTime(0.25 + s.thr * 1.6, t, 0.06);
     const vol = paused ? 0 : s.mode === 'over' && s.rpm < 1800 ? 0.02 : 0.05 + s.thr * 0.09;
-    if (s.cut <= 0 || paused) nodes.out.gain.setTargetAtTime(vol, t, 0.05);
-    nodes.ng.gain.setTargetAtTime(paused ? 0 : 0.02 + s.thr * 0.06, t, 0.05);
+    if (s.cut <= 0 || paused) {
+      nodes.out.gain.setTargetAtTime(four ? 0 : vol, t, 0.05);
+      nodes.out4.gain.setTargetAtTime(four ? vol * 1.5 : 0, t, 0.05);
+    }
+    nodes.ng.gain.setTargetAtTime(paused ? 0 : (0.02 + s.thr * 0.06) * (four ? 0.6 : 1), t, 0.05);
+    // sem filtro e com escape aberto, o 4 tempos estala quando solta o acelerador em giro alto
+    if (four && !paused && s.mode !== 'over' && s.thr < 0.15 && s.rpm > 4200 && Math.random() < 0.05) {
+      backfire(t + Math.random() * 0.03, 0.25 + Math.random() * 0.3);
+      if (Math.random() < 0.3) s.flame = 0.05;
+    }
     nodes.scrapeG.gain.setTargetAtTime(paused ? 0 : s.scrape > 0 ? 0.1 + 0.1 * s.scrape : 0, t, 0.02);
     const L = s.law, rocamOn = L.bikes.some(b => b.state === 'chase' || (b.state === 'hunt' && Math.abs(b.x - s.x) < 35));
     const sirenOn = !paused && (rocamOn || (L.car && L.car.state === 'chase'));
@@ -647,10 +680,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const bang = Math.random() < 0.5;
     if (bang) s.flame = 0.07;
     if (!nodes || muted || paused) return;
-    const t = ac.currentTime, g = nodes.out.gain;
+    const t = ac.currentTime, g = (MODEL === 'bruno' ? nodes.out4 : nodes.out).gain;
     g.cancelScheduledValues(t);
     g.setTargetAtTime(0.004, t, 0.004);
-    g.setTargetAtTime(0.05 + s.thr * 0.09, t + 0.045, 0.006);
+    g.setTargetAtTime((0.05 + s.thr * 0.09) * (MODEL === 'bruno' ? 1.5 : 1), t + 0.045, 0.006);
     if (bang) backfire(t + 0.01 + Math.random() * 0.02, 0.75 + Math.random() * 0.35);
   }
   function backfire(t, k) {
@@ -867,19 +900,23 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (s.mode === 'ready') {
       revTo(IDLE + s.thr * 8600, 5, h);
     } else if (riding) {
-      const on = Math.min(RPM_MAX, 5200 + s.v * 330);
-      const off = Math.min(9000, IDLE + s.v * 250);
+      // relação: quantos rpm por m/s. A CB 99 tem relação longa e só bate o corte perto de 80 km/h
+      const gear = MODEL === 'bruno' ? 180 : 330;
+      const on = Math.min(RPM_MAX, 5200 + s.v * gear);
+      const off = Math.min(9000, IDLE + s.v * gear * 0.76);
       // soltou o acelerador: o 2 tempos perde giro devagar; voltou a acelerar, retoma de onde estava
       const target = off + (on - off) * s.thr;
       revTo(target, target > s.rpm ? 6 : 0.9, h);
-      const drive = s.cut > 0 ? 0 : s.thr * power(s.rpm);
+      const drive = s.cut > 0 ? 0 : s.thr * powerNow(s.rpm);
 
-      s.v += (drive * 4.6 - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6) * h;
+      // a CB 99 (160 4 tempos) tem mais força pra frente: máxima perto de 80 km/h em vez de ~70
+      const push = MODEL === 'bruno' ? 6.2 : 4.6;
+      s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6) * h;
       if (s.v < 0) s.v = 0;
       const dx = s.v * h;
       s.x += dx; s.wheel += dx / R;
 
-      const lift = drive * 14 * (1 - Math.min(s.v, 22) / 40);
+      const lift = drive * (MODEL === 'bruno' ? 15.4 : 14) * (1 - Math.min(s.v, 22) / 40);
       const grav = 10 * Math.cos(s.th + PHI0 + STAND_PHI * s.stand);
       // freio traseiro: quanto mais rápido, mais forte ele enterra a frente
       const brakeTq = s.th > 0 ? s.brk * (8 + s.v * 0.7) : 0;
