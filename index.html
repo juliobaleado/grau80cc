@@ -264,6 +264,11 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .board li b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .board li span { font-variant-numeric: tabular-nums; color: var(--sodium); }
 .board li.me b { color: var(--sodium); }
+.board-tip { font: 600 12px var(--hud); color: var(--muted); }
+.board li.king { padding: 4px 0 5px; margin-bottom: 2px; border-bottom: 1px solid rgba(255, 181, 71, .3); font-size: 17px; }
+.board li.king::before { content: "👑"; font-size: 15px; }
+.board li.king b { color: #ffd21f; }
+.board li.king small { grid-column: 2 / -1; font: 700 11px var(--hud); letter-spacing: .12em; text-transform: uppercase; color: var(--sodium); margin-top: -2px; }
 .board li.board-msg { display: block; color: var(--muted); font-weight: 500; }
 .board li.board-msg::before { content: none; }
 .gsend { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 1px solid var(--sodium); border-radius: 3px; background: rgba(255, 181, 71, .08); }
@@ -358,6 +363,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <aside class="board" aria-label="Placar global">
         <span class="label">Placar global · top 10</span>
         <ol id="boardList"><li class="board-msg">Carregando…</li></ol>
+        <span class="board-tip">Bate o primeiro pra tomar a coroa 👑</span>
       </aside>
       <button class="pix-card" id="pixOpen" type="button">
         <svg class="pastel" width="54" height="33" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg>
@@ -887,7 +893,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (!r.ok) throw new Error(r.status);
       const seen = new Set();
       // cada nome aparece uma vez só, com o melhor grau dele
-      board = (await r.json()).filter(x => { const k = x.nome.trim().toLowerCase(); return !seen.has(k) && seen.add(k); }).slice(0, 10);
+      let rows = await r.json();
+      // o "Rei do Grau" de 2.000 m é a meta inicial: quando alguém passa dele, ele some do placar
+      if (rows.some(x => Number(x.metros) > 2000 && x.nome.trim().toLowerCase() !== 'rei do grau'))
+        rows = rows.filter(x => !(x.nome.trim().toLowerCase() === 'rei do grau' && Number(x.metros) === 2000));
+      board = rows.filter(x => { const k = x.nome.trim().toLowerCase(); return !seen.has(k) && seen.add(k); }).slice(0, 10);
     } catch (e) { board = null; }
     renderBoard();
   }
@@ -896,12 +906,18 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const msg = t => { const li = document.createElement('li'); li.className = 'board-msg'; li.textContent = t; ol.appendChild(li); };
     if (!board) return msg('Sem conexão com o placar.');
     if (!board.length) return msg('Ninguém ainda. Bora ser o primeiro!');
-    for (const x of board) {
+    board.forEach((x, i) => {
       const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
       b.textContent = x.nome; sp.textContent = Number(x.metros).toFixed(1) + ' m';
-      if (myName && x.nome.trim().toLowerCase() === myName.trim().toLowerCase()) li.className = 'me';
-      li.append(b, sp); ol.appendChild(li);
-    }
+      if (myName && x.nome.trim().toLowerCase() === myName.trim().toLowerCase()) li.classList.add('me');
+      li.append(b, sp);
+      // o primeiro do placar ganha a coroa de Rei do Grau
+      if (i === 0) {
+        li.classList.add('king');
+        if (x.nome.trim().toLowerCase() !== 'rei do grau') { const t = document.createElement('small'); t.textContent = 'Rei do Grau'; li.appendChild(t); }
+      }
+      ol.appendChild(li);
+    });
   }
   const boardQualifies = d => !board || board.length < 10 || d > Number(board[board.length - 1].metros);
   $('gName').value = myName;
