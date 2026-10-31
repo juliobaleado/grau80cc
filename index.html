@@ -328,7 +328,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     <div class="card">
       <span class="eyebrow">Motor 2 tempos · 80 cc</span>
       <h1>Grau 80cc</h1>
-      <p>Saindo do Pastel do Agenor numa Monark Barra Circular com motor 80cc e a mochila de entrega nas costas. Segura a frente no alto o máximo de metros que der.</p>
+      <p>Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.</p>
       <span class="hint">A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.</span>
       <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
       <div class="garage" id="garage"></div>
@@ -700,7 +700,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (unlocked[a.id] || !a.test()) continue;
       unlocked[a.id] = true;
       try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
-      $('achWhy').textContent = 'Conquista desbloqueada · ' + a.why;
+      const bike = Object.values(LOOKS.model.opts).find(o => o.lock === a.id);
+      $('achWhy').textContent = 'Conquista desbloqueada · ' + a.why + (bike ? ' · liberou a ' + bike.name : '');
       $('achName').textContent = a.name;
       $('ach').classList.add('show');
       clearTimeout(achTimer); achTimer = setTimeout(() => $('ach').classList.remove('show'), 4500);
@@ -2047,10 +2048,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       keetute: { name: 'keetute', c: '#ffd21f', ink: '#16181b', text: 'keetute', italic: false },
       aifode: { name: 'aíFode', c: '#ea1d2c', ink: '#ffffff', text: 'aíFode', italic: true } } },
     model: { label: 'Bike', opts: {
-      monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari' },
-      xr: { name: 'Motorizada XR', c: '#efe0b5', def: 'creme' },
       caicara: { name: 'Caiçara de cestinha', c: '#3fc1a8', def: 'agua' },
-      bikelete: { name: 'Bikelete 4T', c: '#6f7f78', def: 'militar' },
+      monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari', lock: 'grau30' },
+      xr: { name: 'Motorizada XR', c: '#efe0b5', def: 'creme', lock: 'grau200' },
+      bikelete: { name: 'Bikelete 4T', c: '#6f7f78', def: 'militar', lock: 'grau500' },
       bruno: { name: 'Titan 99 do Bruno CB 99', c: '#8a1020', lock: 'grau700' } } },
     frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelha Ferrari', c: '#d40000' },
@@ -2065,11 +2066,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       rosa: { name: 'Rosa chiclete', c: '#ff6fae' },
       roxa: { name: 'Roxa', c: '#6b3fb8' } } }
   };
-  const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'monark', frame: 'ferrari' };
+  const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'caicara', frame: 'agua' };
   try { Object.assign(pick, JSON.parse(localStorage.getItem('grau80-look') || '{}')); } catch (e) {}
   let HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL;
   const isLocked = (k, o) => o.lock && !unlocked[o.lock];
   function applyLook() {
+    const m = LOOKS.model.opts[pick.model];
+    if (!m || isLocked('model', m)) { pick.model = 'caicara'; pick.frame = 'agua'; }
     for (const k in LOOKS) {
       const o = LOOKS[k].opts[pick[k]];
       if (!o || isLocked(k, o)) pick[k] = Object.keys(LOOKS[k].opts)[0];
@@ -2327,51 +2330,107 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     },
     // Titan 99 do Bruno CB 99: vinho, adesivo azul e amarelo no tanque, motor prata, baú de alumínio. Lenda, não tem cor
     bruno() {
-      const V = '#8a1020', Vd = '#5e0a16';
+      const V = '#8a1020', Vd = '#5e0a16', Vl = '#b3243a', CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20', AMB = '#ffab2e';
+      // paralama dianteiro vinho com filete claro e haste cromada
       C.fillStyle = V; C.beginPath(); C.arc(L, 0, R + 0.05, 0.35, 1.9); C.arc(L, 0, R + 0.01, 1.9, 0.35, true); C.closePath(); C.fill();
-      // balança, amortecedor e escape cromado
-      line([[0, 0], [0.4, 0.1]], 0.05, '#1b1d20');
-      line([[0.06, 0.06], [0.12, 0.5]], 0.035, '#c3c9cd');
+      C.strokeStyle = Vl; C.lineWidth = 0.008; C.beginPath(); C.arc(L, 0, R + 0.04, 0.45, 1.8); C.stroke();
+      line([[L - 0.02, 0.05], [L - 0.05, 0.3]], 0.012, CRd);
+      // freio a tambor na frente: cubo grande e braço do freio
+      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.09, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#4f555b'; C.lineWidth = 0.01; C.beginPath(); C.arc(L, 0, 0.07, 0, Math.PI * 2); C.stroke();
+      line([[L - 0.04, 0.06], [L - 0.12, 0.13]], 0.016, '#4f555b');
+      // coroa, corrente e pinhão
+      C.strokeStyle = '#3a3e44'; C.lineWidth = 0.018; C.beginPath(); C.arc(0, 0, 0.11, 0, Math.PI * 2); C.stroke();
+      C.strokeStyle = '#2b2e33'; C.lineWidth = 0.014; C.beginPath();
+      C.moveTo(0, 0.11); C.lineTo(0.42, 0.11); C.moveTo(0, -0.11); C.lineTo(0.42, 0.02); C.stroke();
+      // balança, amortecedor com mola e escape cromado com protetor furado
+      line([[0, 0], [0.4, 0.1]], 0.05, BK);
+      line([[0.06, 0.06], [0.12, 0.5]], 0.03, '#2b2e33');
+      C.strokeStyle = CR; C.lineWidth = 0.012; C.beginPath();
+      for (let i = 0; i < 8; i++) { const t = 0.12 + i * 0.1, px = 0.06 + 0.06 * t, py = 0.06 + 0.44 * t; C.moveTo(px - 0.035, py + 0.006); C.lineTo(px + 0.035, py - 0.006); }
+      C.stroke();
       line([[0.6, 0.18], [0.66, 0.02], [0.42, -0.04], [0.1, 0.0]], 0.045, '#3a3e44');
-      line([[0.34, -0.04], [-0.05, 0.05]], 0.085, '#d6dbde');
+      line([[0.34, -0.04], [-0.05, 0.05]], 0.085, CR);
+      line([[0.3, -0.03], [0.12, 0.0]], 0.06, CRd);
+      C.fillStyle = '#5b6168'; for (let i = 0; i < 4; i++) { C.beginPath(); C.arc(0.28 - i * 0.045, -0.025 + i * 0.008, 0.009, 0, Math.PI * 2); C.fill(); }
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.ellipse(-0.06, 0.05, 0.015, 0.035, 0.2, 0, Math.PI * 2); C.fill();
       flameFx(-0.09, 0.05);
-      // motor prata aletado
+      // motor: carcaça escura, tampa da embreagem prata, cilindro aletado, carburador e pedal de partida
       C.fillStyle = '#2b2e33'; C.beginPath(); C.ellipse(0.48, 0.08, 0.15, 0.1, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.5, 0.07, 0.075, 0.06, 0, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#7b8186'; C.lineWidth = 0.008; C.beginPath(); C.ellipse(0.5, 0.07, 0.05, 0.04, 0, 0, Math.PI * 2); C.stroke();
       C.save(); C.translate(0.58, 0.12); C.rotate(-0.25);
       C.fillStyle = '#c3c9cd'; C.fillRect(-0.06, 0, 0.13, 0.2);
       C.strokeStyle = '#7b8186'; C.lineWidth = 0.01; C.beginPath();
       for (let i = 1; i < 7; i++) { C.moveTo(-0.07, i * 0.028); C.lineTo(0.08, i * 0.028); }
-      C.stroke(); C.restore();
-      // quadro e pedaleira
-      line([[0.88, 0.62], [0.68, 0.3], [0.58, 0.12]], 0.05, '#1b1d20');
-      line([[0.4, 0.1], [0.3, 0.52], [0.86, 0.62]], 0.045, '#1b1d20');
+      C.stroke();
+      C.fillStyle = '#9aa1a7'; C.fillRect(-0.05, 0.2, 0.11, 0.04);
+      C.restore();
+      C.fillStyle = '#4a4f56'; rrect(0.4, 0.2, 0.1, 0.07, 0.015); C.fill();
+      C.fillStyle = BK; C.beginPath(); C.ellipse(0.36, 0.27, 0.06, 0.045, 0, 0, Math.PI * 2); C.fill();
+      line([[0.4, 0.12], [0.33, 0.04]], 0.018, '#5b6168');
+      // quadro, pedaleiras do piloto e da garupa
+      line([[0.88, 0.62], [0.68, 0.3], [0.58, 0.12]], 0.05, BK);
+      line([[0.4, 0.1], [0.3, 0.52], [0.86, 0.62]], 0.045, BK);
       line([[0.42, 0.1], [0.52, 0.1]], 0.03, '#16181b');
-      // garfo cromado
+      line([[0.12, 0.22], [0.2, 0.2]], 0.025, '#16181b');
+      // garfo cromado com sanfona de borracha
       line([[0.9, 0.62], [0.97, 0.3]], 0.065, '#c3c9cd');
       line([[0.97, 0.3], [L, 0]], 0.05, '#e3e7ea');
-      // tampa lateral, rabeta e banco
+      C.strokeStyle = '#16181b'; C.lineWidth = 0.05; C.beginPath(); C.moveTo(0.965, 0.32); C.lineTo(0.995, 0.17); C.stroke();
+      C.strokeStyle = '#3a3e44'; C.lineWidth = 0.008; C.beginPath();
+      for (let i = 0; i < 5; i++) { const t = i / 4, px = 0.965 + 0.03 * t, py = 0.32 - 0.15 * t; C.moveTo(px - 0.03, py); C.lineTo(px + 0.03, py); }
+      C.stroke();
+      // tampa lateral com o emblema, rabeta, lanterna, placa e pisca
       C.fillStyle = V; C.beginPath(); C.moveTo(0.18, 0.5); C.lineTo(0.42, 0.5); C.lineTo(0.38, 0.32); C.lineTo(0.2, 0.36); C.closePath(); C.fill();
-      C.beginPath(); C.moveTo(-0.22, 0.58); C.lineTo(0.2, 0.56); C.lineTo(0.2, 0.47); C.lineTo(-0.12, 0.48); C.closePath(); C.fill();
-      C.fillStyle = '#d61f1f'; C.fillRect(-0.24, 0.52, 0.05, 0.04);
+      C.save(); C.translate(0.3, 0.42); C.rotate(0.1); C.scale(0.0032, -0.0032);
+      C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('TITAN', 0, 0);
+      C.restore();
+      C.fillStyle = V; C.beginPath(); C.moveTo(-0.22, 0.58); C.lineTo(0.2, 0.56); C.lineTo(0.2, 0.47); C.lineTo(-0.12, 0.48); C.closePath(); C.fill();
+      C.strokeStyle = Vl; C.lineWidth = 0.008; C.beginPath(); C.moveTo(-0.2, 0.55); C.lineTo(0.18, 0.535); C.stroke();
+      C.fillStyle = '#d61f1f'; rrect(-0.27, 0.5, 0.08, 0.06, 0.015); C.fill();
+      C.fillStyle = 'rgba(255, 120, 120, .6)'; C.fillRect(-0.26, 0.535, 0.04, 0.015);
+      line([[-0.17, 0.48], [-0.22, 0.36]], 0.018, BK);
+      C.fillStyle = '#e8e2d2'; C.fillRect(-0.3, 0.3, 0.14, 0.09);
+      C.fillStyle = '#2f6fd6'; C.fillRect(-0.3, 0.37, 0.14, 0.02);
+      line([[-0.18, 0.47], [-0.26, 0.45]], 0.01, BK);
+      C.fillStyle = AMB; C.beginPath(); C.ellipse(-0.28, 0.45, 0.03, 0.018, 0, 0, Math.PI * 2); C.fill();
+      // banco com costura e alça cromada da garupa
       C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(-0.14, 0.6); C.lineTo(0.5, 0.64); C.lineTo(0.52, 0.6); C.lineTo(0.2, 0.55); C.lineTo(-0.16, 0.56); C.closePath(); C.fill();
-      // tanque vinho com o adesivo
+      C.strokeStyle = '#3a3e44'; C.lineWidth = 0.006; C.beginPath(); C.moveTo(-0.12, 0.585); C.lineTo(0.48, 0.62); C.stroke();
+      line([[-0.16, 0.6], [-0.05, 0.62], [0.12, 0.61]], 0.018, CR);
+      // tanque vinho: joelheira preta, tampa do combustível e o adesivo
       C.fillStyle = V; C.beginPath(); C.moveTo(0.46, 0.62); C.quadraticCurveTo(0.66, 0.78, 0.88, 0.68); C.lineTo(0.84, 0.5); C.lineTo(0.5, 0.5); C.closePath(); C.fill();
+      C.fillStyle = Vl; C.beginPath(); C.moveTo(0.52, 0.66); C.quadraticCurveTo(0.66, 0.76, 0.84, 0.69); C.lineTo(0.84, 0.675); C.quadraticCurveTo(0.66, 0.74, 0.52, 0.65); C.closePath(); C.fill();
       C.fillStyle = Vd; C.beginPath(); C.moveTo(0.5, 0.5); C.lineTo(0.84, 0.5); C.lineTo(0.83, 0.54); C.lineTo(0.52, 0.55); C.closePath(); C.fill();
-      C.save(); C.translate(0.68, 0.62); C.rotate(0.1);
-      C.fillStyle = '#ffd21f'; rrect(-0.11, -0.035, 0.22, 0.07, 0.02); C.fill();
-      C.fillStyle = '#2f6fd6'; rrect(-0.1, -0.025, 0.2, 0.05, 0.015); C.fill();
+      C.fillStyle = '#26282c'; rrect(0.5, 0.53, 0.1, 0.08, 0.02); C.fill();
+      C.fillStyle = CR; C.beginPath(); C.ellipse(0.66, 0.735, 0.035, 0.014, 0, 0, Math.PI * 2); C.fill();
+      C.save(); C.translate(0.71, 0.62); C.rotate(0.1);
+      C.fillStyle = '#ffd21f'; rrect(-0.1, -0.035, 0.2, 0.07, 0.02); C.fill();
+      C.fillStyle = '#2f6fd6'; rrect(-0.09, -0.025, 0.18, 0.05, 0.015); C.fill();
       C.scale(0.0035, -0.0035); C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
       C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CB 99', 0, 0);
       C.restore();
-      // farol, guidão e retrovisor
-      C.fillStyle = '#1b1d20'; C.beginPath(); C.ellipse(0.98, 0.66, 0.06, 0.08, 0.3, 0, Math.PI * 2); C.fill();
+      // farol com aro cromado, painel redondo, buzina e piscas da frente
+      C.fillStyle = BK; C.beginPath(); C.ellipse(0.98, 0.66, 0.065, 0.085, 0.3, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = CR; C.lineWidth = 0.012; C.beginPath(); C.ellipse(1.0, 0.66, 0.035, 0.07, 0.3, 0, Math.PI * 2); C.stroke();
       C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.02, 0.66, 0.025, 0.06, 0.3, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#26282c'; C.beginPath(); C.arc(0.9, 0.79, 0.045, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#e8eef2'; C.beginPath(); C.arc(0.905, 0.795, 0.03, 0, Math.PI * 2); C.fill();
+      line([[0.905, 0.795], [0.92, 0.81]], 0.006, '#d0202a');
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.arc(0.93, 0.52, 0.025, 0, Math.PI * 2); C.fill();
+      line([[0.95, 0.74], [1.03, 0.76]], 0.012, BK);
+      C.fillStyle = AMB; C.beginPath(); C.ellipse(1.045, 0.765, 0.03, 0.018, 0.2, 0, Math.PI * 2); C.fill();
       bars([0.9, 0.66], 0.84, [0.8, 0.8], '#2b2e33', '#16181b');
-      // baú de alumínio na garupa
+      // baú de alumínio na garupa, com rebites e fecho
       C.fillStyle = '#c9ced3'; rrect(-0.36, 0.62, 0.38, 0.27, 0.03); C.fill();
+      C.fillStyle = '#e1e5e8'; C.fillRect(-0.34, 0.84, 0.34, 0.025);
       C.fillStyle = '#9aa1a7'; C.fillRect(-0.36, 0.74, 0.38, 0.02);
       C.strokeStyle = '#7f868c'; C.lineWidth = 0.008; C.beginPath(); C.rect(-0.33, 0.65, 0.32, 0.21); C.stroke();
+      C.fillStyle = '#7f868c'; for (const [rx, ry] of [[-0.32, 0.66], [-0.02, 0.66], [-0.32, 0.85], [-0.02, 0.85]]) { C.beginPath(); C.arc(rx, ry, 0.008, 0, Math.PI * 2); C.fill(); }
       C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.7, 0.04, 0.03);
+      C.fillStyle = '#d61f1f'; C.fillRect(-0.3, 0.68, 0.06, 0.02);
     }
   };
 
