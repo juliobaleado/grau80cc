@@ -223,6 +223,11 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .card h1 { font-size: clamp(44px, 12vw, 72px); }
 .card h2 { font-size: clamp(32px, 9vw, 46px); }
 .card p { margin: 0; font-size: 19px; line-height: 1.35; font-weight: 500; }
+.eyerow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.langs { display: flex; gap: 4px; }
+.langs button { display: inline-flex; align-items: center; gap: 5px; font: 700 12px var(--hud); letter-spacing: .1em; color: var(--muted); background: transparent; border: 1px solid rgba(243, 239, 230, .25); border-radius: 2px; padding: 3px 7px; cursor: pointer; }
+.langs svg { border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); }
+.langs button[aria-pressed="true"] { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
 .how { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 17px; line-height: 1.3; }
 .how li { display: grid; grid-template-columns: 92px 1fr; gap: 10px; }
@@ -233,7 +238,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .meta strong { color: var(--ink); font-variant-numeric: tabular-nums; }
 .leftcol { position: absolute; top: 16px; left: max(16px, env(safe-area-inset-left, 0px)); width: 230px; display: flex; flex-direction: column; gap: 10px; pointer-events: auto; }
 .pix-card { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 4px 10px; padding: 10px 12px; text-align: left; cursor: pointer;
-  background: linear-gradient(135deg, rgba(255, 181, 71, .22), rgba(8, 18, 24, .85)); border: 2px solid var(--sodium); border-radius: 4px; color: var(--ink);
+  background: linear-gradient(135deg, rgba(74, 52, 18, .96), rgba(8, 18, 24, .96)); border: 2px solid var(--sodium); border-radius: 4px; color: var(--ink);
   box-shadow: 0 0 0 0 rgba(255, 181, 71, .5); animation: pixPulse 2.6s ease-in-out infinite; }
 .pix-card:hover { filter: brightness(1.1); }
 .pix-txt { display: flex; flex-direction: column; gap: 2px; }
@@ -338,22 +343,22 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   <div class="hud" id="hud">
     <div class="top3">
-      <div class="stat side"><span class="label">Última</span><span class="value" id="last">–</span></div>
+      <div class="stat side"><span class="label" data-i>Última</span><span class="value" id="last">–</span></div>
       <div class="stat main"><span class="label" id="hudMode">Grau</span><span class="value big" id="dist">0.0<small>m</small></span></div>
-      <div class="stat side"><span class="label">Recorde</span><span class="value" id="best">0.0<small>m</small></span></div>
+      <div class="stat side"><span class="label" data-i>Recorde</span><span class="value" id="best">0.0<small>m</small></span></div>
     </div>
     <div class="hud-btns">
-      <button class="mute" id="pauseBtn" type="button">Pausa</button>
+      <button class="mute" id="pauseBtn" type="button" data-i>Pausa</button>
       <button class="mute" id="mute" type="button">Som: ligado</button>
     </div>
   </div>
 
   <div class="pad">
     <div class="pad-l">
-      <div class="ptxt brake" id="btnBrake">‹ Freio<kbd>toca na esquerda · ↓ / S</kbd></div>
-      <button class="pbtn pull" id="btnPull" type="button">Puxa<kbd>A</kbd></button>
+      <div class="ptxt brake" id="btnBrake"><span data-i>‹ Freio</span><kbd data-i>toca na esquerda · ↓ / S</kbd></div>
+      <button class="pbtn pull" id="btnPull" type="button"><span data-i>Puxa</span><kbd>A</kbd></button>
     </div>
-    <div class="ptxt gas" id="btnGas">Acelera ›<kbd>toca na direita · Espaço / ↑</kbd></div>
+    <div class="ptxt gas" id="btnGas"><span data-i>Acelera ›</span><kbd data-i>toca na direita · Espaço / ↑</kbd></div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -362,36 +367,36 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   <div class="screen" id="startScreen">
     <div class="leftcol">
       <aside class="board" aria-label="Placar global">
-        <span class="label">Placar global · top 10</span>
-        <ol id="boardList"><li class="board-msg">Carregando…</li></ol>
-        <span class="board-tip">Bate o primeiro pra tomar a coroa 👑</span>
+        <span class="label" data-i>Placar global · top 10</span>
+        <ol id="boardList"><li class="board-msg" data-i>Carregando…</li></ol>
+        <span class="board-tip" data-i>Bate o primeiro pra tomar a coroa 👑</span>
       </aside>
       <button class="pix-card" id="pixOpen" type="button">
         <svg class="pastel" width="54" height="33" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg>
-        <span class="pix-txt"><b>Me paga um pastel!</b><small>Pix · toca pra ver o QR</small></span>
+        <span class="pix-txt"><b>Me paga um pastel!</b><small data-i>Pix · toca pra ver o QR</small></span>
       </button>
     </div>
     <div class="card">
-      <span class="eyebrow">Motor 2 tempos · 80 cc</span>
+      <div class="eyerow"><span class="eyebrow" data-i>Motor 2 tempos · 80 cc</span><span class="langs" id="langs" role="group" aria-label="Idioma"></span></div>
       <h1>Grau 80cc</h1>
-      <p>Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.</p>
-      <span class="hint">A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.</span>
+      <p data-i>Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.</p>
+      <span class="hint" data-i>A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.</span>
       <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
       <div class="garage" id="garage"></div>
       <div class="actions">
-        <button class="go" id="goStart" type="button">Modo Motoca</button>
-        <button class="go alt" id="goFree" type="button">Modo Livre</button>
+        <button class="go" id="goStart" type="button" data-i>Modo Motoca</button>
+        <button class="go alt" id="goFree" type="button" data-i>Modo Livre</button>
       </div>
       <ul class="how">
-        <li><b>Acelera</b><span>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
-        <li><b>Giro</b><span>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
-        <li><b>Ponto</b><span>Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.</span></li>
-        <li><b>Giro</b><span>Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.</span></li>
-        <li><b>Freio</b><span>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
-        <li><b>Motoca</b><span>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
-        <li><b>Livre</b><span>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
-        <li><b>Puxa</b><span>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
-        <li><b>Pausa</b><span>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
+        <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
+        <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
+        <li><b data-i>Ponto</b><span data-i>Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.</span></li>
+        <li><b data-i>Giro</b><span data-i>Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.</span></li>
+        <li><b data-i>Freio</b><span data-i>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
+        <li><b data-i>Motoca</b><span data-i>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
+        <li><b data-i>Livre</b><span data-i>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
+        <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
+        <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
       </ul>
     </div>
   </div>
@@ -402,35 +407,35 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <h2 id="endTitle">Perdeu os lanche</h2>
       <span class="label" id="endLabel">Distância empinando</span>
       <div class="result" id="endDist">0.0<small> m</small></div>
-      <span class="record" id="endRecord" hidden>Novo recorde</span>
+      <span class="record" id="endRecord" hidden data-i>Novo recorde</span>
       <form class="gsend" id="gSend" hidden>
-        <span class="label">Entrou no top 10 global! Bota teu nome</span>
+        <span class="label" data-i>Entrou no top 10 global! Bota teu nome</span>
         <div class="gsend-row">
-          <input id="gName" maxlength="16" placeholder="Teu nome" autocomplete="nickname" enterkeyhint="send" aria-label="Teu nome no placar">
-          <button class="go" type="submit" id="gBtn">Enviar</button>
+          <input id="gName" maxlength="16" placeholder="Teu nome" data-ip="Teu nome" autocomplete="nickname" enterkeyhint="send" aria-label="Teu nome no placar">
+          <button class="go" type="submit" id="gBtn" data-i>Enviar</button>
         </div>
         <span class="gmsg" id="gMsg" aria-live="polite"></span>
       </form>
       <div class="meta">
-        <span>Recorde <strong id="endBest">0.0 m</strong></span>
-        <span id="endCountRow" hidden>Empinadas <strong id="endCount">0</strong></span>
-        <span>Velocidade máx. <strong id="endTop">0 km/h</strong></span>
+        <span><span data-i>Recorde</span> <strong id="endBest">0.0 m</strong></span>
+        <span id="endCountRow" hidden><span data-i>Empinadas</span> <strong id="endCount">0</strong></span>
+        <span><span data-i>Velocidade máx.</span> <strong id="endTop">0 km/h</strong></span>
       </div>
       <button class="pix-mini" id="pixOpen2" type="button"><svg class="pastel" width="30" height="19" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg><span>Curtiu? Me paga um pastel!</span></button>
       <div class="actions">
-        <button class="go" id="goAgain" type="button">De novo</button>
-        <button class="go alt" id="goGarage" type="button">Tela inicial</button>
+        <button class="go" id="goAgain" type="button" data-i>De novo</button>
+        <button class="go alt" id="goGarage" type="button" data-i>Tela inicial</button>
       </div>
     </div>
   </div>
 
   <div class="screen" id="pauseScreen" hidden>
     <div class="card">
-      <span class="eyebrow">Esc volta pra tela inicial</span>
-      <h2>Pausado</h2>
+      <span class="eyebrow" data-i>Esc volta pra tela inicial</span>
+      <h2 data-i>Pausado</h2>
       <div class="actions">
-        <button class="go" id="goResume" type="button">Continuar</button>
-        <button class="go alt" id="goHome" type="button">Tela inicial</button>
+        <button class="go" id="goResume" type="button" data-i>Continuar</button>
+        <button class="go alt" id="goHome" type="button" data-i>Tela inicial</button>
       </div>
     </div>
   </div>
@@ -440,17 +445,17 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     <button class="pixm-x" id="pixClose" type="button" aria-label="Fechar">×</button>
     <svg class="pastel" width="84" height="52" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg>
     <h2 id="pixTitle">Me paga um pastel!</h2>
-    <p>Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.</p>
+    <p data-i>Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.</p>
     <img class="pixm-qr" src="data:image/png;base64,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" alt="QR code do Pix para doação">
-    <button class="go" id="pixCopy" type="button">Copiar código Pix</button>
+    <button class="go" id="pixCopy" type="button" data-i>Copiar código Pix</button>
     <span class="pixm-msg" id="pixMsg" aria-live="polite">Ou abre o app do banco, escolhe Pix copia e cola e cola o código.</span>
   </div>
 </div>
 <div class="rotate" id="rotate" role="dialog" aria-label="Gire o celular">
   <div class="phone"></div>
-  <b>Deita o celular</b>
-  <span>O grau é na horizontal.</span>
-  <button type="button" class="go" id="goLand">Tela cheia</button>
+  <b data-i>Deita o celular</b>
+  <span data-i>O grau é na horizontal.</span>
+  <button type="button" class="go" id="goLand" data-i>Tela cheia</button>
 </div>
 
 <script>
@@ -485,6 +490,19 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const powerNow = rpm => (MODEL === 'bruno' ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
+  // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português
+  const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde militar":["Army green","Verde militar"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"]};
+  // bandeiras em SVG (emoji de bandeira não aparece no Windows)
+  const FLAG = {
+    pt: '<svg viewBox="0 0 30 21" width="20" height="14" aria-hidden="true"><rect width="30" height="21" fill="#1a9b3c"/><path d="M15 2.5 27 10.5 15 18.5 3 10.5Z" fill="#ffd21f"/><circle cx="15" cy="10.5" r="4.6" fill="#1d3f9b"/><path d="M10.6 9.6q4.4-1.4 8.8 1" stroke="#fff" stroke-width="1" fill="none"/></svg>',
+    en: '<svg viewBox="0 0 30 21" width="20" height="14" aria-hidden="true"><rect width="30" height="21" fill="#fff"/><path d="M0 0h30v1.6H0zM0 3.2h30v1.6H0zM0 6.4h30V8H0zM0 9.7h30v1.6H0zM0 12.9h30v1.6H0zM0 16.1h30v1.6H0zM0 19.4h30V21H0z" fill="#c8102e"/><rect width="13" height="11.3" fill="#1d3f8f"/></svg>',
+    es: '<svg viewBox="0 0 30 21" width="20" height="14" aria-hidden="true"><rect width="30" height="21" fill="#c60b1e"/><rect y="5.25" width="30" height="10.5" fill="#ffc400"/></svg>'
+  };
+  const LANGS = { pt: 'PT', en: 'EN', es: 'ES' };
+  let LANG = 'pt';
+  try { LANG = localStorage.getItem('grau80-lang') || ''; } catch (e) {}
+  if (!LANGS[LANG]) { const n = (navigator.language || 'pt').toLowerCase(); LANG = n.startsWith('pt') ? 'pt' : n.startsWith('es') ? 'es' : 'en'; }
+  const T = pt => (LANG === 'pt' ? pt : (I18N[pt] || [])[LANG === 'en' ? 0 : 1] || pt);
   const BEST_KEY = { motoca: 'grau80-best', livre: 'grau80-best-livre' };
   let cheat = false; // modo teste: digita "agenor" ou toca 5x no título da tela inicial
   let gameMode = 'motoca';
@@ -531,9 +549,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   function toggleCheat() {
     cheat = !cheat;
     ui.dist.style.pointerEvents = cheat ? 'auto' : '';
-    flash(cheat ? 'Modo teste ligado: tudo liberado' : 'Modo teste desligado');
+    flash(T(cheat ? 'Modo teste ligado: tudo liberado' : 'Modo teste desligado'));
     renderAchList(); renderGarage();
-    $('hudMode').textContent = (gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? ' · teste' : '');
+    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
   }
   // no modo teste, N ou tocar no número do grau pula 100 m
   function skip100() { if (cheat && s.mode === 'ride' && s.active) { s.wStart -= 100; flash('+100 m'); } }
@@ -650,7 +668,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // ---------- som: 2 tempos sintetizado ----------
   let ac = null, nodes = null, muted = false;
   try { muted = localStorage.getItem('grau80-mute') === '1'; } catch (e) {}
-  ui.mute.textContent = muted ? 'Som: desligado' : 'Som: ligado';
+  ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
   function wakeAudio() {
     if (ac) { if (ac.state === 'suspended' && !muted) ac.resume(); return; }
     try {
@@ -701,7 +719,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   }
   ui.mute.addEventListener('click', () => {
     muted = !muted;
-    ui.mute.textContent = muted ? 'Som: desligado' : 'Som: ligado';
+    ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
     try { localStorage.setItem('grau80-mute', muted ? '1' : '0'); } catch (e) {}
     wakeAudio();
     if (ac) muted ? ac.suspend() : ac.resume();
@@ -795,7 +813,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     // no modo teste aparecem todas, pra ver tudo que o jogo tem
     const got = cheat ? ACHS : ACHS.filter(a => unlocked[a.id]);
     $('achList').hidden = !got.length;
-    $('achList').querySelector('.label').textContent = cheat ? 'Conquistas · modo teste (todas)' : 'Conquistas';
+    $('achList').querySelector('.label').textContent = T(cheat ? 'Conquistas · modo teste (todas)' : 'Conquistas');
     $('achItems').textContent = got.map(a => '★ ' + a.name).join('  ·  ');
   }
   function checkAch() {
@@ -810,7 +828,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
       }
       const bike = Object.values(LOOKS.model.opts).find(o => o.lock === a.id);
-      $('achWhy').textContent = (cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? ' · liberou a ' + bike.name : '');
+      $('achWhy').textContent = T(cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? T(' · liberou a ') + bike.name : '');
       $('achName').textContent = a.name;
       $('ach').classList.add('show');
       clearTimeout(achTimer); achTimer = setTimeout(() => $('ach').classList.remove('show'), 4500);
@@ -853,7 +871,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (mode === 'motoca' || mode === 'livre') gameMode = mode;
     try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
     best = bests[gameMode];
-    $('hudMode').textContent = (gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? ' · teste' : '');
+    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
     wakeAudio();
     s = fresh();
     s.mode = 'ride';
@@ -896,9 +914,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       const seen = new Set();
       // cada nome aparece uma vez só, com o melhor grau dele
       let rows = await r.json();
-      // o "Rei do Grau" de 2.000 m é a meta inicial: quando alguém passa dele, ele some do placar
-      if (rows.some(x => Number(x.metros) > 2000 && x.nome.trim().toLowerCase() !== 'rei do grau'))
-        rows = rows.filter(x => !(x.nome.trim().toLowerCase() === 'rei do grau' && Number(x.metros) === 2000));
+      // a meta inicial é o JulioBaleado com 2.000 m: quando alguém passa dele, ela some do placar
+      const isGoal = x => x.nome.trim().toLowerCase() === 'juliobaleado' && Number(x.metros) === 2000;
+      if (rows.some(x => Number(x.metros) > 2000 && !isGoal(x))) rows = rows.filter(x => !isGoal(x));
       board = rows.filter(x => { const k = x.nome.trim().toLowerCase(); return !seen.has(k) && seen.add(k); }).slice(0, 10);
     } catch (e) { board = null; }
     renderBoard();
@@ -906,8 +924,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   function renderBoard() {
     const ol = $('boardList'); ol.textContent = '';
     const msg = t => { const li = document.createElement('li'); li.className = 'board-msg'; li.textContent = t; ol.appendChild(li); };
-    if (!board) return msg('Sem conexão com o placar.');
-    if (!board.length) return msg('Ninguém ainda. Bora ser o primeiro!');
+    if (!board) return msg(T('Sem conexão com o placar.'));
+    if (!board.length) return msg(T('Ninguém ainda. Bora ser o primeiro!'));
     board.forEach((x, i) => {
       const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
       b.textContent = x.nome; sp.textContent = Number(x.metros).toFixed(1) + ' m';
@@ -926,20 +944,20 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   $('gSend').addEventListener('submit', async e => {
     e.preventDefault();
     const nome = $('gName').value.trim().slice(0, 16);
-    if (!nome) { $('gMsg').textContent = 'Bota um nome aí.'; $('gName').focus(); return; }
+    if (!nome) { $('gMsg').textContent = T('Bota um nome aí.'); $('gName').focus(); return; }
     if (s.sent || cheat) return;
-    $('gBtn').disabled = true; $('gMsg').textContent = 'Enviando…';
+    $('gBtn').disabled = true; $('gMsg').textContent = T('Enviando…');
     try {
       const r = await fetch(SB.url, { method: 'POST', headers: { apikey: SB.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
         body: JSON.stringify({ nome, metros: +s.runBest.toFixed(1), segundos: Math.max(0.1, +s.runTime.toFixed(1)), bike: MODEL }) });
       if (!r.ok) throw new Error(r.status);
       s.sent = true; myName = nome;
       try { localStorage.setItem('grau80-nome', nome); } catch (e2) {}
-      $('gMsg').textContent = 'Tá no placar global!';
+      $('gMsg').textContent = T('Tá no placar global!');
       $('gName').disabled = true; $('gBtn').disabled = true;
       loadBoard();
     } catch (err) {
-      $('gMsg').textContent = 'Não deu pra enviar. Confere a internet e tenta de novo.';
+      $('gMsg').textContent = T('Não deu pra enviar. Confere a internet e tenta de novo.');
       $('gBtn').disabled = false;
     }
   });
@@ -947,7 +965,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   // doação via Pix: o mesmo código do QR, pra copiar e colar no app do banco
   const PIX = '00020101021126580014br.gov.bcb.pix013690f47819-7429-4454-a29a-8068787589225204000053039865802BR5925JULIO CURTTS DE SOUZA GOD6008BRASILIA62080504SXQR63041A4F';
-  function openPix() { $('pixModal').hidden = false; $('pixMsg').textContent = 'Ou abre o app do banco, escolhe Pix copia e cola e cola o código.'; $('pixCopy').focus(); }
+  function openPix() { $('pixModal').hidden = false; $('pixMsg').textContent = T('Ou abre o app do banco, escolhe Pix copia e cola e cola o código.'); $('pixCopy').focus(); }
   function closePix() { $('pixModal').hidden = true; }
   $('pixOpen').addEventListener('click', openPix);
   $('pixOpen2').addEventListener('click', openPix);
@@ -958,7 +976,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     try { await navigator.clipboard.writeText(PIX); ok = true; } catch (e) {
       try { const ta = document.createElement('textarea'); ta.value = PIX; document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove(); } catch (e2) {}
     }
-    $('pixMsg').textContent = ok ? 'Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!' : 'Não deu pra copiar sozinho. Usa o QR code aí em cima.';
+    $('pixMsg').textContent = T(ok ? 'Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!' : 'Não deu pra copiar sozinho. Usa o QR code aí em cima.');
   });
 
   function finish(how) {
@@ -972,7 +990,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     recordWheelie();
     ui.endEyebrow.textContent = END_TEXT[msg][0];
     ui.endTitle.textContent = END_TEXT[msg][1];
-    $('endLabel').textContent = gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando';
+    $('endLabel').textContent = T(gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando');
     $('endCountRow').hidden = gameMode !== 'livre';
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
     ui.endRecord.hidden = !s.newRecord;
@@ -1052,7 +1070,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         // encostou a roda da frente: acabou a volta (menos de 3 m não conta, sobe de novo)
         if (s.active && gameMode === 'livre') {
           const r = recordWheelie();
-          if (r) flash(r.rec ? 'Novo recorde! ' + r.d.toFixed(1) + ' m' : r.d.toFixed(1) + ' m');
+          if (r) flash(r.rec ? T('Novo recorde!') + ' ' + r.d.toFixed(1) + ' m' : r.d.toFixed(1) + ' m');
         } else if (s.active) {
           if (s.wDist >= 3) finish('landed');
           else { s.active = false; s.wDist = 0; flash('Curto demais, sobe de novo'); }
@@ -1499,7 +1517,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         C.fillStyle = '#6fd08c';
         C.beginPath(); C.moveTo(fx, yC - 1.9 * S); C.lineTo(fx + 0.9 * S, yC - 1.72 * S); C.lineTo(fx, yC - 1.54 * S); C.fill();
         C.fillStyle = '#f3efe6'; C.textAlign = 'left';
-        C.fillText('recorde ' + best.toFixed(1) + ' m', fx + 6, yC - 1.98 * S);
+        C.fillText(T('recorde') + ' ' + best.toFixed(1) + ' m', fx + 6, yC - 1.98 * S);
       }
     }
 
@@ -1603,7 +1621,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       C.drawImage(pixImg, qx, qy, q, q);
       C.imageSmoothingEnabled = sm;
       C.fillStyle = '#16181b'; C.font = `700 ${Math.max(9, Math.round(0.075 * S))}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.fillText('PIX · TOCA PRA AMPLIAR', ba + bw / 2, qy + q + 0.055 * S);
+      C.fillText(T('PIX · TOCA PRA AMPLIAR'), ba + bw / 2, qy + q + 0.055 * S);
     }
 
     // toldo listrado com a barra recortada
@@ -2219,7 +2237,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari', lock: 'grau30' },
       xr: { name: 'Motorizada XR', c: '#efe0b5', def: 'creme', lock: 'grau200' },
       bikelete: { name: 'Bikelete 4T', c: '#6f7f78', def: 'militar', lock: 'grau500' },
-      bruno: { name: 'Titan 99 do Bruno CB 99', c: '#8a1020', lock: 'grau700' } } },
+      bruno: { name: '99 do @Bruno_cb', c: '#8a1020', lock: 'grau700' } } },
     frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelha Ferrari', c: '#d40000' },
       calcinha: { name: 'Azul calcinha', c: '#8ec9e8' },
@@ -2266,7 +2284,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         const box = document.createElement('div'); box.className = 'chips-sel';
         const arrow = (txt, dir) => {
           const a = document.createElement('button'); a.type = 'button'; a.className = 'arr'; a.textContent = txt;
-          a.setAttribute('aria-label', dir < 0 ? 'Anterior' : 'Próximo');
+          a.setAttribute('aria-label', T(dir < 0 ? 'Anterior' : 'Próximo'));
           a.addEventListener('click', () => box.scrollBy({ left: dir * box.clientWidth * 0.7 }));
           return a;
         };
@@ -2278,16 +2296,16 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       }
       const keep = r.box.scrollLeft;
       r.box.textContent = '';
-      r.lab.textContent = LOOKS[k].label;
-      if (dots) { r.lab.append(' · '); const nm = document.createElement('b'); nm.textContent = LOOKS[k].opts[pick[k]].name; r.lab.append(nm); }
+      r.lab.textContent = T(LOOKS[k].label);
+      if (dots) { r.lab.append(' · '); const nm = document.createElement('b'); nm.textContent = T(LOOKS[k].opts[pick[k]].name); r.lab.append(nm); }
       for (const [id, o] of Object.entries(LOOKS[k].opts)) {
         const b = document.createElement('button');
         const locked = isLocked(k, o);
         b.type = 'button'; b.className = dots ? 'sw dot' : 'sw'; b.id = `look-${k}-${id}`;
         const dot = document.createElement('i'); dot.style.background = o.stripe ? `repeating-linear-gradient(90deg, ${o.base} 0 3px, ${o.stripe} 3px 6px)` : o.shell || o.base || o.c;
-        if (dots) { b.append(dot); b.setAttribute('aria-label', o.name); b.title = o.name; }
-        else b.append(dot, locked ? '🔒 ' + o.name : o.name);
-        if (locked) { b.disabled = true; b.title = 'Libera com a conquista ' + ACHS.find(a => a.id === o.lock).name; }
+        if (dots) { b.append(dot); b.setAttribute('aria-label', T(o.name)); b.title = T(o.name); }
+        else b.append(dot, locked ? '🔒 ' + T(o.name) : T(o.name));
+        if (locked) { b.disabled = true; b.title = T('Libera com a conquista') + ' ' + ACHS.find(a => a.id === o.lock).name; }
         b.setAttribute('aria-pressed', String(pick[k] === id));
         b.addEventListener('click', () => {
           pick[k] = id;
@@ -2310,6 +2328,24 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     lookRows.frame.row.hidden = MODEL === 'bruno';
   }
   renderGarage();
+
+  function applyLang() {
+    document.documentElement.lang = LANG === 'pt' ? 'pt-BR' : LANG;
+    document.querySelectorAll('[data-i]').forEach(el => { if (!el.dataset.pt) el.dataset.pt = el.textContent; el.textContent = T(el.dataset.pt); });
+    document.querySelectorAll('[data-ip]').forEach(el => { el.placeholder = T(el.dataset.ip); });
+    ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
+    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
+    const box = $('langs'); box.textContent = '';
+    for (const [id, lab] of Object.entries(LANGS)) {
+      const b = document.createElement('button'); b.type = 'button'; b.innerHTML = FLAG[id] + '<span>' + lab + '</span>';
+      b.setAttribute('aria-pressed', String(id === LANG));
+      b.addEventListener('click', () => { LANG = id; try { localStorage.setItem('grau80-lang', id); } catch (e) {} applyLang(); });
+      box.appendChild(b);
+    }
+    renderGarage(); renderAchList(); renderBoard();
+  }
+  applyLang();
+
   const SKIN = '#c98f62';
   function rrect(x, y, w, h, r) {
     C.beginPath();
@@ -2703,7 +2739,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     C.fillStyle = C.strokeStyle; C.beginPath(); C.arc(cx, cy, 2.5, 0, Math.PI * 2); C.fill();
     C.textAlign = 'center'; C.textBaseline = 'alphabetic';
     C.font = '700 13px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.fillText(bad ? 'FREIA ' + Math.round(deg) + '°' : Math.round(deg) + '°', cx, cy + 14);
+    C.fillText(bad ? T('FREIA') + ' ' + Math.round(deg) + '°' : Math.round(deg) + '°', cx, cy + 14);
   }
   // balão de fala do motoca no corte de giro
   function drawChapa(x, y, a) {
