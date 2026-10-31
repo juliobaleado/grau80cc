@@ -101,31 +101,21 @@ body { background: var(--night); color: var(--ink); font-family: var(--hud); ove
 canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .hud {
-  position: absolute; top: 0; left: 0; right: 0;
-  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 28px;
-  padding-block: 14px 0;
+  position: absolute; top: 0; left: 0; right: 0; min-height: 96px;
+  padding-top: 10px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   pointer-events: none;
 }
-.stat { display: flex; flex-direction: column; gap: 2px; }
+.top3 { position: absolute; left: 50%; top: 8px; transform: translateX(-50%); display: flex; align-items: flex-end; gap: 26px; }
+.stat { display: flex; flex-direction: column; align-items: center; gap: 2px; text-shadow: 0 1px 8px rgba(0, 0, 0, .55); }
 .label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-.value { font-size: 34px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
-.value small { font-size: 16px; font-weight: 600; color: var(--muted); margin-left: 2px; }
-.value.big { font-family: var(--display); font-size: 40px; color: var(--sodium); font-weight: 400; }
-.rpm { flex: 1 1 200px; min-width: 0; max-width: 420px; display: flex; flex-direction: column; gap: 6px; }
-.rpm-row { display: flex; justify-content: space-between; gap: 8px; }
-.rpm-track { position: relative; height: 12px; background: rgba(243, 239, 230, .08); border-radius: 2px; overflow: hidden; }
-.rpm-band { position: absolute; top: 0; bottom: 0; left: 55%; width: 27%; background: rgba(255, 181, 71, .22); border-inline: 1px solid rgba(255, 181, 71, .6); }
-.rpm-limit { position: absolute; top: 0; bottom: 0; left: 85.5%; right: 0; background: rgba(255, 90, 74, .35); }
-.rpm-fill { position: absolute; top: 3px; bottom: 3px; left: 0; width: 10%; background: var(--ink); border-radius: 1px; }
-.rpm-fill.inband { background: var(--sodium); }
-.chips { display: flex; gap: 6px; }
-.chip { font-size: 12px; font-weight: 700; letter-spacing: .12em; padding: 2px 7px; border: 1px solid rgba(243, 239, 230, .25); color: var(--muted); border-radius: 2px; }
-.chip.on { background: var(--sodium); border-color: var(--sodium); color: var(--night); }
-.chip.on.ok { background: var(--ok); border-color: var(--ok); }
-.chip.on.bad { background: var(--danger); border-color: var(--danger); color: var(--ink); }
-.hud-btns { pointer-events: auto; margin-left: auto; align-self: flex-start; display: flex; gap: 8px; }
+.value { font-size: 26px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.value small { font-size: 14px; font-weight: 600; color: var(--muted); margin-left: 2px; }
+.stat.side { min-width: 74px; padding-bottom: 6px; }
+.value.big { font-family: var(--display); font-size: 64px; color: var(--sodium); font-weight: 400; }
+.value.big small { font-family: var(--hud); font-size: 22px; color: var(--sodium); }
+.hud-btns { pointer-events: auto; position: absolute; top: 12px; right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 8px; }
 .mute { font: 600 13px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--ink); background: transparent; border: 1px solid rgba(243, 239, 230, .3); padding: 6px 10px; border-radius: 2px; cursor: pointer; }
 
 .pad {
@@ -148,10 +138,15 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .pbtn.gas { border-color: var(--sodium); }
 .pbtn.held { background: var(--sodium); color: var(--night); }
 .pbtn.held kbd { color: var(--night); }
-.pad-r { display: flex; gap: 12px; align-items: flex-end; }
+.pad-l { display: flex; gap: 18px; align-items: flex-end; }
+.ptxt { pointer-events: none; font: 700 22px/1 var(--hud); letter-spacing: .14em; text-transform: uppercase; color: rgba(243, 239, 230, .55);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .6); transition: color .12s; padding-bottom: 6px; }
+.ptxt kbd { display: block; font: 500 11px var(--hud); letter-spacing: .06em; color: var(--muted); margin-top: 6px; text-transform: none; }
+.ptxt.gas { text-align: right; }
+.ptxt.gas.held { color: var(--sodium); }
+.ptxt.brake.held { color: var(--danger); }
 .pbtn.pull { width: 76px; height: 76px; font-size: 14px; border-color: var(--ok); }
 .pbtn.pull.held { background: var(--ok); border-color: var(--ok); }
-.pbtn.brake.held { background: var(--danger); border-color: var(--danger); color: var(--ink); }
 
 .toast { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); font: 700 22px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium); opacity: 0; transition: opacity .3s; pointer-events: none; text-align: center; white-space: nowrap; }
 .toast.show { opacity: 1; }
@@ -196,6 +191,21 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
     padding-right: max(16px, env(safe-area-inset-right, 0px));
   }
 }
+/* celular deitado: cartão estreito à direita, título numa linha e sem o texto de apresentação */
+@media (max-height: 500px) and (orientation: landscape) {
+  #startScreen {
+    place-items: safe center end; padding-block: 10px;
+    background: linear-gradient(to right, rgba(8, 18, 24, 0) 0%, rgba(8, 18, 24, 0) 30%, rgba(8, 18, 24, .85) 52%, rgba(8, 18, 24, .94) 100%);
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  #startScreen .card { max-width: 400px; gap: 10px; }
+  #startScreen .card h1 { font-size: 40px; }
+  #startScreen .card p, #startScreen .hint { display: none; }
+  #startScreen .eyebrow { font-size: 11px; }
+  #startScreen .go { font-size: 17px; padding: 8px 16px 10px; }
+  .garage { gap: 6px; padding-block: 8px; }
+  .grow { grid-template-columns: 84px 1fr; gap: 6px; }
+}
 .card { width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 14px; }
 .card h1, .card h2 { margin: 0; font-family: var(--display); font-weight: 400; color: var(--sodium); line-height: .95; text-wrap: balance; }
 .card h1 { font-size: clamp(44px, 12vw, 72px); }
@@ -219,16 +229,44 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .garage { display: grid; gap: 8px; padding-block: 12px; border-block: 1px solid rgba(243, 239, 230, .15); }
 .grow { display: grid; grid-template-columns: 92px 1fr; gap: 10px; align-items: center; }
-.chips-sel { display: flex; flex-wrap: wrap; gap: 6px; }
+.grow > .label b { color: var(--ink); font-weight: 600; letter-spacing: .02em; text-transform: none; }
+.slider { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px; min-width: 0; }
+.slider .arr { width: 26px; height: 32px; padding: 0; font: 700 18px var(--hud); color: var(--ink); background: transparent; border: 1px solid rgba(243, 239, 230, .2); border-radius: 2px; cursor: pointer; }
+.slider .arr:disabled { opacity: .25; cursor: default; }
+.chips-sel { position: relative; display: flex; flex-wrap: nowrap; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity; scroll-behavior: smooth;
+  overscroll-behavior-x: contain; touch-action: pan-x; scrollbar-width: none; padding: 3px 2px; min-width: 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); mask-image: linear-gradient(90deg, transparent, #000 14px, #000 calc(100% - 14px), transparent); }
+.chips-sel::-webkit-scrollbar { display: none; }
+.chips-sel .sw { flex: none; scroll-snap-align: center; white-space: nowrap; }
+.sw.dot { width: 32px; height: 32px; padding: 0; justify-content: center; border-radius: 50%; }
+.sw.dot i { width: 22px; height: 22px; }
+.sw:disabled { opacity: .5; cursor: not-allowed; }
+@media (pointer: coarse) { .slider { grid-template-columns: 1fr; } .slider .arr { display: none; } }
+/* celular em pé: pede pra deitar */
+.rotate { position: fixed; inset: 0; z-index: 50; display: none; place-content: center; gap: 14px; text-align: center; padding: 24px;
+  background: var(--night); color: var(--ink); font: 600 18px var(--hud); }
+.rotate b { font: 400 30px var(--display); color: var(--sodium); }
+.rotate .phone { width: 44px; height: 74px; margin: 0 auto; border: 3px solid var(--ink); border-radius: 8px; animation: tilt 2.2s ease-in-out infinite; }
+@keyframes tilt { 0%, 30% { transform: rotate(0); } 60%, 100% { transform: rotate(-90deg); } }
+@media (orientation: portrait) and (pointer: coarse) { .rotate { display: grid; } }
 .sw { display: inline-flex; align-items: center; gap: 6px; font: 600 15px var(--hud); letter-spacing: .03em; color: var(--ink); background: transparent; border: 1px solid rgba(243, 239, 230, .25); padding: 4px 10px 4px 6px; border-radius: 2px; cursor: pointer; }
 .sw i { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(243, 239, 230, .4); }
 .sw[aria-pressed="true"] { border-color: var(--sodium); background: rgba(255, 181, 71, .16); }
 button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
+@media (max-height: 460px) {
+  .value.big { font-size: 48px; }
+  .hud-btns { flex-direction: column; align-items: flex-end; gap: 6px; }
+  .mute { padding: 4px 8px; font-size: 12px; }
+  .pbtn.pull { width: 58px; height: 58px; font-size: 12px; }
+  .pbtn.pull kbd { display: none; }
+}
 @media (max-width: 520px) {
-  .value { font-size: 26px; }
-  .value.big { font-size: 30px; }
-  .pbtn { width: 88px; height: 88px; font-size: 15px; }
+  .value { font-size: 20px; }
+  .value.big { font-size: 46px; }
+  .top3 { gap: 14px; }
+  .stat.side { min-width: 56px; }
+  .ptxt { font-size: 18px; }
   .how li { grid-template-columns: 1fr; gap: 2px; }
   .grow { grid-template-columns: 1fr; gap: 4px; }
 }
@@ -238,31 +276,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   <canvas id="cv"></canvas>
 
   <div class="hud" id="hud">
-    <div class="stat">
-      <span class="label" id="hudMode">Grau</span>
-      <span class="value big" id="dist">0.0<small>m</small></span>
-    </div>
-    <div class="stat">
-      <span class="label">Última</span>
-      <span class="value" id="last">–</span>
-    </div>
-    <div class="stat">
-      <span class="label">Velocidade</span>
-      <span class="value" id="spd">0<small>km/h</small></span>
-    </div>
-    <div class="rpm">
-      <div class="rpm-row">
-        <span class="label">Giro <span id="rpmtxt">1.600</span> rpm</span>
-        <div class="chips">
-          <span class="chip" id="chipBand">No giro</span>
-          <span class="chip" id="chipBal">No ponto</span>
-        </div>
-      </div>
-      <div class="rpm-track"><div class="rpm-band"></div><div class="rpm-limit"></div><div class="rpm-fill" id="rpmfill"></div></div>
-    </div>
-    <div class="stat">
-      <span class="label">Recorde</span>
-      <span class="value" id="best">0.0<small>m</small></span>
+    <div class="top3">
+      <div class="stat side"><span class="label">Última</span><span class="value" id="last">–</span></div>
+      <div class="stat main"><span class="label" id="hudMode">Grau</span><span class="value big" id="dist">0.0<small>m</small></span></div>
+      <div class="stat side"><span class="label">Recorde</span><span class="value" id="best">0.0<small>m</small></span></div>
     </div>
     <div class="hud-btns">
       <button class="mute" id="pauseBtn" type="button">Pausa</button>
@@ -271,11 +288,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   </div>
 
   <div class="pad">
-    <button class="pbtn brake" id="btnBrake" type="button">Freio<kbd>↓ / S / dir.</kbd></button>
-    <div class="pad-r">
+    <div class="pad-l">
+      <div class="ptxt brake" id="btnBrake">‹ Freio<kbd>toca na esquerda · ↓ / S</kbd></div>
       <button class="pbtn pull" id="btnPull" type="button">Puxa<kbd>A</kbd></button>
-      <button class="pbtn gas" id="btnGas" type="button">Acelera<kbd>Espaço / ↑</kbd></button>
     </div>
+    <div class="ptxt gas" id="btnGas">Acelera ›<kbd>toca na direita · Espaço / ↑</kbd></div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -294,14 +311,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         <button class="go alt" id="goFree" type="button">Modo Livre</button>
       </div>
       <ul class="how">
-        <li><b>Acelera</b><span>Segura Espaço, ↑, o botão ou clica na tela.</span></li>
+        <li><b>Acelera</b><span>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
         <li><b>Giro</b><span>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
-        <li><b>Ponto</b><span>Perto de 75° a moto se equilibra sozinha. Passou disso, ela vira pra trás.</span></li>
+        <li><b>Ponto</b><span>Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.</span></li>
         <li><b>Giro</b><span>Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.</span></li>
-        <li><b>Freio</b><span>Freio traseiro: ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
+        <li><b>Freio</b><span>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
         <li><b>Motoca</b><span>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
         <li><b>Livre</b><span>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
-        <li><b>Puxa</b><span>A ou o botão Puxa: joga o corpo pra trás e dá um tranco na frente. Quanto mais rápido, mais ela sobe.</span></li>
+        <li><b>Puxa</b><span>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
         <li><b>Pausa</b><span>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
       </ul>
     </div>
@@ -321,7 +338,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       </div>
       <div class="actions">
         <button class="go" id="goAgain" type="button">De novo</button>
-        <button class="go alt" id="goGarage" type="button">Garagem</button>
+        <button class="go alt" id="goGarage" type="button">Tela inicial</button>
       </div>
     </div>
   </div>
@@ -337,6 +354,12 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     </div>
   </div>
 </div>
+<div class="rotate" id="rotate" role="dialog" aria-label="Gire o celular">
+  <div class="phone"></div>
+  <b>Deita o celular</b>
+  <span>O grau é na horizontal.</span>
+  <button type="button" class="go" id="goLand">Tela cheia</button>
+</div>
 
 <script>
 (() => {
@@ -344,8 +367,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const C = cv.getContext('2d');
   const $ = id => document.getElementById(id);
   const ui = {
-    dist: $('dist'), spd: $('spd'), best: $('best'), rpmtxt: $('rpmtxt'), rpmfill: $('rpmfill'),
-    chipBand: $('chipBand'), chipBal: $('chipBal'), hud: $('hud'), toast: $('toast'),
+    dist: $('dist'), best: $('best'), hud: $('hud'), toast: $('toast'),
     start: $('startScreen'), end: $('endScreen'), endTitle: $('endTitle'), endEyebrow: $('endEyebrow'),
     endDist: $('endDist'), endRecord: $('endRecord'), endBest: $('endBest'), endTop: $('endTop'),
     btnGas: $('btnGas'), btnBrake: $('btnBrake'), mute: $('mute'),
@@ -357,6 +379,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const L = 1.05;              // entre-eixos
   const PHI0 = 0.27;           // centro de massa à frente do eixo traseiro
   const BAL = Math.PI / 2 - PHI0; // ponto de equilíbrio (~74.5°)
+  const STAND_PHI = 0.12;      // em pé com o quadril pra trás o peso vai pra trás: equilíbrio cai pra ~67.6°
+  const balNow = () => BAL - STAND_PHI * s.stand;
   const CRASH = 1.62;          // paralama encosta no chão (~93°)
   const SCRAPE = 1.48;         // a partir de ~85° o paralama traseiro raspa e segura de leve
   const RPM_MAX = 11000, IDLE = 1600;
@@ -367,6 +391,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   const BEST_KEY = { motoca: 'grau80-best', livre: 'grau80-best-livre' };
+  let cheat = false; // modo teste: digita "agenor" ou toca 5x no título da tela inicial
   let gameMode = 'motoca';
   try { if (localStorage.getItem('grau80-mode') === 'livre') gameMode = 'livre'; } catch (e) {}
   const bests = { motoca: 0, livre: 0 };
@@ -383,11 +408,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     return {
       mode: 'ready', x: 0, v: 0, th: 0, om: 0, rpm: IDLE, thr: 0, brk: 0, wheel: 0,
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
-      last: 0, runBest: 0, count: 0, newRecord: false, pull: 0, pullCd: 0, cut: 0, flame: 0,
+      last: 0, runBest: 0, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
       law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
-             uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false },
+             uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
+             at: { kite: 20, car: 150, rocam: 250, uno: 350, thief: 600 }, dur: { car: 50, rocam: 50, uno: 150, thief: 100 },
+             nextLoop: 800, loopI: 0 },
       kite: null, kiteDone: false, sparks: [], scrape: 0,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
       bumps: [], nextBump: 30, parts: [], smokeAcc: 0
@@ -404,7 +431,25 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     ui.btnBrake.classList.toggle('held', brake);
   }
   const KEYMAP = { Space: 'gas', ArrowUp: 'gas', KeyW: 'gas', ArrowDown: 'brake', KeyS: 'brake' };
+  // código do modo teste
+  let typed = '', titleTaps = [];
+  function toggleCheat() {
+    cheat = !cheat;
+    ui.dist.style.pointerEvents = cheat ? 'auto' : '';
+    flash(cheat ? 'Modo teste ligado' : 'Modo teste desligado');
+    $('hudMode').textContent = (gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? ' · teste' : '');
+  }
+  // no modo teste, N ou tocar no número do grau pula 100 m
+  function skip100() { if (cheat && s.mode === 'ride' && s.active) { s.wStart -= 100; flash('+100 m'); } }
+  ui.dist.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); skip100(); });
+  $('startScreen').querySelector('h1').addEventListener('pointerdown', () => {
+    const now = performance.now();
+    titleTaps = titleTaps.filter(t => now - t < 2500); titleTaps.push(now);
+    if (titleTaps.length >= 5) { titleTaps = []; toggleCheat(); }
+  });
   addEventListener('keydown', e => {
+    if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
+    if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
     if (e.code === 'Escape') { e.preventDefault(); if (s.mode !== 'ready') toStart(); return; }
     if (e.code === 'KeyA') { e.preventDefault(); if (!e.repeat) doPull(); return; }
     if ((e.code === 'Enter' || e.code === 'KeyR') && s.mode !== 'ride') {
@@ -414,8 +459,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const k = KEYMAP[e.code];
     if (k) { e.preventDefault(); wakeAudio(); keys.add(k); syncInput(); }
   });
-  addEventListener('keyup', e => { const k = KEYMAP[e.code]; if (k) { keys.delete(k); syncInput(); } });
-  addEventListener('blur', () => { keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput(); });
+  addEventListener('keyup', e => { if (e.code === 'KeyA') endPull(); const k = KEYMAP[e.code]; if (k) { keys.delete(k); syncInput(); } });
+  addEventListener('blur', () => { keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput(); endPull(); });
 
   function bindHold(el, what) {
     el.addEventListener('pointerdown', e => {
@@ -428,34 +473,43 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     el.addEventListener('pointercancel', up);
     el.addEventListener('lostpointercapture', up);
   }
-  bindHold(ui.btnGas, 'gas');
-  bindHold(ui.btnBrake, 'brake');
 
-  // puxada: o piloto joga o corpo pra trás e a frente ganha um tranco pra cima
+  // puxada: o piloto levanta e joga o quadril pra trás; a frente ganha um tranco leve pra cima.
+  // segurando (botão ou A), ele fica em pé e o grau se equilibra mais baixo
+  let standHeld = false;
   function doPull() {
+    standHeld = true; ui.btnPull.classList.add('held');
     if (s.mode !== 'ride' || paused || s.pullCd > 0) return;
     s.pull = 1; s.pullCd = 0.6;
-    s.om += 0.6 + Math.min(s.v, 18) * 0.14;
-    ui.btnPull.classList.add('held');
-    setTimeout(() => ui.btnPull.classList.remove('held'), 180);
+    s.om += 0.35 + Math.min(s.v, 18) * 0.08;
   }
+  function endPull() { standHeld = false; ui.btnPull.classList.remove('held'); }
   ui.btnPull = $('btnPull');
-  ui.btnPull.addEventListener('pointerdown', e => { e.preventDefault(); wakeAudio(); doPull(); });
+  ui.btnPull.addEventListener('pointerdown', e => {
+    e.preventDefault(); wakeAudio();
+    try { ui.btnPull.setPointerCapture(e.pointerId); } catch (_) {}
+    doPull();
+  });
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) ui.btnPull.addEventListener(ev, endPull);
 
-  // tela: toque = acelera; mouse esquerdo = acelera, direito = freio (dá pra segurar os dois)
+  // tela: andando, metade esquerda freia e metade direita acelera (dedo pode deslizar de um lado pro outro);
+  // na tela inicial qualquer toque acelera. Mouse: botão direito freia em qualquer lugar.
   $('game').addEventListener('contextmenu', e => e.preventDefault());
+  const zone = e => s.mode === 'ride' && e.clientX - cv.getBoundingClientRect().left < cv.clientWidth / 2 ? 'brake' : 'gas';
+  const mouseZone = e => { const b = e.buttons & 3; return b & 1 && zone(e) === 'brake' ? (b & ~1) | 2 : b; };
   cv.addEventListener('pointerdown', e => {
     e.preventDefault(); wakeAudio();
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
-    if (e.pointerType === 'mouse') mouseBtns = e.buttons & 3;
-    else ptrs.set(e.pointerId, 'gas');
+    if (e.pointerType === 'mouse') mouseBtns = mouseZone(e);
+    else ptrs.set(e.pointerId, zone(e));
     syncInput();
   });
   cv.addEventListener('pointermove', e => {
-    if (e.pointerType === 'mouse' && (e.buttons & 3) !== mouseBtns) { mouseBtns = e.buttons & 3; syncInput(); }
+    if (e.pointerType === 'mouse') { if (e.buttons & 3 && mouseZone(e) !== mouseBtns) { mouseBtns = mouseZone(e); syncInput(); } }
+    else if (ptrs.has(e.pointerId) && ptrs.get(e.pointerId) !== zone(e)) { ptrs.set(e.pointerId, zone(e)); syncInput(); }
   });
   const cvUp = e => {
-    if (e.pointerType === 'mouse') mouseBtns = e.type === 'pointerup' ? e.buttons & 3 : 0;
+    if (e.pointerType === 'mouse') mouseBtns = e.type === 'pointerup' ? mouseZone(e) : 0;
     else ptrs.delete(e.pointerId);
     syncInput();
   };
@@ -593,7 +647,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     { id: 'grau200', why: '200 m de grau com a viatura na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
     { id: 'grau300', why: '300 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped },
     { id: 'grau500', why: '500 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
-    { id: 'grau700', why: '700 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped }
+    { id: 'grau700', why: '700 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
+    { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
   ];
   let unlocked = {};
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
@@ -604,7 +659,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     $('achItems').textContent = got.map(a => '★ ' + a.name).join('  ·  ');
   }
   function checkAch() {
-    if (gameMode !== 'motoca') return;
+    if (gameMode !== 'motoca' || cheat) return;
     for (const a of ACHS) {
       if (unlocked[a.id] || !a.test()) continue;
       unlocked[a.id] = true;
@@ -613,7 +668,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       $('achName').textContent = a.name;
       $('ach').classList.add('show');
       clearTimeout(achTimer); achTimer = setTimeout(() => $('ach').classList.remove('show'), 4500);
-      achSound(); renderAchList();
+      achSound(); renderAchList(); if (typeof renderGarage === 'function') renderGarage();
     }
   }
   function achSound() {
@@ -636,11 +691,23 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     ui.toast.textContent = msg; ui.toast.classList.add('show');
     clearTimeout(toastTimer); toastTimer = setTimeout(() => ui.toast.classList.remove('show'), 1300);
   }
+  // celular: tenta abrir deitado em tela cheia (precisa vir de um toque)
+  const touchDev = matchMedia('(pointer: coarse)').matches;
+  function goLandscape() {
+    if (!touchDev) return;
+    try {
+      const el = document.documentElement;
+      const fs = !document.fullscreenElement && el.requestFullscreen ? el.requestFullscreen({ navigationUI: 'hide' }) : Promise.resolve();
+      fs.then(() => screen.orientation && screen.orientation.lock ? screen.orientation.lock('landscape') : null).catch(() => {});
+    } catch (e) {}
+  }
+  $('goLand').addEventListener('click', goLandscape);
   function begin(mode) {
+    goLandscape();
     if (mode === 'motoca' || mode === 'livre') gameMode = mode;
     try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
     best = bests[gameMode];
-    $('hudMode').textContent = gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca';
+    $('hudMode').textContent = (gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? ' · teste' : '');
     wakeAudio();
     s = fresh();
     s.mode = 'ride';
@@ -655,7 +722,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     s.active = false; s.wDist = 0;
     if (d < 1) return null;
     s.count++; s.last = d; s.runBest = Math.max(s.runBest, d);
-    const rec = d > best + 0.05;
+    const rec = !cheat && d > best + 0.05; // no modo teste nada vira recorde
     if (rec) { best = bests[gameMode] = d; s.newRecord = true; try { localStorage.setItem(BEST_KEY[gameMode], best.toFixed(2)); } catch (e) {} }
     return { d, rec };
   }
@@ -702,6 +769,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     s.brk += (brkT - s.brk) * Math.min(1, h * (brkT > s.brk ? 5 : 14));
     s.pull = Math.max(0, s.pull - h / 0.35);
     s.pullCd = Math.max(0, s.pullCd - h);
+    s.stand += ((riding && standHeld ? 1 : 0) - s.stand) * Math.min(1, h * 7);
     s.flame = Math.max(0, s.flame - h);
 
     if (s.mode === 'ready') {
@@ -720,7 +788,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       s.x += dx; s.wheel += dx / R;
 
       const lift = drive * 14 * (1 - Math.min(s.v, 22) / 40);
-      const grav = 10 * Math.cos(s.th + PHI0);
+      const grav = 10 * Math.cos(s.th + PHI0 + STAND_PHI * s.stand);
       // freio traseiro: quanto mais rápido, mais forte ele enterra a frente
       const brakeTq = s.th > 0 ? s.brk * (8 + s.v * 0.7) : 0;
       let a = lift - grav - 0.9 * s.om - brakeTq;
@@ -735,6 +803,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         }
       }
       s.om += a * h; s.th += s.om * h;
+      // modo teste: segura a moto no ponto de equilíbrio e nunca deixa cair abaixo de 43 km/h
+      if (cheat) { s.th += (balNow() - s.th) * Math.min(1, h * 4); s.om *= 0.8; s.v = Math.max(s.v, 12); }
 
       while (s.nextBump < s.x + 80) { s.bumps.push(s.nextBump); s.nextBump += 22 + Math.random() * 45; }
       while (s.bumps.length && s.bumps[0] <= s.x) {
@@ -872,11 +942,22 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
   // perseguição: viatura aos 150 m (fura o pneu aos 200 m), 3 motos da Rocam aos 250 m (vão atrás de uma CG aos 300 m),
   // racha com o Uno aos 350 m (funde aos 500 m) e a Titan dos ladrões aos 600 m (a Rocam espanta aos 700 m)
+  // depois dos 700 m os desafios voltam em ciclo, um a cada 100 m (pipa, viatura, Rocam, Uno, ladrões)
+  const LOOP = ['kite', 'car', 'rocam', 'uno', 'thief'];
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
+    if (gameMode === 'motoca' && riding && s.wDist >= L.nextLoop) {
+      const kind = LOOP[L.loopI++ % LOOP.length], at = L.nextLoop;
+      L.nextLoop += 100;
+      if (kind === 'kite') { s.kite = null; s.kiteDone = false; L.at.kite = at + 20; }
+      else if (kind === 'car') { L.car = null; L.carDone = false; L.at.car = at; }
+      else if (kind === 'rocam') { L.bikes = []; L.cg = null; L.rocamDone = false; L.at.rocam = at; }
+      else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; L.dur.uno = 80; }
+      else { L.thief = null; L.thiefDone = false; L.at.thief = at; L.dur.thief = 80; }
+    }
     if (gameMode === 'motoca' && riding) {
-      if (!L.car && !L.carDone && s.wDist >= 150) L.car = { x: s.x - 14, v: s.v + 6, state: 'chase', t: 0, flat: 0 };
-      if (!L.bikes.length && !L.rocamDone && s.wDist >= 250) {
+      if (!L.car && !L.carDone && s.wDist >= L.at.car) L.car = { x: s.x - 14, v: s.v + 6, state: 'chase', t: 0, flat: 0 };
+      if (!L.bikes.length && !L.rocamDone && s.wDist >= L.at.rocam) {
         L.bikes = [0, 1, 2].map(i => ({ x: s.x - 11 - i * 2.5, v: s.v + 5, gap: 2.2 + i * 1.7, lane: [0.22, 0.1, 0][i], state: 'chase', t: 0, phase: i * 0.5 }));
       }
     }
@@ -885,7 +966,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       c.t += h;
       if (c.state === 'chase') {
         if (!riding) c.state = 'stop';
-        else if (s.wDist >= 200) {
+        else if (s.wDist >= L.at.car + L.dur.car) {
           c.state = 'flat'; c.t = 0; L.carDone = true; L.carEscaped = true;
           if (nodes && !muted && !paused) backfire(ac.currentTime + 0.01, 1.2);
           checkAch();
@@ -915,7 +996,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         b.v = Math.max(0, b.v - 8 * h); b.x += b.v * h;
       }
     }
-    if (!L.rocamDone && riding && s.wDist >= 300 && L.bikes.some(b => b.state === 'chase')) {
+    if (!L.rocamDone && riding && s.wDist >= L.at.rocam + L.dur.rocam && L.bikes.some(b => b.state === 'chase')) {
       L.rocamDone = true; L.rocamEscaped = true;
       L.cg = { x: s.x - 9, v: 34 };
       L.bikes.forEach(b => { b.state = 'go'; b.t = 0; });
@@ -925,7 +1006,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     L.bikes = L.bikes.filter(b => Math.abs(b.x - s.x) < 60);
 
     // Uno com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
-    if (gameMode === 'motoca' && riding && !L.uno && !L.unoDone && s.wDist >= 350) {
+    if (gameMode === 'motoca' && riding && !L.uno && !L.unoDone && s.wDist >= L.at.uno) {
       L.uno = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
       hornSound();
     }
@@ -934,7 +1015,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       u.t += h;
       if (u.state === 'race') {
         if (!riding) u.state = 'stop';
-        else if (s.wDist >= 500) {
+        else if (s.wDist >= L.at.uno + L.dur.uno) {
           u.state = 'blown'; u.t = 0; L.unoDone = true; L.unoBeaten = true;
           if (nodes && !muted && !paused) { backfire(ac.currentTime + 0.01, 1.6); backfire(ac.currentTime + 0.16, 1.1); }
           flash('Fundiu o motor do Uno!'); checkAch();
@@ -958,7 +1039,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     }
 
     // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Rocam e eles vazam
-    if (gameMode === 'motoca' && riding && !L.thief && !L.thiefDone && s.wDist >= 600) {
+    if (gameMode === 'motoca' && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
       L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
     }
     const th = L.thief;
@@ -966,7 +1047,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       th.t += h;
       if (th.state === 'chase') {
         if (!riding) th.state = 'stop';
-        else if (s.wDist >= 700) {
+        else if (s.wDist >= L.at.thief + L.dur.thief) {
           th.state = 'flee'; th.t = 0; L.thiefDone = true; L.thiefEscaped = true;
           L.bikes = [0, 1, 2].map(i => ({ x: s.x - 14 - i * 2.5, v: s.v + 8, gap: 0, lane: [0.22, 0.1, 0][i], state: 'hunt', t: 0, phase: i * 0.5 }));
           flash('Sujou! A Rocam chegou'); checkAch();
@@ -1008,8 +1089,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   // pipa: linha de cerol cruzando a rua na altura do pescoço aos 20 m de grau; a moto passa e corta
   function stepKite(h) {
-    if (!s.kite && !s.kiteDone && gameMode === 'motoca' && s.mode === 'ride' && s.active && s.wDist >= 8 && s.wDist < 19) {
-      const x = s.wStart + 20;
+    if (!s.kite && !s.kiteDone && gameMode === 'motoca' && s.mode === 'ride' && s.active && s.wDist >= s.law.at.kite - 12 && s.wDist < s.law.at.kite - 1) {
+      const x = s.wStart + s.law.at.kite;
       s.kite = { x, cut: false, t: 0, kx: x + 5, ky: 4.2, kvx: 0, kvy: 0, rot: 0, up: null, lo: null };
     }
     const k = s.kite;
@@ -1209,7 +1290,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     drawGarageFront(sx, sy, S);
     drawKite(sx, sy, S, performance.now() / 1000);
     drawCG(sx, sy, S, performance.now() / 1000);
-    if (s.mode !== 'ready') drawGauge();
+    // em cima da cabeça do motoca (s.head vem do drawBike, no quadro da bike: eixo traseiro, x pra frente, y pra cima)
+    const [hx, hy] = s.head || [0.3, 1.3], ca = Math.cos(s.th), sa = Math.sin(s.th);
+    const ax = BX + (hx * ca - hy * sa) * S, ay = yC - R * S - (hx * sa + hy * ca) * S - 0.42 * S;
+    if (s.mode !== 'ready') drawAngle(ax, Math.max(ui.hud.offsetHeight + 34, ay));
+    drawInstr(BX + 1.75 * S, yC - 1.0 * S, S);
   }
 
   // pastelaria de onde ele sai: fachada com barrado de azulejo, balcão com estufa de pastel, toldo listrado e placa;
@@ -1808,12 +1893,28 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     for (let i = 1; i < pts.length; i++) C.lineTo(pts[i][0], pts[i][1]);
     C.stroke();
   }
-  function wheel(cx, cy) {
+  // estilo: 'bike' (aro fino), 'disc' (com disco de freio), 'cross' (pneu cravudo), 'moto' (pneu largo, aro preto)
+  function wheel(cx, cy, style = 'bike') {
     C.save(); C.translate(cx, cy);
-    line([[0, 0]], 0, '#000');
-    C.strokeStyle = '#0d0e10'; C.lineWidth = 0.07; C.beginPath(); C.arc(0, 0, R - 0.035, 0, Math.PI * 2); C.stroke();
-    C.strokeStyle = '#9aa6ad'; C.lineWidth = 0.022; C.beginPath(); C.arc(0, 0, R - 0.08, 0, Math.PI * 2); C.stroke();
+    const tire = style === 'moto' ? 0.1 : style === 'cross' ? 0.09 : 0.07;
+    C.strokeStyle = '#0d0e10'; C.lineWidth = tire; C.beginPath(); C.arc(0, 0, R - tire / 2, 0, Math.PI * 2); C.stroke();
+    if (style === 'cross') {
+      C.fillStyle = '#0d0e10';
+      for (let i = 0; i < 26; i++) { const a = -s.wheel + i / 26 * Math.PI * 2; C.beginPath(); C.arc(Math.cos(a) * R, Math.sin(a) * R, 0.022, 0, Math.PI * 2); C.fill(); }
+    }
+    C.strokeStyle = style === 'moto' ? '#26292d' : '#9aa6ad'; C.lineWidth = 0.022;
+    C.beginPath(); C.arc(0, 0, R - tire - 0.01, 0, Math.PI * 2); C.stroke();
+    if (style !== 'bike') {
+      C.strokeStyle = '#b9c3c8'; C.lineWidth = 0.014; C.beginPath(); C.arc(0, 0, 0.085, 0, Math.PI * 2); C.stroke();
+    }
     C.rotate(-s.wheel);
+    if (style === 'moto') {
+      C.strokeStyle = '#2b2e33'; C.lineWidth = 0.022; C.beginPath();
+      for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; C.moveTo(Math.cos(a) * 0.05, Math.sin(a) * 0.05); C.lineTo(Math.cos(a + 0.25) * (R - 0.11), Math.sin(a + 0.25) * (R - 0.11)); }
+      C.stroke();
+      C.fillStyle = '#c9d2d6'; C.beginPath(); C.arc(0, 0, 0.04, 0, Math.PI * 2); C.fill();
+      C.restore(); return;
+    }
     C.strokeStyle = 'rgba(200, 210, 215, .55)'; C.lineWidth = 0.008;
     C.beginPath();
     for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2; C.moveTo(0, 0); C.lineTo(Math.cos(a) * (R - 0.08), Math.sin(a) * (R - 0.08)); }
@@ -1826,109 +1927,147 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const LOOKS = {
     helmet: { label: 'Capacete', opts: {
       branco: { name: 'Branco', shell: '#f4f5f6', edge: '#c3c9cd', dot: '#1b1d20' },
-      preto: { name: 'Preto', shell: '#1b1d20', edge: '#3a3e44', dot: '#6b7178' } } },
+      preto: { name: 'Preto', shell: '#1b1d20', edge: '#3a3e44', dot: '#6b7178' },
+      vermelho: { name: 'Vermelho', shell: '#d0202a', edge: '#8e141b', dot: '#f4f5f6' },
+      amarelo: { name: 'Amarelo', shell: '#ffd21f', edge: '#c9a10f', dot: '#1b1d20' },
+      azul: { name: 'Azul', shell: '#1d47b8', edge: '#13307d', dot: '#f4f5f6' },
+      verde: { name: 'Verde limão', shell: '#9be22d', edge: '#6ea41c', dot: '#1b1d20' },
+      rosa: { name: 'Rosa', shell: '#ff6fae', edge: '#c74a83', dot: '#1b1d20' },
+      laranja: { name: 'Laranja', shell: '#ff7a12', edge: '#c95500', dot: '#1b1d20' } } },
     jersey: { label: 'Camisa', opts: {
       amarela: { name: 'Seleção amarela', base: '#ffd400', trim: '#1a8f3a' },
       azul: { name: 'Seleção azul', base: '#1d47b8', trim: '#ffd400' },
-      vermelha: { name: 'Seleção vermelha', base: '#c8102e', trim: '#ffd400' } } },
+      vermelha: { name: 'Seleção vermelha', base: '#c8102e', trim: '#ffd400' },
+      verde: { name: 'Seleção verde', base: '#1a8f3a', trim: '#ffd400' },
+      preta: { name: 'Seleção preta', base: '#16181b', trim: '#ffd400' },
+      branca: { name: 'Seleção branca', base: '#f2f2ee', trim: '#1d47b8' },
+      rosa: { name: 'Rosa', base: '#f06aa8', trim: '#16181b' },
+      listrada: { name: 'Listrada', base: '#f2f2ee', trim: '#16181b', stripe: '#16181b' } } },
     shorts: { label: 'Bermuda', opts: {
       branca: { name: 'Branca', c: '#eceae4' },
       azul: { name: 'Azul', c: '#2753b8' },
-      verde: { name: 'Verde', c: '#1a8f3a' } } },
+      verde: { name: 'Verde', c: '#1a8f3a' },
+      preta: { name: 'Preta', c: '#1b1d20' },
+      vermelha: { name: 'Vermelha', c: '#c8102e' },
+      jeans: { name: 'Jeans', c: '#46658f' },
+      cinza: { name: 'Cinza', c: '#8a9096' },
+      amarela: { name: 'Amarela', c: '#ffd400' } } },
     bag: { label: 'Mochila', opts: {
       keetute: { name: 'keetute', c: '#ffd21f', ink: '#16181b', text: 'keetute', italic: false },
       aifode: { name: 'aíFode', c: '#ea1d2c', ink: '#ffffff', text: 'aíFode', italic: true } } },
-    frame: { label: 'Monark', opts: {
+    model: { label: 'Bike', opts: {
+      monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari' },
+      xr: { name: 'Motorizada XR', c: '#efe0b5', def: 'creme' },
+      caicara: { name: 'Caiçara de cestinha', c: '#3fc1a8', def: 'agua' },
+      bikelete: { name: 'Bikelete 4T', c: '#6f7f78', def: 'militar' },
+      bruno: { name: 'Titan 99 do Bruno CB 99', c: '#8a1020', lock: 'grau700' } } },
+    frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelha Ferrari', c: '#d40000' },
-      calcinha: { name: 'Azul calcinha', c: '#8ec9e8' } } }
+      calcinha: { name: 'Azul calcinha', c: '#8ec9e8' },
+      creme: { name: 'Creme', c: '#efe0b5' },
+      agua: { name: 'Verde água', c: '#3fc1a8' },
+      militar: { name: 'Verde militar', c: '#6f7f78' },
+      preta: { name: 'Preta fosca', c: '#232528' },
+      branca: { name: 'Branca', c: '#f0f0ec' },
+      amarela: { name: 'Amarela', c: '#ffcc00' },
+      laranja: { name: 'Laranja', c: '#ff7a12' },
+      rosa: { name: 'Rosa chiclete', c: '#ff6fae' },
+      roxa: { name: 'Roxa', c: '#6b3fb8' } } }
   };
-  const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', frame: 'ferrari' };
+  const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'monark', frame: 'ferrari' };
   try { Object.assign(pick, JSON.parse(localStorage.getItem('grau80-look') || '{}')); } catch (e) {}
-  let HELMET, JERSEY, SHORTS, BAG, FRAME;
+  let HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL;
+  const isLocked = (k, o) => o.lock && !unlocked[o.lock];
   function applyLook() {
-    for (const k in LOOKS) if (!LOOKS[k].opts[pick[k]]) pick[k] = Object.keys(LOOKS[k].opts)[0];
+    for (const k in LOOKS) {
+      const o = LOOKS[k].opts[pick[k]];
+      if (!o || isLocked(k, o)) pick[k] = Object.keys(LOOKS[k].opts)[0];
+    }
     HELMET = LOOKS.helmet.opts[pick.helmet];
     JERSEY = LOOKS.jersey.opts[pick.jersey];
     SHORTS = LOOKS.shorts.opts[pick.shorts].c;
     BAG = LOOKS.bag.opts[pick.bag];
-    FRAME = LOOKS.frame.opts[pick.frame].c;
+    MODEL = pick.model;
+    // a Titan do Bruno é lenda: não tem customização de cor
+    FRAME = MODEL === 'bruno' ? LOOKS.model.opts.bruno.c : LOOKS.frame.opts[pick.frame].c;
   }
   applyLook();
-  for (const k in LOOKS) {
-    const row = document.createElement('div'); row.className = 'grow';
-    const lab = document.createElement('span'); lab.className = 'label'; lab.textContent = LOOKS[k].label;
-    const box = document.createElement('div'); box.className = 'chips-sel';
-    for (const [id, o] of Object.entries(LOOKS[k].opts)) {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'sw'; b.id = `look-${k}-${id}`;
-      const dot = document.createElement('i'); dot.style.background = o.shell || o.base || o.c;
-      b.append(dot, o.name);
-      b.setAttribute('aria-pressed', String(pick[k] === id));
-      b.addEventListener('click', () => {
-        pick[k] = id; applyLook();
-        box.querySelectorAll('.sw').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-        try { localStorage.setItem('grau80-look', JSON.stringify(pick)); } catch (e) {}
-      });
-      box.appendChild(b);
+  const lookRows = {};
+  function renderGarage() {
+    applyLook();
+    for (const k in LOOKS) {
+      let r = lookRows[k];
+      const dots = ['helmet', 'jersey', 'shorts', 'frame'].includes(k);
+      if (!r) {
+        const row = document.createElement('div'); row.className = 'grow';
+        const lab = document.createElement('span'); lab.className = 'label';
+        const sl = document.createElement('div'); sl.className = 'slider';
+        const box = document.createElement('div'); box.className = 'chips-sel';
+        const arrow = (txt, dir) => {
+          const a = document.createElement('button'); a.type = 'button'; a.className = 'arr'; a.textContent = txt;
+          a.setAttribute('aria-label', dir < 0 ? 'Anterior' : 'Próximo');
+          a.addEventListener('click', () => box.scrollBy({ left: dir * box.clientWidth * 0.7 }));
+          return a;
+        };
+        const prev = arrow('‹', -1), next = arrow('›', 1);
+        const sync = () => { prev.disabled = box.scrollLeft < 4; next.disabled = box.scrollLeft + box.clientWidth > box.scrollWidth - 4; };
+        box.addEventListener('scroll', sync, { passive: true });
+        sl.append(prev, box, next); row.append(lab, sl); $('garage').appendChild(row);
+        r = lookRows[k] = { row, box, lab, sync, fresh: true };
+      }
+      const keep = r.box.scrollLeft;
+      r.box.textContent = '';
+      r.lab.textContent = LOOKS[k].label;
+      if (dots) { r.lab.append(' · '); const nm = document.createElement('b'); nm.textContent = LOOKS[k].opts[pick[k]].name; r.lab.append(nm); }
+      for (const [id, o] of Object.entries(LOOKS[k].opts)) {
+        const b = document.createElement('button');
+        const locked = isLocked(k, o);
+        b.type = 'button'; b.className = dots ? 'sw dot' : 'sw'; b.id = `look-${k}-${id}`;
+        const dot = document.createElement('i'); dot.style.background = o.stripe ? `repeating-linear-gradient(90deg, ${o.base} 0 3px, ${o.stripe} 3px 6px)` : o.shell || o.base || o.c;
+        if (dots) { b.append(dot); b.setAttribute('aria-label', o.name); b.title = o.name; }
+        else b.append(dot, locked ? '🔒 ' + o.name : o.name);
+        if (locked) { b.disabled = true; b.title = 'Libera com a conquista ' + ACHS.find(a => a.id === o.lock).name; }
+        b.setAttribute('aria-pressed', String(pick[k] === id));
+        b.addEventListener('click', () => {
+          pick[k] = id;
+          if (k === 'model' && o.def) pick.frame = o.def; // cada modelo chega na cor de fábrica
+          try { localStorage.setItem('grau80-look', JSON.stringify(pick)); } catch (e) {}
+          renderGarage();
+        });
+        r.box.appendChild(b);
+      }
+      // mantém a rolagem onde estava; na primeira vez centraliza o escolhido
+      r.box.style.scrollBehavior = 'auto';
+      if (r.fresh) {
+        const sel = r.box.querySelector('[aria-pressed="true"]');
+        requestAnimationFrame(() => { if (sel) r.box.scrollLeft = sel.offsetLeft - (r.box.clientWidth - sel.offsetWidth) / 2; r.sync(); });
+        r.fresh = false;
+      } else r.box.scrollLeft = keep;
+      r.box.style.scrollBehavior = '';
+      r.sync();
     }
-    row.append(lab, box); $('garage').appendChild(row);
+    lookRows.frame.row.hidden = MODEL === 'bruno';
   }
+  renderGarage();
   const SKIN = '#c98f62';
   function rrect(x, y, w, h, r) {
     C.beginPath();
     if (C.roundRect) C.roundRect(x, y, w, h, r); else C.rect(x, y, w, h);
   }
 
-  function drawBike(x, y, S) {
-    C.save();
-    C.translate(x, y); C.rotate(-s.th); C.scale(S, -S);
-    C.lineCap = 'round'; C.lineJoin = 'round';
-
-    wheel(0, 0); wheel(L, 0);
-
-    // paralamas na cor do quadro
-    C.strokeStyle = FRAME; C.lineWidth = 0.035;
-    C.beginPath(); C.arc(0, 0, R + 0.035, 0.35, Math.PI - 0.35); C.stroke();
-    C.beginPath(); C.arc(L, 0, R + 0.035, 0.2, 2.5); C.stroke();
-
-    // escape com câmara de expansão
+  // geometria do piloto em cada bike (quadril, mão, joelho, tornozelo) e o tipo de roda
+  const GEO = {
+    monark: { hip: [0.24, 0.66], hand: [0.63, 0.65], knee: [0.6, 0.42], ankle: [0.53, -0.07], wheel: 'bike' },
+    xr: { hip: [0.2, 0.7], hand: [0.66, 0.68], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
+    caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
+    bikelete: { hip: [0.22, 0.64], hand: [0.68, 0.74], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross' },
+    bruno: { hip: [0.3, 0.76], hand: [0.78, 0.8], knee: [0.66, 0.52], ankle: [0.47, 0.1], wheel: 'moto' }
+  };
+  // motor 2 tempos de bicicleta motorizada (cilindro inclinado, escape com câmara de expansão)
+  function motor2T() {
     line([[0.66, 0.24], [0.77, 0.1], [0.7, -0.03], [0.3, -0.05], [0.08, 0.06]], 0.085, '#4f575c');
     line([[0.66, 0.24], [0.77, 0.1], [0.7, -0.03], [0.3, -0.05], [0.08, 0.06]], 0.03, '#6c757a');
     line([[0.08, 0.08], [-0.14, 0.12]], 0.032, '#3d4448');
-    if (s.flame > 0) { // labareda do tiro no escape
-      const k = s.flame / 0.07;
-      C.fillStyle = `rgba(255, 150, 40, ${0.9 * k})`;
-      C.beginPath(); C.ellipse(-0.21, 0.13, 0.08 * (0.6 + k), 0.032, -0.18, 0, Math.PI * 2); C.fill();
-      C.fillStyle = `rgba(255, 235, 170, ${k})`;
-      C.beginPath(); C.ellipse(-0.17, 0.125, 0.035, 0.016, -0.18, 0, Math.PI * 2); C.fill();
-    }
-
-    // quadro Monark Barra Circular: tubo de cima reto, aro no meio do quadro, tudo vermelho
-    const F = FRAME;
-    C.strokeStyle = '#b9c3c8'; C.lineWidth = 0.014;
-    C.beginPath(); C.arc(0.44, -0.01, 0.08, 0, Math.PI * 2); C.stroke();      // coroa
-    line([[0, 0], [0.44, -0.01]], 0.04, F);                                   // chainstay
-    line([[0.06, 0.03], [0.46, 0.04]], 0.06, F);                              // protetor de corrente
-    line([[0, 0], [0.25, 0.47]], 0.034, F);                                   // seat stay
-    line([[0.44, -0.01], [0.25, 0.48]], 0.046, F);                            // tubo do selim
-    line([[0.25, 0.48], [0.86, 0.52]], 0.046, F);                             // tubo de cima
-    line([[0.44, -0.01], [0.9, 0.36]], 0.05, F);                              // tubo de baixo
-    C.strokeStyle = F; C.lineWidth = 0.036;
-    C.beginPath(); C.arc(0.55, 0.3, 0.17, 0, Math.PI * 2); C.stroke();        // a barra circular
-    line([[0.85, 0.56], [0.92, 0.33]], 0.06, F);                              // caixa de direção
-    line([[0.92, 0.33], [L, 0]], 0.04, F);                                    // garfo
-    // bagageiro
-    line([[-0.2, 0.47], [0.25, 0.48]], 0.03, F);
-    line([[-0.17, 0.47], [-0.02, 0.02]], 0.018, F);
-    line([[0.05, 0.47], [0.02, 0.05]], 0.014, F);
-    // guidão alto com retrovisor
-    line([[0.85, 0.56], [0.84, 0.7]], 0.03, '#b9c3c8');
-    line([[0.84, 0.7], [0.74, 0.68], [0.64, 0.65]], 0.028, '#b9c3c8');
-    line([[0.66, 0.655], [0.6, 0.64]], 0.04, '#1a1c1f');
-    line([[0.84, 0.7], [0.9, 0.8]], 0.012, '#b9c3c8');
-    C.fillStyle = '#1a1c1f'; C.beginPath(); C.arc(0.9, 0.82, 0.03, 0, Math.PI * 2); C.fill();
-
-    // motor
     C.fillStyle = '#7b858a'; C.beginPath(); C.arc(0.52, 0.07, 0.09, 0, Math.PI * 2); C.fill();
     C.save(); C.translate(0.56, 0.1); C.rotate(-0.55);
     C.fillStyle = '#a3acb1'; C.fillRect(-0.065, 0, 0.13, 0.21);
@@ -1937,36 +2076,244 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     C.stroke();
     C.fillStyle = '#2b2f33'; C.fillRect(-0.02, 0.21, 0.04, 0.04);
     C.restore();
-
-    // tanque sobre o tubo de cima
-    C.fillStyle = '#cdd5d8'; C.beginPath(); C.ellipse(0.62, 0.56, 0.15, 0.05, 0.03, 0, Math.PI * 2); C.fill();
-    C.fillStyle = F; C.fillRect(0.52, 0.553, 0.2, 0.016);
-
-    // selim de mola e pedal
-    line([[0.25, 0.48], [0.24, 0.58]], 0.025, '#b9c3c8');
-    line([[0.17, 0.6], [0.2, 0.575], [0.16, 0.555], [0.2, 0.535], [0.17, 0.51]], 0.01, '#b9c3c8');
-    C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.24, 0.615, 0.115, 0.04, 0.05, 0, Math.PI * 2); C.fill();
+  }
+  function pedal() {
+    C.strokeStyle = '#b9c3c8'; C.lineWidth = 0.014;
+    C.beginPath(); C.arc(0.44, -0.01, 0.08, 0, Math.PI * 2); C.stroke();
     line([[0.44, -0.01], [0.52, -0.1]], 0.025, '#2b2f33');
     line([[0.46, -0.1], [0.59, -0.1]], 0.035, '#16181b');
+  }
+  // guidão alto puxado pra trás, com retrovisor: base = topo da caixa de direção, top = altura do guidão
+  function bars(base, top, grip, col, gripCol) {
+    const t = [base[0] - 0.01, top];
+    line([base, t], 0.03, col);
+    line([t, [t[0] - 0.1, t[1] - 0.02], grip], 0.028, col);
+    line([grip, [grip[0] - 0.06, grip[1] - 0.015]], 0.04, gripCol);
+    line([t, [t[0] + 0.06, t[1] + 0.1]], 0.012, col);
+    C.fillStyle = '#1a1c1f'; C.beginPath(); C.arc(t[0] + 0.06, t[1] + 0.12, 0.03, 0, Math.PI * 2); C.fill();
+  }
+  // labareda do tiro no escape, na ponta (x0, y0)
+  function flameFx(x0, y0) {
+    if (s.flame <= 0) return;
+    const k = s.flame / 0.07;
+    C.fillStyle = `rgba(255, 150, 40, ${0.9 * k})`;
+    C.beginPath(); C.ellipse(x0 - 0.07, y0 + 0.01, 0.08 * (0.6 + k), 0.032, -0.18, 0, Math.PI * 2); C.fill();
+    C.fillStyle = `rgba(255, 235, 170, ${k})`;
+    C.beginPath(); C.ellipse(x0 - 0.03, y0, 0.035, 0.016, -0.18, 0, Math.PI * 2); C.fill();
+  }
+
+  const FRAMES = {
+    // Monark Barra Circular: tubo de cima reto e o aro no meio do quadro
+    monark(F) {
+      C.strokeStyle = F; C.lineWidth = 0.035;
+      C.beginPath(); C.arc(0, 0, R + 0.035, 0.35, Math.PI - 0.35); C.stroke();
+      C.beginPath(); C.arc(L, 0, R + 0.035, 0.2, 2.5); C.stroke();
+      motor2T(); flameFx(-0.14, 0.125);
+      pedal();
+      line([[0, 0], [0.44, -0.01]], 0.04, F);
+      line([[0.06, 0.03], [0.46, 0.04]], 0.06, F);
+      line([[0, 0], [0.25, 0.47]], 0.034, F);
+      line([[0.44, -0.01], [0.25, 0.48]], 0.046, F);
+      line([[0.25, 0.48], [0.86, 0.52]], 0.046, F);
+      line([[0.44, -0.01], [0.9, 0.36]], 0.05, F);
+      C.strokeStyle = F; C.lineWidth = 0.036;
+      C.beginPath(); C.arc(0.55, 0.3, 0.17, 0, Math.PI * 2); C.stroke();
+      line([[0.85, 0.56], [0.92, 0.33]], 0.06, F);
+      line([[0.92, 0.33], [L, 0]], 0.04, F);
+      line([[-0.2, 0.47], [0.25, 0.48]], 0.03, F);
+      line([[-0.17, 0.47], [-0.02, 0.02]], 0.018, F);
+      line([[0.05, 0.47], [0.02, 0.05]], 0.014, F);
+      bars([0.85, 0.56], 0.7, [0.66, 0.655], '#b9c3c8', '#1a1c1f');
+      C.fillStyle = '#cdd5d8'; C.beginPath(); C.ellipse(0.62, 0.56, 0.15, 0.05, 0.03, 0, Math.PI * 2); C.fill();
+      C.fillStyle = F; C.fillRect(0.52, 0.553, 0.2, 0.016);
+      line([[0.25, 0.48], [0.24, 0.58]], 0.025, '#b9c3c8');
+      line([[0.17, 0.6], [0.2, 0.575], [0.16, 0.555], [0.2, 0.535], [0.17, 0.51]], 0.01, '#b9c3c8');
+      C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.24, 0.615, 0.115, 0.04, 0.05, 0, Math.PI * 2); C.fill();
+    },
+    // motorizada estilo MTB: quadro creme, tanque preto no tubo de cima, banco comprido "XR" sobre o bagageiro, suspensão
+    xr(F) {
+      motor2T(); flameFx(-0.14, 0.125);
+      pedal();
+      line([[0, 0], [0.44, -0.01]], 0.035, F);
+      line([[0, 0], [0.3, 0.46]], 0.03, F);
+      line([[0.44, -0.01], [0.3, 0.5]], 0.045, F);
+      line([[0.3, 0.5], [0.87, 0.55]], 0.045, F);
+      line([[0.44, -0.01], [0.62, 0.22], [0.89, 0.42]], 0.055, F);
+      line([[0.87, 0.6], [0.91, 0.4]], 0.06, F);
+      // garfo com suspensão: bengala preta em cima, tubo prata embaixo
+      line([[0.91, 0.42], [0.96, 0.22]], 0.06, '#1b1d20');
+      line([[0.96, 0.24], [L, 0]], 0.036, '#c3c9cd');
+      // bagageiro e banco comprido
+      line([[-0.22, 0.52], [0.12, 0.52]], 0.022, '#1b1d20');
+      line([[-0.2, 0.52], [-0.02, 0.03]], 0.016, '#1b1d20');
+      line([[0.3, 0.5], [0.28, 0.56]], 0.025, '#b9c3c8');
+      C.fillStyle = '#16181b'; rrect(-0.24, 0.55, 0.62, 0.075, 0.03); C.fill();
+      C.save(); C.translate(0.08, 0.588); C.scale(0.004, -0.004);
+      C.fillStyle = '#f3efe6'; C.font = 'italic 700 15px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('XR', 0, 0);
+      C.restore();
+      C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.66, 0.6, 0.15, 0.055, 0.08, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#c3c9cd'; C.fillRect(0.6, 0.65, 0.04, 0.025);
+      bars([0.87, 0.6], 0.72, [0.68, 0.685], '#2b2e33', '#16181b');
+    },
+    // caiçara retrô de cestinha (motorizada): quadro rebaixado de dupla curva, paralamas e protetor creme, selim marrom
+    caicara(F) {
+      const CR = '#f1e6c8';
+      C.strokeStyle = CR; C.lineWidth = 0.05;
+      C.beginPath(); C.arc(0, 0, R + 0.04, 0.3, Math.PI - 0.2); C.stroke();
+      C.beginPath(); C.arc(L, 0, R + 0.04, 0.25, 2.5); C.stroke();
+      motor2T(); flameFx(-0.14, 0.125);
+      pedal();
+      line([[0, 0], [0.44, -0.01]], 0.035, F);
+      line([[0, 0], [0.26, 0.48]], 0.03, F);
+      line([[0.44, -0.01], [0.26, 0.5]], 0.045, F);
+      C.strokeStyle = F; C.lineWidth = 0.045;
+      C.beginPath(); C.moveTo(0.42, 0.02); C.bezierCurveTo(0.52, 0.3, 0.66, 0.12, 0.9, 0.46); C.stroke();
+      C.beginPath(); C.moveTo(0.3, 0.3); C.bezierCurveTo(0.5, 0.42, 0.66, 0.26, 0.88, 0.54); C.stroke();
+      line([[0.88, 0.6], [0.92, 0.4]], 0.06, F);
+      line([[0.92, 0.42], [L, 0]], 0.036, F);
+      C.fillStyle = CR; rrect(0.06, 0.0, 0.42, 0.08, 0.04); C.fill();
+      // tanque pequeno preso no tubo de baixo
+      C.fillStyle = '#d9dde0'; C.beginPath(); C.ellipse(0.64, 0.3, 0.1, 0.04, 0.55, 0, Math.PI * 2); C.fill();
+      // bagageiro creme
+      line([[-0.22, 0.5], [0.2, 0.5]], 0.025, CR);
+      line([[-0.2, 0.5], [-0.02, 0.03]], 0.016, CR);
+      line([[0.0, 0.5], [0.02, 0.05]], 0.012, CR);
+      // selim marrom de mola
+      line([[0.26, 0.5], [0.25, 0.58]], 0.025, '#b9c3c8');
+      C.fillStyle = '#8a5a34'; C.beginPath(); C.ellipse(0.24, 0.62, 0.12, 0.045, 0.05, 0, Math.PI * 2); C.fill();
+      bars([0.88, 0.6], 0.76, [0.68, 0.72], '#c3c9cd', '#a86b3c');
+      // cestinha de vime com flores
+      C.save(); C.translate(1.06, 0.62);
+      C.fillStyle = '#d6b98c'; rrect(-0.14, -0.13, 0.28, 0.2, 0.03); C.fill();
+      C.strokeStyle = '#a88a5c'; C.lineWidth = 0.01; C.beginPath();
+      for (let i = -2; i <= 2; i++) { C.moveTo(i * 0.05, -0.13); C.lineTo(i * 0.05, 0.07); }
+      for (let j = 0; j < 3; j++) { C.moveTo(-0.14, -0.08 + j * 0.06); C.lineTo(0.14, -0.08 + j * 0.06); }
+      C.stroke();
+      for (const [px, py, pc] of [[-0.09, 0.1, '#ff8fc8'], [-0.02, 0.13, '#b88cff'], [0.05, 0.1, '#ff6fae'], [0.1, 0.12, '#ffd1e6'], [0.0, 0.08, '#f4a6ff']]) {
+        C.fillStyle = pc; C.beginPath(); C.arc(px, py, 0.04, 0, Math.PI * 2); C.fill();
+      }
+      C.fillStyle = '#4f9a4a'; C.beginPath(); C.ellipse(-0.12, 0.07, 0.04, 0.015, 0.4, 0, Math.PI * 2); C.fill();
+      C.restore();
+      line([[0.92, 0.5], [0.94, 0.55]], 0.02, '#c3c9cd');
+    },
+    // bikelete: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
+    bikelete(F) {
+      line([[0.62, 0.1], [0.66, -0.02], [0.4, -0.06], [-0.12, 0.02]], 0.05, '#c9d0d5');
+      line([[0.2, -0.03], [-0.14, 0.03]], 0.075, '#dfe4e7');
+      flameFx(-0.16, 0.035);
+      line([[0, 0], [0.4, 0.05]], 0.045, F);
+      // amortecedor com mola vermelha
+      line([[0.08, 0.06], [0.2, 0.42]], 0.03, '#2b2e33');
+      C.strokeStyle = '#d0202a'; C.lineWidth = 0.012; C.beginPath();
+      for (let i = 0; i < 7; i++) { const t = 0.15 + i * 0.1, px = 0.08 + 0.12 * t, py = 0.06 + 0.36 * t; C.moveTo(px - 0.03, py + 0.01); C.lineTo(px + 0.03, py - 0.01); }
+      C.stroke();
+      // quadro duplo
+      line([[0.18, 0.44], [0.86, 0.58]], 0.04, F);
+      line([[0.2, 0.32], [0.86, 0.46]], 0.04, F);
+      line([[0.18, 0.44], [0.3, 0.06]], 0.045, F);
+      line([[0.86, 0.46], [0.62, 0.12], [0.4, 0.05]], 0.045, F);
+      line([[0.86, 0.62], [0.9, 0.42]], 0.06, F);
+      // garrafinha de combustível entre os tubos
+      C.save(); C.translate(0.55, 0.42); C.rotate(0.2);
+      C.fillStyle = '#d9dde0'; rrect(-0.1, -0.03, 0.18, 0.06, 0.02); C.fill();
+      C.fillStyle = '#2b2e33'; C.fillRect(0.08, -0.015, 0.04, 0.03);
+      C.restore();
+      // motor 4T deitado: carcaça prata, cilindro pra frente e filtro azul
+      C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.42, 0.1, 0.13, 0.1, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#9aa3a8'; C.fillRect(0.5, 0.14, 0.16, 0.09);
+      C.strokeStyle = '#6f777c'; C.lineWidth = 0.01; C.beginPath();
+      for (let i = 1; i < 5; i++) { C.moveTo(0.5 + i * 0.032, 0.13); C.lineTo(0.5 + i * 0.032, 0.24); }
+      C.stroke();
+      C.fillStyle = '#2f6fd6'; C.beginPath(); C.ellipse(0.4, 0.27, 0.06, 0.04, 0, 0, Math.PI * 2); C.fill();
+      // pedaleira no lugar do pedal
+      line([[0.4, 0.02], [0.5, 0.02]], 0.03, '#16181b');
+      // garfo telescópico prata e guidão alto de trilha
+      line([[0.9, 0.44], [0.96, 0.24]], 0.06, '#c3c9cd');
+      line([[0.96, 0.24], [L, 0]], 0.04, '#dfe4e7');
+      C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
+      bars([0.86, 0.62], 0.8, [0.7, 0.75], '#1b1d20', '#16181b');
+    },
+    // Titan 99 do Bruno CB 99: vinho, adesivo azul e amarelo no tanque, motor prata, baú de alumínio. Lenda, não tem cor
+    bruno() {
+      const V = '#8a1020', Vd = '#5e0a16';
+      C.fillStyle = V; C.beginPath(); C.arc(L, 0, R + 0.05, 0.35, 1.9); C.arc(L, 0, R + 0.01, 1.9, 0.35, true); C.closePath(); C.fill();
+      // balança, amortecedor e escape cromado
+      line([[0, 0], [0.4, 0.1]], 0.05, '#1b1d20');
+      line([[0.06, 0.06], [0.12, 0.5]], 0.035, '#c3c9cd');
+      line([[0.6, 0.18], [0.66, 0.02], [0.42, -0.04], [0.1, 0.0]], 0.045, '#3a3e44');
+      line([[0.34, -0.04], [-0.05, 0.05]], 0.085, '#d6dbde');
+      flameFx(-0.09, 0.05);
+      // motor prata aletado
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.ellipse(0.48, 0.08, 0.15, 0.1, 0, 0, Math.PI * 2); C.fill();
+      C.save(); C.translate(0.58, 0.12); C.rotate(-0.25);
+      C.fillStyle = '#c3c9cd'; C.fillRect(-0.06, 0, 0.13, 0.2);
+      C.strokeStyle = '#7b8186'; C.lineWidth = 0.01; C.beginPath();
+      for (let i = 1; i < 7; i++) { C.moveTo(-0.07, i * 0.028); C.lineTo(0.08, i * 0.028); }
+      C.stroke(); C.restore();
+      // quadro e pedaleira
+      line([[0.88, 0.62], [0.68, 0.3], [0.58, 0.12]], 0.05, '#1b1d20');
+      line([[0.4, 0.1], [0.3, 0.52], [0.86, 0.62]], 0.045, '#1b1d20');
+      line([[0.42, 0.1], [0.52, 0.1]], 0.03, '#16181b');
+      // garfo cromado
+      line([[0.9, 0.62], [0.97, 0.3]], 0.065, '#c3c9cd');
+      line([[0.97, 0.3], [L, 0]], 0.05, '#e3e7ea');
+      // tampa lateral, rabeta e banco
+      C.fillStyle = V; C.beginPath(); C.moveTo(0.18, 0.5); C.lineTo(0.42, 0.5); C.lineTo(0.38, 0.32); C.lineTo(0.2, 0.36); C.closePath(); C.fill();
+      C.beginPath(); C.moveTo(-0.22, 0.58); C.lineTo(0.2, 0.56); C.lineTo(0.2, 0.47); C.lineTo(-0.12, 0.48); C.closePath(); C.fill();
+      C.fillStyle = '#d61f1f'; C.fillRect(-0.24, 0.52, 0.05, 0.04);
+      C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(-0.14, 0.6); C.lineTo(0.5, 0.64); C.lineTo(0.52, 0.6); C.lineTo(0.2, 0.55); C.lineTo(-0.16, 0.56); C.closePath(); C.fill();
+      // tanque vinho com o adesivo
+      C.fillStyle = V; C.beginPath(); C.moveTo(0.46, 0.62); C.quadraticCurveTo(0.66, 0.78, 0.88, 0.68); C.lineTo(0.84, 0.5); C.lineTo(0.5, 0.5); C.closePath(); C.fill();
+      C.fillStyle = Vd; C.beginPath(); C.moveTo(0.5, 0.5); C.lineTo(0.84, 0.5); C.lineTo(0.83, 0.54); C.lineTo(0.52, 0.55); C.closePath(); C.fill();
+      C.save(); C.translate(0.68, 0.62); C.rotate(0.1);
+      C.fillStyle = '#ffd21f'; rrect(-0.11, -0.035, 0.22, 0.07, 0.02); C.fill();
+      C.fillStyle = '#2f6fd6'; rrect(-0.1, -0.025, 0.2, 0.05, 0.015); C.fill();
+      C.scale(0.0035, -0.0035); C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CB 99', 0, 0);
+      C.restore();
+      // farol, guidão e retrovisor
+      C.fillStyle = '#1b1d20'; C.beginPath(); C.ellipse(0.98, 0.66, 0.06, 0.08, 0.3, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.02, 0.66, 0.025, 0.06, 0.3, 0, Math.PI * 2); C.fill();
+      bars([0.9, 0.66], 0.84, [0.8, 0.8], '#2b2e33', '#16181b');
+      // baú de alumínio na garupa
+      C.fillStyle = '#c9ced3'; rrect(-0.36, 0.62, 0.38, 0.27, 0.03); C.fill();
+      C.fillStyle = '#9aa1a7'; C.fillRect(-0.36, 0.74, 0.38, 0.02);
+      C.strokeStyle = '#7f868c'; C.lineWidth = 0.008; C.beginPath(); C.rect(-0.33, 0.65, 0.32, 0.21); C.stroke();
+      C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.7, 0.04, 0.03);
+    }
+  };
+
+  function drawBike(x, y, S) {
+    C.save();
+    C.translate(x, y); C.rotate(-s.th); C.scale(S, -S);
+    C.lineCap = 'round'; C.lineJoin = 'round';
+    const G = GEO[MODEL] || GEO.monark;
+    wheel(0, 0, G.wheel); wheel(L, 0, G.wheel);
+    FRAMES[MODEL in FRAMES ? MODEL : 'monark'](FRAME);
 
     // piloto: o tronco compensa parte do ângulo da moto
-    const pullK = Math.sin(s.pull * Math.PI); // vai e volta durante a puxada
-    const lean = -s.th * 0.6 + pullK * 0.45;
-    const hip = [0.24 - pullK * 0.08, 0.66];
+    const st = Math.max(s.stand, Math.sin(s.pull * Math.PI) * 0.8); // em pé: segurando o Puxa, ou no tranco da puxada
+    const lean = -s.th * 0.6 - st * 0.2;
+    const hip = [G.hip[0] - st * 0.14, G.hip[1] + st * 0.17];
     const ta = lean - 0.5; // eixo do tronco (y ao longo da coluna, -x = costas)
     const tp = (px, py) => [hip[0] + px * Math.cos(ta) - py * Math.sin(ta), hip[1] + px * Math.sin(ta) + py * Math.cos(ta)];
-    const sh = tp(0, 0.48), head = tp(0.06, 0.7), hand = [0.63, 0.65];
+    const sh = tp(0, 0.48), head = tp(0.06, 0.7), hand = G.hand;
+    s.head = head; // o medidor de ângulo fica em cima da cabeça
     const elbow = [(sh[0] + hand[0]) / 2 - 0.02, (sh[1] + hand[1]) / 2 - 0.1];
     const sleeve = [sh[0] + (elbow[0] - sh[0]) * 0.55, sh[1] + (elbow[1] - sh[1]) * 0.55];
 
     // bermuda até o joelho, canela de fora e chinelo de dedo
-    const knee = [0.6, 0.42], ankle = [0.53, -0.07];
+    // em pé a perna estica: o joelho vai pro meio do caminho entre o quadril e o pé
+    const ankle = G.ankle, kx = (hip[0] + ankle[0]) / 2 + 0.07, ky = (hip[1] + ankle[1]) / 2;
+    const knee = [G.knee[0] + (kx - G.knee[0]) * st, G.knee[1] + (ky - G.knee[1]) * st];
+    const fx = ankle[0] - 0.53, fy = ankle[1] + 0.07;
     const hem = [hip[0] + (knee[0] - hip[0]) * 0.9, hip[1] + (knee[1] - hip[1]) * 0.9];
     line([hem, knee, ankle], 0.075, SKIN);
     line([hip, hem], 0.13, SHORTS);
-    line([[0.47, -0.125], [0.65, -0.125]], 0.02, '#f3efe6');
-    line([[0.51, -0.1], [0.63, -0.105]], 0.04, SKIN);
-    line([[0.555, -0.075], [0.6, -0.11]], 0.012, '#f3efe6');
+    line([[0.47 + fx, -0.125 + fy], [0.65 + fx, -0.125 + fy]], 0.02, '#f3efe6');
+    line([[0.51 + fx, -0.1 + fy], [0.63 + fx, -0.105 + fy]], 0.04, SKIN);
+    line([[0.555 + fx, -0.075 + fy], [0.6 + fx, -0.11 + fy]], 0.012, '#f3efe6');
 
     C.save(); C.translate(hip[0], hip[1]); C.rotate(ta);
     // mochila térmica de entrega
@@ -2024,46 +2371,52 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     C.restore();
   }
 
-  function drawGauge() {
-    const r = Math.max(38, Math.min(56, W * 0.09));
-    const cx = W - r - Math.max(20, 20 + (parseFloat(getComputedStyle(ui.hud).paddingRight) || 0) - 16);
-    const cy = ui.hud.offsetHeight + r + 22;
-    const deg = s.th * 180 / Math.PI;
+  // ângulo: meia-lua pequena em cima da cabeça do motoca (verde no ponto, vermelho pra frear)
+  function drawAngle(cx, cy) {
+    const r = 20, deg = s.th * 180 / Math.PI, bal = balNow() * 180 / Math.PI;
     const ang = d => Math.PI + (Math.min(100, Math.max(0, d)) / 100) * Math.PI;
-    const arc = (a, b, col, w) => { C.strokeStyle = col; C.lineWidth = w; C.beginPath(); C.arc(cx, cy, r, ang(a), ang(b)); C.stroke(); };
+    const arc = (a, b, col) => { C.strokeStyle = col; C.lineWidth = 4; C.beginPath(); C.arc(cx, cy, r, ang(a), ang(b)); C.stroke(); };
     C.lineCap = 'butt';
-    arc(0, 100, 'rgba(243, 239, 230, .12)', 8);
-    arc(55, BAL * 180 / Math.PI + 3, 'rgba(111, 208, 140, .8)', 8);
-    arc(BAL * 180 / Math.PI + 7, 100, 'rgba(255, 90, 74, .85)', 8);
-    const a = ang(deg);
-    C.strokeStyle = '#f3efe6'; C.lineWidth = 3; C.lineCap = 'round';
-    C.beginPath(); C.moveTo(cx, cy); C.lineTo(cx + Math.cos(a) * (r + 4), cy + Math.sin(a) * (r + 4)); C.stroke();
-    C.fillStyle = '#f3efe6'; C.beginPath(); C.arc(cx, cy, 4, 0, Math.PI * 2); C.fill();
-    C.textAlign = 'center';
-    C.font = '700 22px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.fillText(Math.round(deg) + '°', cx, cy + 24);
-    C.fillStyle = '#8fa3ad'; C.font = '600 11px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.fillText('ÂNGULO', cx, cy + 38);
+    arc(0, 100, 'rgba(243, 239, 230, .14)');
+    arc(55, bal + 3, 'rgba(111, 208, 140, .85)');
+    arc(bal + 7, 100, 'rgba(255, 90, 74, .9)');
+    const a = ang(deg), bad = deg > bal + 3;
+    C.strokeStyle = bad ? '#ff5a4a' : '#f3efe6'; C.lineWidth = 2; C.lineCap = 'round';
+    C.beginPath(); C.moveTo(cx, cy); C.lineTo(cx + Math.cos(a) * (r + 3), cy + Math.sin(a) * (r + 3)); C.stroke();
+    C.fillStyle = C.strokeStyle; C.beginPath(); C.arc(cx, cy, 2.5, 0, Math.PI * 2); C.fill();
+    C.textAlign = 'center'; C.textBaseline = 'alphabetic';
+    C.font = '700 13px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.fillText(bad ? 'FREIA ' + Math.round(deg) + '°' : Math.round(deg) + '°', cx, cy + 14);
   }
+  // velocidade em cima e conta-giros vertical na frente da moto
+  function drawInstr(x, y, S) {
+    const hgt = Math.round(Math.max(70, Math.min(120, 1.05 * S))), w = 8, top = y - hgt;
+    const inBand = s.rpm >= BAND_LO && s.rpm <= BAND_HI;
+    const fy = v => top + hgt * (1 - v / RPM_MAX);
+    C.fillStyle = 'rgba(11, 26, 34, .72)'; rrectS(x - 26, top - 40, 52, hgt + 62, 6); C.fill();
+    C.textAlign = 'center'; C.textBaseline = 'alphabetic';
+    C.fillStyle = '#f3efe6'; C.font = '700 20px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.fillText(Math.round(s.v * 3.6), x, top - 18);
+    C.fillStyle = '#8fa3ad'; C.font = '600 10px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.fillText('KM/H', x, top - 7);
+    C.fillStyle = 'rgba(243, 239, 230, .1)'; C.fillRect(x - w / 2, top, w, hgt);
+    C.fillStyle = 'rgba(255, 181, 71, .3)'; C.fillRect(x - w / 2, fy(BAND_HI), w, fy(BAND_LO) - fy(BAND_HI));
+    C.fillStyle = 'rgba(255, 90, 74, .45)'; C.fillRect(x - w / 2, top, w, fy(LIMIT) - top);
+    C.fillStyle = inBand ? '#ffb547' : '#f3efe6';
+    C.fillRect(x - w / 2 + 2, fy(Math.min(RPM_MAX, s.rpm)), w - 4, top + hgt - fy(Math.min(RPM_MAX, s.rpm)));
+    C.fillStyle = inBand ? '#ffb547' : '#f3efe6'; C.font = '700 12px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.fillText(fmt(Math.round(s.rpm / 50) * 50), x, top + hgt + 13);
+    C.fillStyle = '#8fa3ad'; C.font = '600 9px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.fillText('RPM', x, top + hgt + 22);
+  }
+  function rrectS(x, y, w, hh, r) { C.beginPath(); if (C.roundRect) C.roundRect(x, y, w, hh, r); else C.rect(x, y, w, hh); }
 
   // ---------- HUD ----------
   const fmt = n => n.toLocaleString('pt-BR');
   function updateHud() {
     ui.dist.innerHTML = s.wDist.toFixed(1) + '<small>m</small>';
-    ui.spd.innerHTML = Math.round(s.v * 3.6) + '<small>km/h</small>';
     ui.best.innerHTML = best.toFixed(1) + '<small>m</small>';
     ui.last.innerHTML = s.last ? s.last.toFixed(1) + '<small>m</small>' : '–';
-    ui.rpmtxt.textContent = fmt(Math.round(s.rpm / 50) * 50);
-    const inBand = s.rpm >= BAND_LO && s.rpm <= BAND_HI;
-    ui.rpmfill.style.width = (s.rpm / RPM_MAX * 100).toFixed(1) + '%';
-    ui.rpmfill.classList.toggle('inband', inBand);
-    ui.chipBand.classList.toggle('on', inBand && s.mode === 'ride');
-    const deg = s.th * 180 / Math.PI;
-    const bal = BAL * 180 / Math.PI;
-    ui.chipBal.classList.toggle('on', deg > 55);
-    ui.chipBal.classList.toggle('ok', deg > 55 && deg <= bal + 3);
-    ui.chipBal.classList.toggle('bad', deg > bal + 3);
-    ui.chipBal.textContent = deg > bal + 3 ? 'Freia!' : 'No ponto';
   }
 
   // ---------- loop ----------
