@@ -684,10 +684,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) ui.btnPull.addEventListener(ev, endPull);
 
   // tela: andando, metade esquerda freia e metade direita acelera (dedo pode deslizar de um lado pro outro);
-  // na tela inicial qualquer toque acelera. Mouse: botão direito freia em qualquer lugar.
+  // na tela inicial qualquer toque acelera. Mouse: botão esquerdo acelera e direito freia, em qualquer lugar.
   $('game').addEventListener('contextmenu', e => e.preventDefault());
   const zone = e => s.mode === 'ride' && e.clientX - cv.getBoundingClientRect().left < cv.clientWidth / 2 ? 'brake' : 'gas';
-  const mouseZone = e => { const b = e.buttons & 3; return b & 1 && zone(e) === 'brake' ? (b & ~1) | 2 : b; };
+  const mouseZone = e => e.buttons & 3;
   cv.addEventListener('pointerdown', e => {
     // na tela inicial, tocar na faixa "Pastel Solidário" abre o QR do Pix
     if (s.mode === 'ready' && pixRect) {
@@ -701,7 +701,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     syncInput();
   });
   cv.addEventListener('pointermove', e => {
-    if (e.pointerType === 'mouse') { if (e.buttons & 3 && mouseZone(e) !== mouseBtns) { mouseBtns = mouseZone(e); syncInput(); } }
+    if (e.pointerType === 'mouse') { if (mouseZone(e) !== mouseBtns) { mouseBtns = mouseZone(e); syncInput(); } }
     else if (ptrs.has(e.pointerId) && ptrs.get(e.pointerId) !== zone(e)) { ptrs.set(e.pointerId, zone(e)); syncInput(); }
   });
   const cvUp = e => {
@@ -719,7 +719,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // volta pra tela inicial (garagem); a empinada em andamento ainda é anotada
   function toStart() {
     if (s.mode === 'ride' && s.active) recordWheelie();
-    s = fresh(); paused = false;
+    const last = s.last;
+    s = fresh(); s.last = last; paused = false;
     ui.pause.hidden = true; ui.end.hidden = true; ui.start.hidden = false;
     loadBoard();
     keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput();
@@ -950,7 +951,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     best = bests[gameMode];
     $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
     wakeAudio();
-    s = fresh();
+    const last = s.last; // "Última" continua mostrando a empinada da rodada anterior
+    s = fresh(); s.last = last;
     s.mode = 'ride';
     paused = false;
     ui.start.hidden = true; ui.end.hidden = true; ui.pause.hidden = true;
