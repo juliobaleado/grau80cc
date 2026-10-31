@@ -386,7 +386,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       last: 0, runBest: 0, count: 0, newRecord: false, pull: 0, pullCd: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
-      law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false },
+      law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
+             uno: null, unoDone: false, thief: null, thiefDone: false },
       kite: null, kiteDone: false, sparks: [], scrape: 0,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
       bumps: [], nextBump: 30, parts: [], smokeAcc: 0
@@ -542,7 +543,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (s.cut <= 0 || paused) nodes.out.gain.setTargetAtTime(vol, t, 0.05);
     nodes.ng.gain.setTargetAtTime(paused ? 0 : 0.02 + s.thr * 0.06, t, 0.05);
     nodes.scrapeG.gain.setTargetAtTime(paused ? 0 : s.scrape > 0 ? 0.1 + 0.1 * s.scrape : 0, t, 0.02);
-    const L = s.law, rocamOn = L.bikes.some(b => b.state === 'chase');
+    const L = s.law, rocamOn = L.bikes.some(b => b.state === 'chase' || (b.state === 'hunt' && Math.abs(b.x - s.x) < 35));
     const sirenOn = !paused && (rocamOn || (L.car && L.car.state === 'chase'));
     const now = performance.now() / 1000;
     const sirenHz = rocamOn ? 750 + 450 * (0.5 + 0.5 * Math.sin(now * Math.PI * 2 / 0.35))
@@ -663,12 +664,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     landed: ['Frente no chão', 'Piloto de azeitona'],
     gang: ['Os caramelo venceram', 'Caiu no beco da mordida'],
     car: ['A viatura encostou', 'Pegaro os lanche'],
-    rocam: ['A Rocam encostou', 'É só trocar ideia']
+    rocam: ['A Rocam encostou', 'É só trocar ideia'],
+    thief: ['Os cara encostou', 'Perdeu, perdeu']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
   function finish(how) {
     const L = s.law;
-    const msg = L.bikes.some(b => b.state === 'chase') ? 'rocam'
+    const msg = L.thief && L.thief.state === 'chase' ? 'thief'
+      : L.bikes.some(b => b.state === 'chase') ? 'rocam'
       : L.car && L.car.state === 'chase' ? 'car'
       : gangChasing() ? 'gang' : how;
     s.mode = 'over'; s.reason = how;
@@ -773,7 +776,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     for (const p of s.parts) { p.age += h; p.x += p.vx * h; p.y += p.vy * h; p.vx *= 1 - h * 0.6; }
     for (const p of s.sparks) { p.age += h; p.x += p.vx * h; p.y = Math.max(0, p.y + p.vy * h); p.vy -= 9 * h; }
     s.sparks = s.sparks.filter(p => p.age < p.life);
-    while (s.parts.length && s.parts[0].age > s.parts[0].life) s.parts.shift();
+    s.parts = s.parts.filter(p => p.age < p.life);
     stepDog(h);
   }
 
@@ -863,7 +866,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   }
   // volume do latido: some aos poucos conforme o cachorro fica longe da moto
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
-  // perseguição: viatura aos 150 m (fura o pneu aos 200 m) e 3 motos da Rocam aos 250 m (vão atrás de uma CG aos 300 m)
+  // perseguição: viatura aos 150 m (fura o pneu aos 200 m), 3 motos da Rocam aos 250 m (vão atrás de uma CG aos 300 m),
+  // racha com o Uno aos 350 m (funde aos 500 m) e a Titan dos ladrões aos 600 m (a Rocam espanta aos 700 m)
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
     if (gameMode === 'motoca' && riding) {
@@ -898,6 +902,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         const tx = s.x - b.gap;
         b.v += (Math.min(s.v + 7, s.v + (tx - b.x) * 1.5) - b.v) * Math.min(1, h * 3);
         b.x = Math.min(b.x + b.v * h, tx + 0.2);
+      } else if (b.state === 'hunt') {
+        b.v += (38 - b.v) * Math.min(1, h * 1.1); b.x += b.v * h;
       } else if (b.state === 'go') {
         if (b.t > b.phase * 0.4) b.v += (36 - b.v) * Math.min(1, h * 1.2);
         b.x += b.v * h;
@@ -913,6 +919,77 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     }
     if (L.cg) { L.cg.x += L.cg.v * h; if (L.cg.x - s.x > 60) L.cg = null; }
     L.bikes = L.bikes.filter(b => Math.abs(b.x - s.x) < 60);
+
+    // Uno com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
+    if (gameMode === 'motoca' && riding && !L.uno && !L.unoDone && s.wDist >= 350) {
+      L.uno = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
+      hornSound();
+    }
+    const u = L.uno;
+    if (u) {
+      u.t += h;
+      if (u.state === 'race') {
+        if (!riding) u.state = 'stop';
+        else if (s.wDist >= 500) {
+          u.state = 'blown'; u.t = 0; L.unoDone = true;
+          if (nodes && !muted && !paused) { backfire(ac.currentTime + 0.01, 1.6); backfire(ac.currentTime + 0.16, 1.1); }
+          flash('Fundiu o motor do Uno!');
+        }
+        const tx = s.x + 1.3 + 1.6 * Math.sin(u.t * 0.7);
+        u.v += (Math.min(s.v + 6, Math.max(s.v - 4, s.v + (tx - u.x) * 1.2)) - u.v) * Math.min(1, h * 2);
+      } else {
+        u.v = Math.max(0, u.v - (u.state === 'blown' ? 5 : 8) * h);
+      }
+      u.x += u.v * h;
+      if (u.state === 'blown') {
+        u.smk += h * (u.t < 1.5 ? 40 : 14);
+        while (u.smk >= 1) {
+          u.smk -= 1;
+          if (s.parts.length > 320) s.parts.shift();
+          s.parts.push({ x: u.x - 0.4 - Math.random() * 0.5, y: 0.95 + UNO_LANE, vx: u.v * 0.85 - 0.3 + Math.random() * 0.6,
+            vy: 0.5 + Math.random() * 0.6, age: 0, life: 2 + Math.random() * 1.5, r0: 0.15, dark: true });
+        }
+      }
+      if (s.x - u.x > 50) L.uno = null;
+    }
+
+    // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Rocam e eles vazam
+    if (gameMode === 'motoca' && riding && !L.thief && !L.thiefDone && s.wDist >= 600) {
+      L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
+    }
+    const th = L.thief;
+    if (th) {
+      th.t += h;
+      if (th.state === 'chase') {
+        if (!riding) th.state = 'stop';
+        else if (s.wDist >= 700) {
+          th.state = 'flee'; th.t = 0; L.thiefDone = true;
+          L.bikes = [0, 1, 2].map(i => ({ x: s.x - 14 - i * 2.5, v: s.v + 8, gap: 0, lane: [0.22, 0.1, 0][i], state: 'hunt', t: 0, phase: i * 0.5 }));
+          flash('Sujou! A Rocam chegou');
+        }
+        const tx = s.x - 1.5 - 0.5 * Math.sin(th.t * 1.3);
+        th.v += (Math.min(s.v + 7, s.v + (tx - th.x) * 1.5) - th.v) * Math.min(1, h * 3);
+        th.x = Math.min(th.x + th.v * h, tx + 0.2);
+      } else if (th.state === 'flee') {
+        th.v += (40 - th.v) * Math.min(1, h * 1.2); th.x += th.v * h;
+      } else {
+        th.v = Math.max(0, th.v - 8 * h); th.x += th.v * h;
+      }
+      if (Math.abs(th.x - s.x) > 70) L.thief = null;
+    }
+  }
+  // buzina do Uno chamando pro racha: fom-fom
+  function hornSound() {
+    if (!nodes || muted || paused) return;
+    const t = ac.currentTime;
+    for (const t0 of [t, t + 0.28]) {
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02);
+      g.gain.setValueAtTime(0.12, t0 + 0.16); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
+      const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1800;
+      f.connect(g).connect(ac.destination);
+      for (const hz of [415, 520]) { const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = hz; o.connect(f); o.start(t0); o.stop(t0 + 0.24); }
+    }
   }
   function cgSound() {
     if (!nodes || muted || paused) return;
@@ -1092,6 +1169,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     drawRunCat(sx, sy, S, performance.now() / 1000);
     drawCar(sx, sy, S, performance.now() / 1000);
     drawRocams(sx, sy, S, performance.now() / 1000);
+    drawUno(sx, sy, S, performance.now() / 1000);
 
     // bandeira do recorde
     if (best > 0 && s.active && s.mode === 'ride') {
@@ -1110,7 +1188,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     for (const p of s.parts) {
       const k = p.age / p.life;
       const r = (p.r0 + k * 0.55) * S;
-      C.fillStyle = `rgba(188, 208, 219, ${0.32 * (1 - k)})`;
+      C.fillStyle = p.dark ? `rgba(52, 54, 58, ${0.6 * (1 - k)})` : `rgba(188, 208, 219, ${0.32 * (1 - k)})`;
       C.beginPath(); C.arc(sx(p.x), sy(p.y), r, 0, Math.PI * 2); C.fill();
     }
 
@@ -1308,87 +1386,285 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     C.fillStyle = g; C.fillRect(x - 1.6 * rad, y - 1.6 * rad, 3.2 * rad, 3.2 * rad);
     C.restore();
   }
-  function wheelCar(x, squash) {
-    C.fillStyle = '#111214'; C.beginPath(); C.ellipse(x, 0.32 * squash, 0.33, 0.32 * squash, 0, 0, Math.PI * 2); C.fill();
-    C.fillStyle = '#9aa3a8'; C.beginPath(); C.ellipse(x, 0.32 * squash, 0.15, 0.15 * squash, 0, 0, Math.PI * 2); C.fill();
-  }
   // viatura: c.x é o para-choque dianteiro; com o pneu furado a frente afunda
   function drawCar(sx, sy, S, t) {
     const c = s.law.car;
     if (!c) return;
     const x = sx(c.x);
-    if (x < -0.5 * S || x - 4.4 * S > W) return;
+    if (x < -0.5 * S || x - 5.4 * S > W) return;
+    const WH = '#f1f2f0', TAN = '#a8937b', TANd = '#7d6b58', BK = '#1b1d20', GL = '#1a2733';
     C.save(); C.translate(x, sy(0)); C.scale(S, -S);
-    C.translate(-3.4, 0); C.rotate(-0.035 * c.flat); C.translate(3.4, 0);
-    C.fillStyle = '#eef0f2';
-    C.beginPath(); C.moveTo(0, 0.28); C.lineTo(0.02, 0.72); C.lineTo(-0.95, 0.86); C.lineTo(-1.65, 1.4);
-    C.lineTo(-3.2, 1.42); C.lineTo(-3.85, 0.98); C.lineTo(-4.2, 0.9); C.lineTo(-4.2, 0.28); C.closePath(); C.fill();
-    C.fillStyle = '#1b1d20'; C.fillRect(-4.2, 0.28, 4.22, 0.2);
-    C.fillStyle = '#1a2733';
-    C.beginPath(); C.moveTo(-1.72, 1.32); C.lineTo(-2.42, 1.32); C.lineTo(-2.42, 0.96); C.lineTo(-1.25, 0.96); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-2.52, 1.32); C.lineTo(-3.15, 1.32); C.lineTo(-3.62, 0.96); C.lineTo(-2.52, 0.96); C.closePath(); C.fill();
-    C.fillStyle = '#1d47b8'; C.fillRect(-4.2, 0.56, 4.2, 0.05);
-    C.save(); C.translate(-2.3, 0.72); C.scale(0.01, -0.01);
-    C.fillStyle = '#1b1d20'; C.font = '700 20px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('POLÍCIA', 0, 0);
-    C.restore();
-    C.fillStyle = '#fff3c4'; C.fillRect(-0.12, 0.62, 0.12, 0.08);
+    C.translate(-4.05, 0); C.rotate(-0.035 * c.flat); C.translate(4.05, 0);
+    // picape cabine dupla: capô alto, cabine e caçamba
+    C.fillStyle = WH;
+    C.beginPath(); C.moveTo(0.02, 0.38); C.lineTo(0.06, 0.82); C.lineTo(-0.05, 0.98); C.lineTo(-1.3, 1.1); C.lineTo(-1.95, 1.68);
+    C.lineTo(-3.35, 1.7); C.lineTo(-3.45, 1.12); C.lineTo(-5.15, 1.12); C.lineTo(-5.2, 0.38); C.closePath(); C.fill();
+    // faixa bege por baixo, subindo pelo capô na frente (padrão PMSC)
+    C.fillStyle = TAN;
+    C.beginPath(); C.moveTo(0.04, 0.6); C.lineTo(0.05, 0.86); C.lineTo(-0.45, 0.9); C.lineTo(-1.0, 0.72); C.lineTo(-1.6, 0.6);
+    C.lineTo(-5.18, 0.6); C.lineTo(-5.18, 0.45); C.lineTo(0.03, 0.45); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-3.45, 1.12); C.lineTo(-5.15, 1.12); C.lineTo(-5.15, 0.96); C.lineTo(-3.5, 0.96); C.closePath(); C.fill();
+    C.fillStyle = TANd; C.fillRect(-5.18, 0.45, 5.21, 0.035);
+    // para-choque, estribo e para-lamas pretos
+    C.fillStyle = BK; C.fillRect(-5.25, 0.3, 5.3, 0.15);
+    C.fillRect(-3.45, 0.36, 2.0, 0.07);
+    C.beginPath(); C.arc(-0.95, 0.4, 0.5, 0, Math.PI); C.fill();
+    C.beginPath(); C.arc(-4.05, 0.4, 0.5, 0, Math.PI); C.fill();
+    C.fillStyle = '#2a2d31'; C.fillRect(-0.02, 0.62, 0.08, 0.26);
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(0.04, 0.82); C.lineTo(-0.22, 0.86); C.lineTo(-0.2, 0.78); C.lineTo(0.04, 0.74); C.closePath(); C.fill();
+    C.fillStyle = '#c0161a'; C.fillRect(-5.2, 0.8, 0.07, 0.22);
+    // vidros e a coluna entre as portas
+    C.fillStyle = GL;
+    C.beginPath(); C.moveTo(-1.98, 1.6); C.lineTo(-2.6, 1.6); C.lineTo(-2.6, 1.16); C.lineTo(-1.48, 1.14); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.7, 1.6); C.lineTo(-3.28, 1.6); C.lineTo(-3.35, 1.16); C.lineTo(-2.7, 1.16); C.closePath(); C.fill();
+    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
+    C.moveTo(-1.48, 1.12); C.lineTo(-1.6, 0.42); C.moveTo(-2.65, 1.14); C.lineTo(-2.65, 0.45); C.moveTo(-3.42, 1.1); C.lineTo(-3.42, 0.45);
+    C.stroke();
+    // grafismo verde e vermelho com o brasão
+    C.lineCap = 'round';
+    C.strokeStyle = '#1f9a4a'; C.lineWidth = 0.07; C.beginPath(); C.moveTo(-3.3, 1.12); C.quadraticCurveTo(-2.6, 1.08, -2.25, 0.7); C.stroke();
+    C.strokeStyle = '#d0202a'; C.lineWidth = 0.06; C.beginPath(); C.moveTo(-3.3, 1.02); C.quadraticCurveTo(-2.75, 0.98, -2.5, 0.72); C.stroke();
+    C.fillStyle = '#f7f7f5'; C.beginPath(); C.arc(-2.38, 0.86, 0.13, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = '#1f9a4a'; C.lineWidth = 0.03; C.beginPath(); C.arc(-2.38, 0.86, 0.12, -0.6, 2.2); C.stroke();
+    C.strokeStyle = '#d0202a'; C.beginPath(); C.arc(-2.38, 0.86, 0.12, 2.2, 5.68); C.stroke();
+    C.fillStyle = '#1d47b8'; C.beginPath();
+    for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 0.035 : 0.08; C.lineTo(-2.38 + Math.cos(a) * r, 0.86 + Math.sin(a) * r); }
+    C.closePath(); C.fill();
+    const txt = (s1, tx, ty, px, col) => {
+      C.save(); C.translate(tx, ty); C.scale(0.01, -0.01);
+      C.fillStyle = col; C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(s1, 0, 0);
+      C.restore();
+    };
+    txt('POLÍCIA MILITAR', -2.95, 0.72, 22, BK);
+    txt('EMERGÊNCIA 190', -0.85, 0.98, 13, BK);
+    // giroflex vermelho no teto
     const on = Math.floor(t * 6) % 2;
-    C.fillStyle = on ? '#ff2a2a' : '#5a1010'; C.fillRect(-2.75, 1.42, 0.42, 0.1);
-    C.fillStyle = on ? '#1c2f6a' : '#2f5bff'; C.fillRect(-2.33, 1.42, 0.42, 0.1);
-    wheelCar(-0.8, 1 - 0.35 * c.flat); wheelCar(-3.4, 1);
-    C.restore();
-    if (c.state === 'chase') drawLights(sx(c.x - 2.5), sy(1.5), S, t, 0);
-  }
-  // moto genérica de lado (Rocam e CG); origem na roda da frente
-  function drawMoto(x, y, S, t, o) {
-    C.save(); C.translate(x, y); C.scale(S * o.k, -S * o.k);
-    for (const cx of [0, -1.42]) {
-      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, 0.3, 0.3, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#8d9499'; C.beginPath(); C.arc(cx, 0.3, 0.12, 0, Math.PI * 2); C.fill();
-    }
-    line([[0, 0.3], [-0.2, 0.95]], 0.05, '#8d9499');
-    line([[-1.42, 0.3], [-0.9, 0.5]], 0.05, '#2b2f33');
-    C.fillStyle = '#2b2f33'; C.fillRect(-1.0, 0.35, 0.45, 0.3);
-    C.fillStyle = o.body;
-    C.beginPath(); C.moveTo(-0.1, 0.62); C.lineTo(-0.25, 1.05); C.lineTo(-0.55, 0.98); C.lineTo(-1.25, 0.86);
-    C.lineTo(-1.62, 0.78); C.lineTo(-1.3, 0.62); C.lineTo(-0.5, 0.56); C.closePath(); C.fill();
-    C.fillStyle = o.stripe; C.fillRect(-1.3, 0.68, 1.0, 0.04);
-    C.save(); C.translate(-0.8, 0.79); C.scale(0.006, -0.006);
-    C.fillStyle = o.stripe; C.font = '700 18px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(o.label, 0, 0);
-    C.restore();
-    const hip = [-0.85, 1.02], sh = [-0.62 + o.lean, 1.52 - o.lean * 0.3], hand = [-0.25, 1.1];
-    line([hip, [-0.5, 0.75], [-0.7, 0.45]], 0.12, o.suit);
-    line([hip, sh], 0.2, o.suit);
-    line([sh, [(sh[0] + hand[0]) / 2, (sh[1] + hand[1]) / 2 - 0.06], hand], 0.09, o.suit);
-    C.fillStyle = o.helmet; C.beginPath(); C.arc(sh[0] + 0.1, sh[1] + 0.2, 0.14, 0, Math.PI * 2); C.fill();
-    C.fillStyle = '#1a2733'; C.beginPath(); C.ellipse(sh[0] + 0.19, sh[1] + 0.19, 0.06, 0.045, 0, 0, Math.PI * 2); C.fill();
-    if (o.light) {
-      const on = Math.floor(t * 8 + o.phase * 2) % 2;
-      line([[-1.5, 0.85], [-1.5, 1.25]], 0.02, '#8d9499');
-      C.fillStyle = on ? '#2f5bff' : '#ff2a2a'; C.beginPath(); C.arc(-1.5, 1.3, 0.06, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#2a2d31'; C.fillRect(-3.05, 1.7, 0.9, 0.05);
+    C.fillStyle = on ? '#ff2a2a' : '#7a1414'; C.fillRect(-3.0, 1.75, 0.4, 0.09);
+    C.fillStyle = on ? '#7a1414' : '#ff2a2a'; C.fillRect(-2.6, 1.75, 0.4, 0.09);
+    // rodas maiores de picape
+    for (const [wx, sq] of [[-0.95, 1 - 0.35 * c.flat], [-4.05, 1]]) {
+      C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.38, 0.38 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#6f767c'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.2, 0.2 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#3a3f44'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.06, 0.06 * sq, 0, 0, Math.PI * 2); C.fill();
     }
     C.restore();
+    if (c.state === 'chase') drawLights(sx(c.x - 2.6), sy(1.8), S, t, 0);
   }
   function drawRocams(sx, sy, S, t) {
     [...s.law.bikes].sort((a, b) => b.lane - a.lane).forEach(b => {
       const k = 1 - b.lane * 0.6, x = sx(b.x), y = sy(0) - b.lane * S;
       if (x < -2 * S || x - 2 * S > W) return;
-      drawMoto(x, y, S, t, { body: '#eef0f2', stripe: '#1d47b8', suit: '#1c2a44', helmet: '#f4f5f6', light: true, label: 'ROCAM', lean: 0.05, k, phase: b.phase });
-      if (b.state === 'chase') drawLights(x - 1.5 * S * k, y - 1.3 * S * k, S * 0.5, t, b.phase * 2);
+      drawXre(x, y, S * k, t, b.phase, -b.x / 0.32);
+      if (b.state === 'chase') drawLights(x - 1.55 * S * k, y - 1.55 * S * k, S * 0.5, t, b.phase * 2);
     });
   }
+  // XRE 300 da Rocam: branca com xadrez vermelho, bico, para-brisa, baú e piloto de capacete branco
+  function drawXre(x, y, S, t, phase, rot) {
+    const WH = '#eef0f2', RD = '#d0202a', BK = '#16181b', SV = '#b9bec4', SU = '#2a2e35';
+    C.save(); C.translate(x, y); C.scale(S, -S);
+    const checker = (x0, y0, w, h, n) => {
+      const q = w / n;
+      for (let i = 0; i < n; i++) for (let j = 0; j * q < h - 0.001; j++) {
+        C.fillStyle = (i + j) % 2 ? WH : RD; C.fillRect(x0 + i * q, y0 + j * q, q, Math.min(q, h - j * q));
+      }
+    };
+    const wheel = (cx, r) => {
+      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, r, r, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = SV; C.lineWidth = 0.02; C.beginPath(); C.arc(cx, r, r - 0.07, 0, Math.PI * 2); C.stroke();
+      C.lineWidth = 0.008; C.beginPath();
+      for (let i = 0; i < 18; i++) { const a = rot + i * Math.PI / 9; C.moveTo(cx, r); C.lineTo(cx + Math.cos(a) * (r - 0.07), r + Math.sin(a) * (r - 0.07)); }
+      C.stroke();
+      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, r, 0.04, 0, Math.PI * 2); C.fill();
+    };
+    wheel(-1.45, 0.31); wheel(0, 0.33);
+    // balança, motor com protetor e escape
+    line([[-1.45, 0.31], [-0.92, 0.48]], 0.06, BK);
+    line([[-1.2, 0.4], [-1.05, 0.9]], 0.045, '#c0161a');
+    C.fillStyle = '#2c2f34'; C.beginPath(); C.ellipse(-0.72, 0.45, 0.22, 0.15, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#4a4f56'; C.fillRect(-0.7, 0.5, 0.2, 0.26);
+    line([[-0.42, 0.85], [-0.38, 0.5], [-0.55, 0.32], [-0.9, 0.34]], 0.035, BK);
+    line([[-0.55, 0.5], [-0.75, 0.3], [-1.0, 0.42], [-1.3, 0.72]], 0.05, '#3a3e44');
+    C.fillStyle = SV; C.beginPath(); C.moveTo(-1.15, 0.6); C.lineTo(-1.5, 0.8); C.lineTo(-1.5, 0.92); C.lineTo(-1.15, 0.74); C.closePath(); C.fill();
+    // garfo comprido, para-lama baixo e bico
+    line([[0, 0.33], [-0.2, 1.08]], 0.055, SV);
+    line([[-0.16, 0.92], [-0.24, 1.18]], 0.075, BK);
+    C.fillStyle = BK; C.beginPath(); C.arc(0, 0.33, 0.39, 0.4, 1.6); C.arc(0, 0.33, 0.35, 1.6, 0.4, true); C.closePath(); C.fill();
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.12, 0.98); C.lineTo(0.22, 0.88); C.lineTo(0.12, 0.98); C.lineTo(-0.08, 1.06); C.closePath(); C.fill();
+    // carenagem do farol, para-brisa e guidão
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.08, 1.06); C.lineTo(0.0, 1.22); C.lineTo(-0.18, 1.4); C.lineTo(-0.36, 1.22); C.lineTo(-0.3, 1.0); C.closePath(); C.fill();
+    C.save(); C.beginPath(); C.moveTo(-0.06, 1.1); C.lineTo(-0.02, 1.2); C.lineTo(-0.2, 1.36); C.lineTo(-0.3, 1.16); C.closePath(); C.clip();
+    checker(-0.32, 1.1, 0.32, 0.28, 6); C.restore();
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(-0.02, 1.06); C.lineTo(0.03, 1.15); C.lineTo(-0.03, 1.15); C.closePath(); C.fill();
+    C.fillStyle = 'rgba(40, 52, 66, .85)'; C.beginPath(); C.moveTo(-0.18, 1.4); C.lineTo(-0.32, 1.62); C.lineTo(-0.38, 1.58); C.lineTo(-0.3, 1.3); C.closePath(); C.fill();
+    line([[-0.3, 1.36], [-0.4, 1.46], [-0.5, 1.46]], 0.035, BK);
+    // tanque com a aba branca e "POLÍCIA", banco preto e rabeta xadrez
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.3, 1.18); C.quadraticCurveTo(-0.55, 1.26, -0.85, 1.12); C.lineTo(-0.85, 0.95); C.lineTo(-0.35, 0.95); C.closePath(); C.fill();
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.28, 1.12); C.lineTo(-0.72, 1.06); C.lineTo(-0.8, 0.8); C.lineTo(-0.5, 0.74); C.lineTo(-0.3, 0.88); C.closePath(); C.fill();
+    C.save(); C.translate(-0.53, 0.93); C.rotate(0.12); C.scale(0.0055, -0.0055);
+    C.fillStyle = BK; C.font = '700 16px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('POLÍCIA', 0, 0);
+    C.restore();
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.8, 1.1); C.lineTo(-1.25, 1.1); C.lineTo(-1.62, 1.14); C.lineTo(-1.6, 1.04); C.lineTo(-1.2, 0.96); C.lineTo(-0.82, 0.96); C.closePath(); C.fill();
+    C.save(); C.beginPath(); C.moveTo(-1.2, 1.02); C.lineTo(-1.6, 1.08); C.lineTo(-1.56, 0.92); C.lineTo(-1.2, 0.86); C.closePath(); C.clip();
+    checker(-1.6, 0.86, 0.42, 0.24, 7); C.restore();
+    // baú preto e o giroflex
+    C.fillStyle = BK; C.beginPath(); C.roundRect(-1.85, 1.12, 0.45, 0.32, 0.05); C.fill();
+    C.fillStyle = WH; C.fillRect(-1.8, 1.32, 0.35, 0.035);
+    const on = Math.floor(t * 8 + phase * 2) % 2;
+    line([[-1.5, 1.44], [-1.5, 1.6]], 0.02, '#8d9499');
+    C.fillStyle = on ? '#2f5bff' : '#ff2a2a'; C.beginPath(); C.arc(-1.5, 1.64, 0.05, 0, Math.PI * 2); C.fill();
+    // policial sentado reto: farda escura, bota preta, capacete branco com faixa vermelha
+    const hip = [-0.95, 1.14], sh = [-0.82, 1.68], hand = [-0.45, 1.44], knee = [-0.58, 0.98], foot = [-0.74, 0.58];
+    line([hip, knee, foot], 0.13, SU);
+    line([[knee[0] - 0.02, knee[1] - 0.06], foot], 0.11, BK);
+    line([hip, sh], 0.22, SU);
+    line([sh, [-0.66, 1.45], hand], 0.09, SU);
+    C.fillStyle = BK; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
+    const hx = sh[0] + 0.07, hy = sh[1] + 0.21;
+    C.fillStyle = '#f4f5f6'; C.beginPath(); C.arc(hx, hy, 0.15, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = RD; C.lineWidth = 0.035; C.beginPath(); C.arc(hx, hy, 0.13, 1.2, 2.9); C.stroke();
+    C.fillStyle = '#1a2733'; C.beginPath(); C.ellipse(hx + 0.09, hy - 0.01, 0.065, 0.05, 0, 0, Math.PI * 2); C.fill();
+    C.restore();
+  }
   // CG 160 passando voando na faixa da frente
+  // (a mesma Titan volta aos 600 m com os dois ladrões)
   function drawCG(sx, sy, S, t) {
-    const c = s.law.cg;
-    if (!c) return;
-    const x = sx(c.x), y = sy(0) + 0.28 * S;
-    if (x < -2 * S || x - 2 * S > W) return;
-    C.strokeStyle = 'rgba(243, 239, 230, .3)'; C.lineWidth = 2; C.beginPath();
-    for (let i = 0; i < 4; i++) { const yy = y - (0.4 + i * 0.3) * S; C.moveTo(x - (1.8 + i * 0.2) * S, yy); C.lineTo(x - (3.2 + i * 0.5) * S, yy); }
+    for (const c of [s.law.cg, s.law.thief]) {
+      if (!c) continue;
+      const x = sx(c.x), y = sy(0) + 0.28 * S;
+      if (x < -2 * S || x - 2 * S > W) continue;
+      if (c.v - s.v > 4) {
+        C.strokeStyle = 'rgba(243, 239, 230, .3)'; C.lineWidth = 2; C.beginPath();
+        for (let i = 0; i < 4; i++) { const yy = y - (0.4 + i * 0.3) * S; C.moveTo(x - (1.8 + i * 0.2) * S, yy); C.lineTo(x - (3.2 + i * 0.5) * S, yy); }
+        C.stroke();
+      }
+      drawTitan(x, y, S * 1.05, -c.x / 0.3);
+    }
+  }
+  // Uno Mille branco com escada de alumínio no rack; na faixa de trás, tirando racha
+  const UNO_LANE = 0.3;
+  function drawUno(sx, sy, S, t) {
+    const u = s.law.uno;
+    if (!u) return;
+    const x = sx(u.x), y = sy(0) - UNO_LANE * S, k = 0.96 * S;
+    if (x < -0.5 * S || x - 4.2 * S > W) return;
+    const WH = '#eceeea', BK = '#26282c', GL = '#1a2733', AL = '#c9ced3';
+    const shake = u.state === 'blown' && u.t < 2 ? Math.sin(u.t * 70) * 0.012 : 0;
+    C.save(); C.translate(x, y); C.scale(k, -k); C.translate(0, shake);
+    // carroceria quadradona de 3 portas
+    C.fillStyle = WH;
+    C.beginPath(); C.moveTo(0.02, 0.32); C.lineTo(0.04, 0.68); C.lineTo(-0.05, 0.78); C.lineTo(-0.85, 0.88); C.lineTo(-1.4, 1.36);
+    C.lineTo(-3.25, 1.38); C.lineTo(-3.5, 0.95); C.lineTo(-3.58, 0.32); C.closePath(); C.fill();
+    C.fillStyle = BK; C.fillRect(-3.62, 0.28, 0.42, 0.2); C.fillRect(-0.3, 0.28, 0.36, 0.22);
+    C.fillRect(-3.2, 0.3, 2.9, 0.06);
+    C.fillStyle = '#4a4e54'; C.fillRect(-3.3, 0.6, 3.0, 0.04);
+    C.beginPath(); C.arc(-0.62, 0.32, 0.36, 0, Math.PI); C.fill();
+    C.beginPath(); C.arc(-2.98, 0.32, 0.36, 0, Math.PI); C.fill();
+    C.fillStyle = GL;
+    C.beginPath(); C.moveTo(-1.45, 1.3); C.lineTo(-2.3, 1.3); C.lineTo(-2.3, 0.92); C.lineTo(-1.0, 0.9); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.4, 1.3); C.lineTo(-3.2, 1.3); C.lineTo(-3.38, 0.95); C.lineTo(-2.4, 0.92); C.closePath(); C.fill();
+    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
+    C.moveTo(-1.02, 0.88); C.lineTo(-1.05, 0.38); C.moveTo(-2.35, 0.9); C.lineTo(-2.35, 0.38); C.stroke();
+    C.fillStyle = BK; C.fillRect(-2.25, 0.78, 0.14, 0.03);
+    C.beginPath(); C.ellipse(-1.05, 0.98, 0.07, 0.05, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#fff3c4'; C.fillRect(-0.12, 0.6, 0.16, 0.1);
+    C.fillStyle = '#c0161a'; C.fillRect(-3.58, 0.72, 0.06, 0.18);
+    // rack e escada de alumínio amarrada com fita vermelha
+    line([[-1.75, 1.38], [-1.75, 1.47]], 0.04, BK); line([[-2.9, 1.38], [-2.9, 1.47]], 0.04, BK);
+    C.fillStyle = AL; C.fillRect(-3.95, 1.47, 4.15, 0.035); C.fillRect(-3.95, 1.56, 4.15, 0.035);
+    C.strokeStyle = '#8f969c'; C.lineWidth = 0.02; C.beginPath();
+    for (let lx = 0.1; lx > -3.95; lx -= 0.3) { C.moveTo(lx, 1.47); C.lineTo(lx, 1.6); }
     C.stroke();
-    drawMoto(x, y, S, t, { body: '#c8102e', stripe: '#f3efe6', suit: '#2b2f33', helmet: '#16181b', light: false, label: 'CG 160', lean: 0.25, k: 1.05, phase: 0 });
+    C.fillStyle = '#d61f1f'; C.fillRect(-1.8, 1.42, 0.06, 0.22); C.fillRect(-2.95, 1.42, 0.06, 0.22);
+    // rodas de liga
+    for (const wx of [-0.62, -2.98]) {
+      C.fillStyle = '#111214'; C.beginPath(); C.arc(wx, 0.3, 0.29, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#9aa3a8'; C.beginPath(); C.arc(wx, 0.3, 0.17, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#3a3f44'; C.lineWidth = 0.035; C.beginPath();
+      for (let i = 0; i < 5; i++) { const a = -u.x / 0.29 + i * Math.PI * 0.4; C.moveTo(wx, 0.3); C.lineTo(wx + Math.cos(a) * 0.16, 0.3 + Math.sin(a) * 0.16); }
+      C.stroke();
+    }
+    // motorista
+    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-1.85, 1.08, 0.12, 0, Math.PI * 2); C.fill();
+    // motor fundindo: labareda saindo do capô
+    if (u.state === 'blown' && u.t < 1.2) {
+      const fl = 1 - u.t / 1.2;
+      C.fillStyle = `rgba(255, 140, 30, ${0.85 * fl})`;
+      C.beginPath(); C.moveTo(-0.2, 0.8); C.quadraticCurveTo(-0.5, 0.8 + 0.7 * fl + Math.sin(t * 40) * 0.05, -0.75, 0.86); C.closePath(); C.fill();
+      C.fillStyle = `rgba(255, 230, 120, ${0.9 * fl})`;
+      C.beginPath(); C.moveTo(-0.32, 0.82); C.quadraticCurveTo(-0.48, 0.8 + 0.35 * fl, -0.62, 0.85); C.closePath(); C.fill();
+    }
+    C.restore();
+  }
+  // CG 160 laranja (tanque e farol laranja, banco e rabeta pretos) com piloto e garupa de preto
+  function drawTitan(x, y, S, rot) {
+    const OR = '#ff7a12', ORd = '#c95500', BK = '#141518', SU = '#1b1d21', SUh = '#3b4048', SV = '#c3c8cd';
+    C.save(); C.translate(x, y); C.scale(S, -S);
+    const wheel = cx => {
+      C.fillStyle = BK; C.beginPath(); C.arc(cx, 0.3, 0.3, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#2c2f34'; C.lineWidth = 0.025; C.beginPath(); C.arc(cx, 0.3, 0.24, 0, Math.PI * 2); C.stroke();
+      C.lineWidth = 0.018; C.beginPath();
+      for (let i = 0; i < 12; i++) { const a = rot + i * Math.PI / 6; C.moveTo(cx + Math.cos(a) * 0.06, 0.3 + Math.sin(a) * 0.06); C.lineTo(cx + Math.cos(a + 0.2) * 0.235, 0.3 + Math.sin(a + 0.2) * 0.235); }
+      C.stroke();
+      C.strokeStyle = SV; C.lineWidth = 0.02; C.beginPath(); C.arc(cx, 0.3, 0.11, 0, Math.PI * 2); C.stroke();
+      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, 0.3, 0.035, 0, Math.PI * 2); C.fill();
+    };
+    wheel(-1.42); wheel(0);
+    // balança, amortecedor, escape e motor
+    line([[-1.42, 0.3], [-0.9, 0.44]], 0.06, BK);
+    line([[-1.25, 0.36], [-1.12, 0.84]], 0.05, SV);
+    line([[-1.25, 0.36], [-1.12, 0.84]], 0.02, '#7b8188');
+    line([[-0.5, 0.45], [-0.62, 0.26], [-0.95, 0.24]], 0.05, '#2a2c30');
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.95, 0.2); C.lineTo(-1.4, 0.36); C.lineTo(-1.45, 0.5); C.lineTo(-1.25, 0.47); C.lineTo(-0.95, 0.32); C.closePath(); C.fill();
+    C.fillStyle = SV; C.beginPath(); C.moveTo(-1.4, 0.36); C.lineTo(-1.45, 0.5); C.lineTo(-1.5, 0.48); C.lineTo(-1.46, 0.37); C.closePath(); C.fill();
+    C.fillStyle = '#26282c'; C.beginPath(); C.ellipse(-0.72, 0.33, 0.2, 0.12, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = SV; C.fillRect(-0.68, 0.4, 0.22, 0.28);
+    C.fillStyle = '#7b8188'; for (let i = 0; i < 5; i++) C.fillRect(-0.68, 0.43 + i * 0.05, 0.22, 0.014);
+    // quadro preto
+    line([[-0.2, 0.98], [-0.42, 0.62], [-0.7, 0.4]], 0.06, BK);
+    line([[-0.42, 0.62], [-0.95, 0.78], [-1.5, 0.92]], 0.05, BK);
+    // garfo, paralama e farol laranjas
+    line([[0, 0.3], [-0.13, 0.78]], 0.055, SV);
+    line([[-0.13, 0.78], [-0.2, 1.02]], 0.07, BK);
+    C.fillStyle = OR; C.beginPath(); C.arc(0, 0.3, 0.355, 0.35, 1.9); C.arc(0, 0.3, 0.315, 1.9, 0.35, true); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-0.24, 0.92); C.lineTo(0.02, 0.95); C.lineTo(0.07, 1.04); C.lineTo(-0.1, 1.16); C.lineTo(-0.24, 1.1); C.closePath(); C.fill();
+    C.fillStyle = '#ffe9a8'; C.beginPath(); C.moveTo(0.02, 0.96); C.lineTo(0.065, 1.03); C.lineTo(0.0, 1.05); C.closePath(); C.fill();
+    line([[-0.2, 1.1], [-0.27, 1.24], [-0.36, 1.25]], 0.035, BK);
+    line([[-0.24, 1.22], [-0.2, 1.38]], 0.015, BK);
+    C.fillStyle = BK; C.beginPath(); C.ellipse(-0.19, 1.41, 0.04, 0.028, 0.4, 0, Math.PI * 2); C.fill();
+    // banco, rabeta e suporte da placa
+    C.fillStyle = BK;
+    C.beginPath(); C.moveTo(-0.82, 0.93); C.lineTo(-1.3, 0.97); C.lineTo(-1.7, 1.03); C.lineTo(-1.66, 0.94); C.lineTo(-1.3, 0.84); C.lineTo(-0.85, 0.8); C.closePath(); C.fill();
+    line([[-1.6, 0.92], [-1.68, 0.66]], 0.035, BK);
+    C.fillStyle = '#e8e2d2'; C.fillRect(-1.73, 0.6, 0.08, 0.1);
+    C.fillStyle = '#d61f1f'; C.fillRect(-1.73, 0.92, 0.05, 0.04);
+    // tanque laranja com a aba lateral e o painel preto
+    C.fillStyle = OR;
+    C.beginPath(); C.moveTo(-0.24, 0.98); C.quadraticCurveTo(-0.45, 1.12, -0.85, 0.97); C.lineTo(-0.82, 0.78); C.lineTo(-0.5, 0.72); C.lineTo(-0.28, 0.66); C.lineTo(-0.26, 0.82); C.closePath(); C.fill();
+    C.fillStyle = ORd; C.beginPath(); C.moveTo(-0.28, 0.66); C.lineTo(-0.5, 0.72); C.lineTo(-0.82, 0.78); C.lineTo(-0.8, 0.84); C.lineTo(-0.5, 0.79); C.closePath(); C.fill();
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.82, 0.78); C.lineTo(-0.5, 0.72); C.lineTo(-0.66, 0.62); C.lineTo(-0.92, 0.66); C.closePath(); C.fill();
+    line([[-0.33, 0.75], [-0.6, 0.83]], 0.018, '#e8eaec');
+    C.save(); C.translate(-0.72, 0.7); C.rotate(0.17); C.scale(0.005, -0.005);
+    C.fillStyle = OR; C.font = 'italic 700 15px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CG 160', 0, 0);
+    C.restore();
+    // piloto e garupa de preto, capacete preto fechado
+    const rider = (hip, sh, hand, knee, foot, back) => {
+      line([hip, knee, foot], 0.13, back ? '#16181b' : SU);
+      line([hip, sh], 0.22, back ? '#16181b' : SU);
+      line([[hip[0] - 0.02, hip[1] + 0.06], [sh[0] - 0.04, sh[1] - 0.02]], 0.03, SUh);
+      line([sh, [(sh[0] + hand[0]) / 2, (sh[1] + hand[1]) / 2 - 0.07], hand], 0.09, back ? '#16181b' : SU);
+      C.fillStyle = '#e9e9e9'; C.beginPath(); C.ellipse(foot[0] + 0.04, foot[1] - 0.02, 0.09, 0.04, 0, 0, Math.PI * 2); C.fill();
+      const hx = sh[0] + 0.1, hy = sh[1] + 0.21;
+      C.fillStyle = '#0d0e10'; C.beginPath(); C.arc(hx, hy, 0.15, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#2a3442'; C.beginPath(); C.ellipse(hx + 0.08, hy + 0.0, 0.07, 0.05, 0, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = 'rgba(255, 255, 255, .28)'; C.lineWidth = 0.025; C.beginPath(); C.arc(hx, hy, 0.11, 1.7, 2.6); C.stroke();
+    };
+    rider([-1.25, 1.06], [-1.14, 1.58], [-0.86, 1.3], [-1.02, 0.8], [-1.16, 0.5], true);
+    rider([-0.88, 1.03], [-0.6, 1.45], [-0.3, 1.23], [-0.5, 0.78], [-0.72, 0.48], false);
+    C.restore();
   }
   // pipa com rabiola e a linha de cerol (presa numa lata na calçada)
   function drawKite(sx, sy, S, t) {
