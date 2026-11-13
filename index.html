@@ -411,6 +411,76 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   .pixm-card .go { grid-column: 2; justify-self: start; align-self: center; font-size: 15px; }
   .pixm-msg { grid-column: 2; font-size: 12px; }
 }
+/* ---------- multiplayer: abas placar/chat, painel da sala, placar da sala no jogo, chat ---------- */
+.tabs { display: flex; gap: 4px; margin-bottom: 2px; }
+.tabs button { flex: 1; font: 700 12px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: transparent;
+  border: 1px solid rgba(243, 239, 230, .2); border-radius: 2px; padding: 3px 6px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
+#paneBoard { display: flex; flex-direction: column; gap: 6px; }
+.lobby { display: flex; flex-direction: column; gap: 6px; }
+.lobby .label { text-transform: none; letter-spacing: .02em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chatlog { height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 14px; line-height: 1.25; overscroll-behavior: contain;
+  user-select: text; -webkit-user-select: text; touch-action: pan-y; }
+.chatlog .cl { overflow-wrap: anywhere; }
+.chatlog .cl b { color: var(--sodium); font-weight: 700; }
+.chatlog .cl.me b { color: var(--ok); }
+.chatlog .cl.sys { color: var(--muted); font-style: italic; }
+.chatrow { display: flex; gap: 6px; }
+.chatrow input, .mpfield input, .mpchat input { flex: 1; min-width: 0; font: 600 16px var(--hud); color: var(--ink); background: rgba(243, 239, 230, .08);
+  border: 1px solid rgba(243, 239, 230, .3); border-radius: 2px; padding: 5px 8px; user-select: text; -webkit-user-select: text; }
+.chatrow input:focus, .mpfield input:focus, .mpchat input:focus { outline: 2px solid var(--sodium); outline-offset: 1px; }
+.chatrow .go { font-size: 16px; padding: 4px 12px 6px; align-self: stretch; }
+#mpCode { text-transform: uppercase; letter-spacing: .3em; font-size: 20px; text-align: center; }
+.pixm-card.mpcard { display: flex; flex-direction: column; align-items: stretch; text-align: left; width: min(100%, 420px); gap: 8px; }
+.mpview { display: flex; flex-direction: column; gap: 8px; }
+.mpview[hidden] { display: none; }
+.mpview h2 { margin: 0; }
+.mpfield { display: flex; flex-direction: column; gap: 4px; }
+.mpcard .go { align-self: flex-start; }
+.mpcard .actions .go { font-size: 18px; padding: 8px 16px 10px; }
+.mpcode { align-self: flex-start; font: 400 40px/1 var(--display); letter-spacing: .12em; color: var(--sodium); background: transparent; border: 1px dashed rgba(255, 181, 71, .5);
+  border-radius: 4px; padding: 6px 12px 8px; cursor: pointer; }
+.mplist { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; font-size: 16px; font-weight: 600; }
+.mplist li { display: flex; justify-content: space-between; gap: 10px; }
+.mplist li.me { color: var(--sodium); }
+.mplist li span { color: var(--muted); font-variant-numeric: tabular-nums; }
+#mpRoom .chatlog { height: 110px; padding: 6px 8px; background: rgba(243, 239, 230, .04); border-radius: 3px; }
+.mpside { position: absolute; top: 10px; left: max(16px, env(safe-area-inset-left, 0px)); width: 190px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.mpboard { pointer-events: none; padding: 6px 10px 8px; }
+.mpboard li.king::before { content: "👑"; }
+.mpboard li.dead b { color: var(--muted); text-decoration: line-through; }
+.mpboard li small { grid-column: 2 / -1; font-size: 11px; color: var(--muted); margin-top: -2px; }
+.mpfeed { display: flex; flex-direction: column; gap: 3px; font-size: 14px; font-weight: 600; text-shadow: 0 1px 4px rgba(0, 0, 0, .9); }
+.mpfeed div { overflow-wrap: anywhere; transition: opacity .6s; }
+.mpfeed div.old { opacity: 0; }
+.mpfeed b { color: var(--sodium); }
+.mpchat { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(560px, calc(100% - 32px)); display: flex; gap: 6px; z-index: 5;
+  padding: 8px; background: rgba(8, 18, 24, .92); border: 1px solid var(--sodium); border-radius: 4px; }
+.mpchat .go { font-size: 16px; padding: 4px 12px 6px; }
+.mute.on { color: var(--night); background: var(--ok); border-color: var(--ok); }
+.tabs button.new::after { content: " •"; color: var(--ok); }
+@media (max-height: 500px) and (orientation: landscape) {
+  .tabs button { font-size: 10px; padding: 2px 4px; }
+  .chatlog { height: 92px; font-size: 12px; }
+  .chatrow input { font-size: 14px; padding: 3px 6px; }
+  .chatrow .go { font-size: 13px; padding: 3px 10px 4px; }
+  .pixm-card.mpcard { display: flex; width: min(100%, 560px); padding: 10px 14px; gap: 6px; }
+  .mpcard p, .mpcard .pixm-msg { display: block; }
+  #mpRoom { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); column-gap: 14px; row-gap: 4px; align-items: start; }
+  #mpRoom[hidden] { display: none; }
+  #mpRoom > * { grid-column: 1; }
+  #mpRoom .chatlog, #mpRoom .chatrow { grid-column: 2; }
+  #mpRoom .chatlog { grid-row: 1 / span 4; height: 130px; }
+  #mpRoom .chatrow { grid-row: 5; }
+  #mpRoom .actions { grid-column: 1 / -1; }
+  .mpcode { font-size: 28px; padding: 3px 10px 5px; }
+  .mplist { font-size: 13px; }
+  .mpcard .actions .go { font-size: 14px; padding: 6px 12px 8px; }
+  .mpside { width: 160px; top: 6px; left: max(10px, env(safe-area-inset-left, 0px)); }
+  .mpboard li { font-size: 12px; }
+  .mpfeed { font-size: 12px; }
+  .mpchat { bottom: 8px; padding: 5px; }
+}
 </style>
 
 <div class="game" id="game">
@@ -423,6 +493,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <div class="stat side"><span class="label" data-i>Recorde</span><span class="value" id="best">0.0<small>m</small></span></div>
     </div>
     <div class="hud-btns">
+      <button class="mute" id="chatBtn" type="button" hidden data-i>Chat</button>
+      <button class="mute" id="micBtn" type="button" hidden>Mic: off</button>
       <button class="mute" id="pauseBtn" type="button" data-i>Pausa</button>
       <button class="mute" id="mute" type="button">Som: ligado</button>
     </div>
@@ -439,12 +511,40 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   <div class="toast" id="toast"></div>
   <div class="ach" id="ach"><span class="label" id="achWhy">Conquista desbloqueada</span><strong id="achName"></strong></div>
 
+  <!-- sala: placar só da sala, mensagens do chat e a barra pra escrever -->
+  <div class="mpside" id="mpSide" hidden>
+    <aside class="board mpboard" aria-label="Placar da sala">
+      <span class="label" id="mpBoardTitle">Sala</span>
+      <ol id="mpBoardList"></ol>
+    </aside>
+    <div class="mpfeed" id="mpFeed" aria-live="polite"></div>
+  </div>
+  <form class="mpchat" id="mpChat" hidden>
+    <input id="mpChatIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Escreve pra sala…" data-ip="Escreve pra sala…" aria-label="Mensagem pra sala">
+    <button class="go" type="submit" data-i>Enviar</button>
+    <button class="go alt" type="button" id="mpChatX" aria-label="Fechar">×</button>
+  </form>
+
   <div class="screen" id="startScreen">
     <div class="leftcol">
       <aside class="board" aria-label="Placar global">
-        <span class="label" data-i>Placar global · top 10</span>
-        <ol id="boardList"><li class="board-msg" data-i>Carregando…</li></ol>
-        <span class="board-tip" data-i>Bate o primeiro pra tomar a coroa 👑</span>
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tabBoard" aria-selected="true" data-i>Placar</button>
+          <button type="button" role="tab" id="tabChat" aria-selected="false"><span data-i>Chat</span> <span id="onlineN">· 0</span></button>
+        </div>
+        <div id="paneBoard">
+          <span class="label" data-i>Placar global · top 10</span>
+          <ol id="boardList"><li class="board-msg" data-i>Carregando…</li></ol>
+          <span class="board-tip" data-i>Bate o primeiro pra tomar a coroa 👑</span>
+        </div>
+        <div id="paneChat" class="lobby" hidden>
+          <span class="label" id="onlineList">Online</span>
+          <div class="chatlog" id="lobbyLog"></div>
+          <form class="chatrow" id="lobbyForm">
+            <input id="lobbyIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Fala com a galera…" data-ip="Fala com a galera…" aria-label="Mensagem pra todo mundo online">
+            <button class="go" type="submit" aria-label="Enviar">›</button>
+          </form>
+        </div>
       </aside>
       <button class="pix-card" id="pixOpen" type="button">
         <svg class="pastel" width="54" height="33" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg>
@@ -461,6 +561,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <div class="actions">
         <button class="go" id="goStart" type="button" data-i>Modo Motoca</button>
         <button class="go alt" id="goFree" type="button" data-i>Modo Livre</button>
+        <button class="go alt" id="goMulti" type="button">Multiplayer</button>
       </div>
       <ul class="how">
         <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
@@ -470,6 +571,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         <li><b data-i>Freio</b><span data-i>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
         <li><b data-i>Motoca</b><span data-i>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
         <li><b data-i>Livre</b><span data-i>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
+        <li><b data-i>Multi</b><span data-i>Cria uma sala e manda o código, ou entra com o código de um parceiro (até 5). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Quando todo mundo cai, começa outra rodada.</span></li>
         <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
         <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
       </ul>
@@ -526,6 +628,40 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     <span class="pixm-msg" id="pixMsg" aria-live="polite">Ou abre o app do banco, escolhe Pix copia e cola e cola o código.</span>
   </div>
 </div>
+<div class="pixm" id="mpModal" role="dialog" aria-modal="true" aria-labelledby="mpTitle" hidden>
+  <div class="pixm-card mpcard">
+    <button class="pixm-x" id="mpClose" type="button" aria-label="Fechar">×</button>
+    <div id="mpMenu" class="mpview">
+      <h2 id="mpTitle" data-i>Multiplayer</h2>
+      <label class="mpfield"><span class="label" data-i>Teu nome</span>
+        <input id="mpName" maxlength="16" placeholder="Teu nome" data-ip="Teu nome" autocomplete="nickname"></label>
+      <button class="go" id="mpCreate" type="button" data-i>Criar sala</button>
+      <span class="label" data-i>ou entra com o código</span>
+      <form class="chatrow" id="mpJoinForm">
+        <input id="mpCode" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código da sala">
+        <button class="go" type="submit" data-i>Entrar</button>
+      </form>
+      <span class="pixm-msg" id="mpMsg" aria-live="polite"></span>
+    </div>
+    <div id="mpRoom" class="mpview" hidden>
+      <span class="label" data-i>Código da sala</span>
+      <button class="mpcode" id="mpCodeBig" type="button" title="Copiar">----</button>
+      <span class="pixm-msg" data-i>Manda o código pros parceiros. Até 5 na sala.</span>
+      <ol class="mplist" id="mpList"></ol>
+      <div class="chatlog" id="roomLog"></div>
+      <form class="chatrow" id="roomForm">
+        <input id="roomIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Escreve pra sala…" data-ip="Escreve pra sala…" aria-label="Mensagem pra sala">
+        <button class="go" type="submit" aria-label="Enviar">›</button>
+      </form>
+      <div class="actions">
+        <button class="go" id="mpGo" type="button" data-i>Bora!</button>
+        <button class="go alt" id="mpMic" type="button">Mic: off</button>
+        <button class="go alt" id="mpLeave" type="button" data-i>Sair da sala</button>
+      </div>
+      <span class="pixm-msg" id="mpRoomMsg" aria-live="polite"></span>
+    </div>
+  </div>
+</div>
 <div class="rotate" id="rotate" role="dialog" aria-label="Gire o celular">
   <div class="phone"></div>
   <b data-i>Deita o celular</b>
@@ -567,6 +703,25 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português
   const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde militar":["Army green","Verde militar"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"]};
+  Object.assign(I18N, {
+    "Chat": ["Chat", "Chat"], "Placar": ["Scores", "Marcador"], "Multi": ["Multi", "Multi"], "Multiplayer": ["Multiplayer", "Multijugador"],
+    "Teu nome": ["Your name", "Tu nombre"], "Criar sala": ["Create room", "Crear sala"], "ou entra com o código": ["or join with a code", "o entra con el código"],
+    "Entrar": ["Join", "Entrar"], "Código da sala": ["Room code", "Código de la sala"],
+    "Manda o código pros parceiros. Até 5 na sala.": ["Send the code to your friends. Up to 5 per room.", "Manda el código a tus amigos. Hasta 5 por sala."],
+    "Bora!": ["Go!", "¡Vamos!"], "Sair da sala": ["Leave room", "Salir de la sala"], "Escreve pra sala…": ["Message the room…", "Escribe a la sala…"],
+    "Fala com a galera…": ["Talk to everyone…", "Habla con todos…"], "Grau · sala": ["Wheelie · room", "Caballito · sala"], "Sala": ["Room", "Sala"],
+    "Modo teste não vale na sala": ["Test mode is off in rooms", "El modo prueba no vale en la sala"], "Online": ["Online", "En línea"],
+    "Só tu online agora.": ["Just you online right now.", "Solo tú en línea ahora."], "Conectando…": ["Connecting…", "Conectando…"],
+    "Sem conexão com o chat.": ["No chat connection.", "Sin conexión al chat."],
+    "Sala não encontrada. Confere o código.": ["Room not found. Check the code.", "Sala no encontrada. Revisa el código."],
+    "Sala cheia (máximo 5).": ["Room is full (max 5).", "Sala llena (máximo 5)."], "O código tem 4 letras.": ["The code has 4 characters.", "El código tiene 4 caracteres."],
+    "Código copiado!": ["Code copied!", "¡Código copiado!"], "Sem acesso ao microfone.": ["No microphone access.", "Sin acceso al micrófono."],
+    "Tu entrou na sala": ["You joined room", "Entraste a la sala"], "entrou na sala": ["joined the room", "entró a la sala"], "saiu da sala": ["left the room", "salió de la sala"],
+    "Nova rodada em": ["New round in", "Nueva ronda en"], "agora": ["now", "ahora"], "na tela inicial": ["on the menu", "en el menú"], "tu": ["you", "tú"],
+    "Cria uma sala e manda o código, ou entra com o código de um parceiro (até 5). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Quando todo mundo cai, começa outra rodada.":
+      ["Create a room and share the code, or join a friend's code (up to 5). Each player sees their own challenges. Front wheel down resets your wheelie; flip over and you turn into a stray dog chasing whoever is still riding. When everyone falls, a new round starts.",
+       "Crea una sala y comparte el código, o entra con el código de un amigo (hasta 5). Cada uno ve sus propios desafíos. Si la rueda delantera toca el suelo, el caballito vuelve a cero; si te das vuelta, te conviertes en perro y corres detrás de quien sigue en una rueda. Cuando todos caen, empieza otra ronda."]
+  });
   // bandeiras em SVG (emoji de bandeira não aparece no Windows)
   const FLAG = {
     pt: '<svg viewBox="0 0 30 21" width="20" height="14" aria-hidden="true"><rect width="30" height="21" fill="#1a9b3c"/><path d="M15 2.5 27 10.5 15 18.5 3 10.5Z" fill="#ffd21f"/><circle cx="15" cy="10.5" r="4.6" fill="#1d3f9b"/><path d="M10.6 9.6q4.4-1.4 8.8 1" stroke="#fff" stroke-width="1" fill="none"/></svg>',
@@ -580,8 +735,21 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const T = pt => (LANG === 'pt' ? pt : (I18N[pt] || [])[LANG === 'en' ? 0 : 1] || pt);
   const BEST_KEY = { motoca: 'grau80-best', livre: 'grau80-best-livre' };
   let cheat = false; // modo teste: digita "agenor" ou toca 5x no título da tela inicial
-  let gameMode = 'motoca';
+  let gameMode = 'motoca'; // 'motoca', 'livre' ou 'multi' (sala: livre com desafios, cada um no seu celular)
   try { if (localStorage.getItem('grau80-mode') === 'livre') gameMode = 'livre'; } catch (e) {}
+  // estado da sala (multiplayer): declarado cedo porque o HUD e o idioma consultam
+  const room = { code: '', ch: null, phase: '', at: 0, best: 0, members: {}, peers: {}, tries: {}, q: 0, sendAcc: 0, castAcc: 0, timer: 0 };
+  const remotes = new Map(); // id → o que chegou do parceiro (posição, ângulo, placar)
+  // na sala a rua é uma volta: a cada 1000 m passa de novo na pastelaria (todo mundo se acha mais fácil)
+  const LAP = 1000;
+  const lapK = () => (gameMode === 'multi' ? Math.round(s.x / LAP) : 0);
+  // posição de alguém trazida pra volta em que eu estou (o mais perto de mim, pra frente ou pra trás)
+  const near = x => { if (gameMode !== 'multi') return x; const d = x - s.x; return s.x + d - LAP * Math.round(d / LAP); };
+  let micOn = false, micTrack = null, mpRound = 0;
+  const CHAL = () => gameMode === 'motoca' || gameMode === 'multi'; // tem desafios
+  const FREE = () => gameMode === 'livre' || gameMode === 'multi';  // encostou a frente, zera e sobe de novo
+  const modeLabel = () => gameMode === 'multi' ? T('Grau · sala') + ' ' + room.code
+    : T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
   const bests = { motoca: 0, livre: 0 };
   for (const m in BEST_KEY) { try { bests[m] = parseFloat(localStorage.getItem(BEST_KEY[m])) || 0; } catch (e) {} }
   let best = bests[gameMode];
@@ -598,12 +766,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
       last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, achSeen: {}, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, gearN: 1, chapa: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
-      pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false },
+      // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, viatura 300–400,
+      // Rocam 500–600, Uno 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
+      pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at: 100 },
       law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
              uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
-             at: { kite: 20, car: 150, rocam: 250, uno: 350, thief: 600 }, dur: { car: 50, rocam: 50, uno: 150, thief: 100 },
-             nextLoop: 800, loopI: 0 },
-      kite: null, kiteDone: false, sparks: [], scrape: 0,
+             at: { kite: 20, car: 300, rocam: 500, uno: 700, thief: 900 }, dur: { car: 100, rocam: 100, uno: 100, thief: 100 },
+             nextLoop: 1000, loopI: 0 },
+      kite: null, kiteDone: false, sparks: [], scrape: 0, dieT: 0, pet: null,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
       bumps: [], nextBump: 30, parts: [], smokeAcc: 0
     };
@@ -622,11 +792,12 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // código do modo teste
   let typed = '', titleTaps = [];
   function toggleCheat() {
+    if (!cheat && room.code) { flash(T('Modo teste não vale na sala')); return; } // ninguém trapaceia no placar da sala
     cheat = !cheat;
     ui.dist.style.pointerEvents = cheat ? 'auto' : '';
     flash(T(cheat ? 'Modo teste ligado: tudo liberado' : 'Modo teste desligado'));
     renderAchList(); renderGarage();
-    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
+    $('hudMode').textContent = modeLabel();
   }
   // no modo teste, N ou tocar no número do grau pula 100 m
   function skip100() { if (cheat && s.mode === 'ride' && s.active) { s.wStart -= 100; flash('+100 m'); } }
@@ -638,12 +809,16 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   });
   addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
+    if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
     if (e.code === 'Escape' && !$('pixModal').hidden) { e.preventDefault(); closePix(); return; }
+    if (e.code === 'Escape' && !$('mpModal').hidden) { e.preventDefault(); closeMp(); return; }
     if (e.code === 'Escape') { e.preventDefault(); if (s.mode !== 'ready') toStart(); return; }
     if (e.code === 'KeyA') { e.preventDefault(); if (!e.repeat) doPull(); return; }
+    if (e.code === 'KeyT' && gameMode === 'multi' && room.code && ui.start.hidden) { e.preventDefault(); openChat(); return; }
     if ((e.code === 'Enter' || e.code === 'KeyR') && s.mode !== 'ride') {
+      if (gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over')) return; // na sala a rodada recomeça junto
       if (e.code === 'Enter' && e.target.tagName === 'BUTTON') return; // Enter num botão da garagem só escolhe
       e.preventDefault(); begin(); return;
     }
@@ -725,6 +900,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     loadBoard();
     keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput();
     $('goStart').focus();
+    mpHud();
+    if (room.code) openMp();
   }
   $('goGarage').addEventListener('click', toStart);
   $('goHome').addEventListener('click', toStart);
@@ -813,12 +990,12 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     nodes.lp4.frequency.setTargetAtTime(260 + s.rpm * 0.11 + s.thr * 500, t, 0.04);
     nodes.honk.frequency.setTargetAtTime(330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
     nodes.honkG.gain.setTargetAtTime(0.25 + s.thr * 1.6, t, 0.06);
-    const vol = paused ? 0 : s.mode === 'over' && s.rpm < 1800 ? 0.02 : 0.05 + s.thr * 0.09;
+    const vol = paused || s.mode === 'dog' ? 0 : s.mode === 'over' && s.rpm < 1800 ? 0.02 : 0.05 + s.thr * 0.09;
     if (s.cut <= 0 || paused) {
       nodes.out.gain.setTargetAtTime(four ? 0 : vol, t, 0.05);
       nodes.out4.gain.setTargetAtTime(four ? vol * 1.5 : 0, t, 0.05);
     }
-    nodes.ng.gain.setTargetAtTime(paused ? 0 : (0.02 + s.thr * 0.06) * (four ? 0.6 : 1), t, 0.05);
+    nodes.ng.gain.setTargetAtTime(paused || s.mode === 'dog' ? 0 : (0.02 + s.thr * 0.06) * (four ? 0.6 : 1), t, 0.05);
     // sem filtro e com escape aberto, o 4 tempos estala quando solta o acelerador em giro alto
     if (four && !paused && s.mode !== 'over' && s.thr < 0.15 && s.rpm > 4200 && Math.random() < 0.05) {
       backfire(t + Math.random() * 0.03, 0.25 + Math.random() * 0.3);
@@ -875,11 +1052,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // ---------- conquistas (salvas no navegador) ----------
   const ACHS = [
     { id: 'grau30', why: 'Primeiros 30 m de grau', name: 'Acima de mim só Deus e a roda da frente', test: () => s.active && s.wDist >= 30 },
-    { id: 'grau100', why: '100 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
-    { id: 'grau200', why: '200 m de grau com a viatura na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
-    { id: 'grau300', why: '300 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped },
-    { id: 'grau500', why: '500 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
-    { id: 'grau700', why: '700 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
+    { id: 'grau100', why: '200 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
+    { id: 'grau200', why: '400 m de grau com a viatura na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
+    { id: 'grau300', why: '600 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped },
+    { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
+    { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
     { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
   ];
   let unlocked = {};
@@ -946,10 +1123,12 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   if (touchDev) addEventListener('touchend', () => { if (!document.fullscreenElement) goLandscape(); }, { passive: true });
   function begin(mode) {
     goLandscape();
-    if (mode === 'motoca' || mode === 'livre') gameMode = mode;
-    try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
-    best = bests[gameMode];
-    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
+    if (mode === 'motoca' || mode === 'livre' || mode === 'multi') gameMode = mode;
+    if (gameMode === 'multi' && !room.code) gameMode = 'livre';
+    if (gameMode === 'multi') { if (cheat) toggleCheat(); closeMp(); mpRound = 0; rtTrack(room.ch, roomMeta()); }
+    else try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
+    best = gameMode === 'multi' ? room.best : bests[gameMode];
+    $('hudMode').textContent = modeLabel();
     wakeAudio();
     const last = s.last; // "Última" continua mostrando a empinada da rodada anterior
     s = fresh(); s.last = last;
@@ -957,6 +1136,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     paused = false;
     ui.start.hidden = true; ui.end.hidden = true; ui.pause.hidden = true;
     keys.clear(); ptrs.clear(); syncInput();
+    mpHud();
     cv.focus?.();
   }
   // anota a empinada atual e zera o contador; o recorde só sobe
@@ -966,6 +1146,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (d < 1) return null;
     s.count++; s.last = d;
     if (d > s.runBest) { s.runBest = d; s.runTime = s.wTime; }
+    if (gameMode === 'multi') return mpRecord(d); // na sala o placar é só da sala
     const rec = !cheat && d > best + 0.05; // no modo teste nada vira recorde
     if (rec) { best = bests[gameMode] = d; s.newRecord = true; try { localStorage.setItem(BEST_KEY[gameMode], best.toFixed(2)); } catch (e) {} }
     return { d, rec };
@@ -1059,6 +1240,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   });
 
   function finish(how) {
+    if (gameMode === 'multi') return mpDie(); // na sala ninguém para: quem cai vira caramelo e corre atrás da galera
     const L = s.law;
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
       : L.bikes.some(b => b.state === 'chase') ? 'rocam'
@@ -1147,7 +1329,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (s.th < 0) {
         s.th = 0; s.om = 0;
         // encostou a roda da frente: acabou a volta (menos de 3 m não conta, sobe de novo)
-        if (s.active && gameMode === 'livre') {
+        if (s.active && FREE()) {
           const r = recordWheelie();
           if (r) flash(r.rec ? T('Novo recorde!') + ' ' + r.d.toFixed(1) + ' m' : r.d.toFixed(1) + ' m');
         } else if (s.active) {
@@ -1156,11 +1338,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         }
       }
       if (riding && s.mode === 'ride') {
-        if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; }
+        if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; if (gameMode === 'multi') rearm(); }
         if (s.active) { s.wTime += h; s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
         if (s.th > CRASH) finish('flip');
       }
+    } else if (s.mode === 'dog') {
+      stepPet(h);
     } else {
+      if (gameMode === 'multi' && (s.dieT += h) > 1.6) becomeDog();
       if (s.reason === 'flip' && s.th < 1.92) { s.om += 7 * h; s.th = Math.min(1.92, s.th + s.om * h); }
       else if (s.reason === 'landed') { s.th = 0; }
       s.v = Math.max(0, s.v - (s.reason === 'flip' ? 7 : 3.5) * h);
@@ -1171,7 +1356,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
     // fumaça azulada do escape
     const drive = s.thr * power(s.rpm);
-    s.smokeAcc += h * (6 + drive * 70 + s.thr * 10);
+    s.smokeAcc += s.mode === 'dog' ? 0 : h * (6 + drive * 70 + s.thr * 10);
     while (s.smokeAcc >= 1) {
       s.smokeAcc -= 1;
       if (s.parts.length > 240) s.parts.shift();
@@ -1226,14 +1411,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     src.connect(f).connect(g).connect(ac.destination);
     src.start(t, 0.2, 0.5);
   }
-  // matilha: 3 caramelos dormindo na rua perto dos 50 m de grau; acordam quando a moto passa empinando,
-  // correm atrás e, se a empinada chegar a 100 m, largam a moto pra correr atrás de um gato
+  // matilha: 3 caramelos dormindo na rua aos 100 m de grau; acordam quando a moto passa empinando,
+  // correm atrás e, se a empinada durar mais 100 m, largam a moto pra correr atrás de um gato
   const PACK_FUR = [['#d9a441', '#a8762a'], ['#c98b35', '#8f6324'], ['#e3b25a', '#b38535']];
   function stepPack(h) {
     const p = s.pack;
-    if (!p.spawned && gameMode === 'motoca' && s.mode === 'ride' && s.active && s.wDist >= 38) {
+    if (!p.spawned && CHAL() && s.mode === 'ride' && s.active && s.wDist >= p.at - 12 && s.wDist < p.at - 1) {
       p.spawned = true;
-      const base = s.wStart + 50;
+      const base = s.wStart + p.at;
       p.dogs = [0, 1.3, 2.7].map((o, i) => ({
         x: base + o, v: 0, state: 'sleep', t: 0, bark: 0.2 + i * 0.17, say: 0, leg: i * 2, dir: 1,
         gap: 0.8 + i * 0.75, Y: PACK_FUR[i][0], Yd: PACK_FUR[i][1], pitch: 0.85 + i * 0.15
@@ -1258,7 +1443,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (d.state === 'run' && d.x > s.x - d.gap) { d.x = s.x - d.gap; d.v = Math.min(d.v, s.v); }
       d.leg += Math.abs(d.v) * h * 5;
     }
-    if (!p.catDone && riding && s.wDist >= 100 && p.dogs.some(d => d.state === 'run')) {
+    if (!p.catDone && riding && s.wDist >= p.at + 100 && p.dogs.some(d => d.state === 'run')) {
       p.catDone = true; p.chasedOff = true;
       p.cat = { x: s.x - 3.6, v: -11, t: 0 };
       p.dogs.forEach(d => { if (d.state === 'run') { d.state = 'cat'; d.t = 0; } });
@@ -1271,22 +1456,23 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   }
   // volume do latido: some aos poucos conforme o cachorro fica longe da moto
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
-  // perseguição: viatura aos 150 m (fura o pneu aos 200 m), 3 motos da Rocam aos 250 m (vão atrás de uma CG aos 300 m),
-  // racha com o Uno aos 350 m (funde aos 500 m) e a Titan dos ladrões aos 600 m (a Rocam espanta aos 700 m)
-  // depois dos 700 m os desafios voltam em ciclo, um a cada 100 m (pipa, viatura, Rocam, Uno, ladrões)
-  const LOOP = ['kite', 'car', 'rocam', 'uno', 'thief'];
+  // perseguição: viatura aos 300 m (fura o pneu aos 400 m), 3 motos da Rocam aos 500 m (vão atrás de uma CG aos 600 m),
+  // racha com o Uno aos 700 m (funde aos 800 m) e a Titan dos ladrões aos 900 m (a Rocam espanta aos 1.000 m)
+  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, viatura, Rocam, Uno, ladrões)
+  const LOOP = ['pack', 'car', 'rocam', 'uno', 'thief'];
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
-    if (gameMode === 'motoca' && riding && s.wDist >= L.nextLoop) {
-      const kind = LOOP[L.loopI++ % LOOP.length], at = L.nextLoop;
-      L.nextLoop += 100;
-      if (kind === 'kite') { s.kite = null; s.kiteDone = false; L.at.kite = at + 20; }
+    if (CHAL() && riding && s.wDist >= L.nextLoop) {
+      // arma o próximo no começo da folga: ele aparece 100 m depois
+      const kind = LOOP[L.loopI++ % LOOP.length], at = L.nextLoop + 100;
+      L.nextLoop += 200;
+      if (kind === 'pack') { s.pack = { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at }; s.kite = null; s.kiteDone = false; L.at.kite = at - 60; }
       else if (kind === 'car') { L.car = null; L.carDone = false; L.at.car = at; }
       else if (kind === 'rocam') { L.bikes = []; L.cg = null; L.rocamDone = false; L.at.rocam = at; }
-      else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; L.dur.uno = 80; }
-      else { L.thief = null; L.thiefDone = false; L.at.thief = at; L.dur.thief = 80; }
+      else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; }
+      else { L.thief = null; L.thiefDone = false; L.at.thief = at; }
     }
-    if (gameMode === 'motoca' && riding) {
+    if (CHAL() && riding) {
       if (!L.car && !L.carDone && s.wDist >= L.at.car) L.car = { x: s.x - 14, v: s.v + 6, state: 'chase', t: 0, flat: 0 };
       if (!L.bikes.length && !L.rocamDone && s.wDist >= L.at.rocam) {
         L.bikes = [0, 1, 2].map(i => ({ x: s.x - 11 - i * 2.5, v: s.v + 5, gap: 2.2 + i * 1.7, lane: [0.22, 0.1, 0][i], state: 'chase', t: 0, phase: i * 0.5 }));
@@ -1337,7 +1523,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     L.bikes = L.bikes.filter(b => Math.abs(b.x - s.x) < 60);
 
     // Uno com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
-    if (gameMode === 'motoca' && riding && !L.uno && !L.unoDone && s.wDist >= L.at.uno) {
+    if (CHAL() && riding && !L.uno && !L.unoDone && s.wDist >= L.at.uno) {
       L.uno = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
       hornSound();
     }
@@ -1370,7 +1556,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     }
 
     // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Rocam e eles vazam
-    if (gameMode === 'motoca' && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
+    if (CHAL() && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
       L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
     }
     const th = L.thief;
@@ -1420,7 +1606,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   // pipa: linha de cerol cruzando a rua na altura do pescoço aos 20 m de grau; a moto passa e corta
   function stepKite(h) {
-    if (!s.kite && !s.kiteDone && gameMode === 'motoca' && s.mode === 'ride' && s.active && s.wDist >= s.law.at.kite - 12 && s.wDist < s.law.at.kite - 1) {
+    if (!s.kite && !s.kiteDone && CHAL() && s.mode === 'ride' && s.active && s.wDist >= s.law.at.kite - 12 && s.wDist < s.law.at.kite - 1) {
       const x = s.wStart + s.law.at.kite;
       s.kite = { x, cut: false, t: 0, kx: x + 5, ky: 4.2, kvx: 0, kvy: 0, rot: 0, up: null, lo: null };
     }
@@ -1567,9 +1753,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     C.font = `600 ${Math.max(11, S * 0.18)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
     C.textAlign = 'center';
     for (let m = Math.ceil((s.x - BX / S) / 10) * 10; sx(m) < W + 20; m += 10) {
-      if (m <= 0) continue;
+      const lab = gameMode === 'multi' ? ((m % LAP) + LAP) % LAP : m;
+      if (m <= 0 || lab === 0) continue;
       C.fillStyle = 'rgba(243, 239, 230, .18)'; C.fillRect(sx(m) - 1, yC + 0.05 * S, 2, 0.16 * S);
-      C.fillStyle = 'rgba(243, 239, 230, .32)'; C.fillText(m + ' m', sx(m), yC + 0.42 * S);
+      C.fillStyle = 'rgba(243, 239, 230, .32)'; C.fillText(lab + ' m', sx(m), yC + 0.42 * S);
     }
     // lombadinhas / remendos
     for (const b of s.bumps) {
@@ -1579,7 +1766,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       C.beginPath(); C.ellipse(x, yC, 0.22 * S, 0.06 * S, 0, Math.PI, 0); C.fill();
     }
 
-    drawGarageBack(sx, sy, yC, groundY, S, performance.now() / 1000);
+    // na sala a pastelaria aparece de novo a cada volta
+    const lk = lapK(), sxG = lk ? wx => sx(wx + lk * LAP) : sx;
+    drawGarageBack(sxG, sy, yC, groundY, S, performance.now() / 1000);
     drawDog(sx, sy, S, performance.now() / 1000);
     for (const d of s.pack.dogs) drawDog(sx, sy, S, performance.now() / 1000, d);
     drawRunCat(sx, sy, S, performance.now() / 1000);
@@ -1587,7 +1776,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     drawRocams(sx, sy, S, performance.now() / 1000);
     drawUno(sx, sy, S, performance.now() / 1000);
 
-    // bandeira do recorde
+    // bandeira do recorde (na sala é o melhor grau teu na sala)
     if (best > 0 && s.active && s.mode === 'ride') {
       const fx = sx(s.wStart + best);
       if (fx > -50 && fx < W + 50) {
@@ -1613,19 +1802,25 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     for (const p of s.sparks) { C.moveTo(sx(p.x), sy(p.y)); C.lineTo(sx(p.x - p.vx * 0.03), sy(p.y - p.vy * 0.03)); }
     C.stroke();
 
-    // sombra
-    C.fillStyle = 'rgba(0, 0, 0, .35)';
-    C.beginPath(); C.ellipse(BX + (L / 2) * Math.cos(s.th) * S, yC + 2, (0.5 + 0.4 * Math.cos(s.th)) * S, 0.07 * S, 0, 0, Math.PI * 2); C.fill();
-
-    drawBike(BX, yC - R * S, S);
-    drawGarageFront(sx, sy, S);
+    const dogMe = s.mode === 'dog';
+    if (dogMe) drawDog(sx, sy, S, performance.now() / 1000, s.pet);
+    else {
+      // sombra
+      C.fillStyle = 'rgba(0, 0, 0, .35)';
+      C.beginPath(); C.ellipse(BX + (L / 2) * Math.cos(s.th) * S, yC + 2, (0.5 + 0.4 * Math.cos(s.th)) * S, 0.07 * S, 0, 0, Math.PI * 2); C.fill();
+      drawBike(BX, yC - R * S, S);
+    }
+    // os parceiros da sala, cada um numa faixa um pouco mais pra baixo (mais perto da câmera)
+    drawRemotes(sx, S, yC);
+    drawGarageFront(sxG, sy, S);
     drawKite(sx, sy, S, performance.now() / 1000);
     drawCG(sx, sy, S, performance.now() / 1000);
     // em cima da cabeça do motoca (s.head vem do drawBike, no quadro da bike: eixo traseiro, x pra frente, y pra cima)
     const [hx, hy] = s.head || [0.3, 1.3], ca = Math.cos(s.th), sa = Math.sin(s.th);
     const ax = BX + (hx * ca - hy * sa) * S, ay = yC - R * S - (hx * sa + hy * ca) * S - 0.42 * S;
-    if (s.mode !== 'ready') drawAngle(ax, Math.max(ui.hud.offsetHeight + 34, ay));
-    drawInstr(BX + 1.75 * S, yC - 1.0 * S, S);
+    if (s.mode !== 'ready' && !dogMe) drawAngle(ax, Math.max(ui.hud.offsetHeight + 34, ay));
+    if (!dogMe) drawInstr(BX + 1.75 * S, yC - 1.0 * S, S);
+    drawRemoteTags(sx, S, yC);
     // o balão vem por último pra ficar por cima do velocímetro
     if (s.chapa > 0) drawChapa(ax + 0.55 * S, ay + 0.18 * S, Math.min(1, s.chapa / 0.25));
   }
@@ -2414,7 +2609,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     document.querySelectorAll('[data-i]').forEach(el => { if (!el.dataset.pt) el.dataset.pt = el.textContent; el.textContent = T(el.dataset.pt); });
     document.querySelectorAll('[data-ip]').forEach(el => { el.placeholder = T(el.dataset.ip); });
     ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
-    $('hudMode').textContent = T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
+    $('hudMode').textContent = modeLabel();
     const box = $('langs'); box.textContent = '';
     for (const [id, lab] of Object.entries(LANGS)) {
       const b = document.createElement('button'); b.type = 'button'; b.innerHTML = FLAG[id] + '<span>' + lab + '</span>';
@@ -2422,7 +2617,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       b.addEventListener('click', () => { LANG = id; try { localStorage.setItem('grau80-lang', id); } catch (e) {} applyLang(); });
       box.appendChild(b);
     }
-    renderGarage(); renderAchList(); renderBoard();
+    renderGarage(); renderAchList(); renderBoard(); mpHud();
   }
   applyLang();
 
@@ -2863,7 +3058,637 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     ui.dist.innerHTML = s.wDist.toFixed(1) + '<small>m</small>';
     ui.best.innerHTML = best.toFixed(1) + '<small>m</small>';
     ui.last.innerHTML = s.last ? s.last.toFixed(1) + '<small>m</small>' : '–';
+    mpUi();
   }
+
+  // ---------- multiplayer ----------
+  // Supabase Realtime: uma conexão só, com dois canais. O saguão junta todo mundo que está com o jogo aberto
+  // (quantos estão online + chat da tela inicial). A sala junta até 5 jogadores (presença, chat, sinal do WebRTC
+  // e posição de reserva). Posição e voz vão direto de celular pra celular por WebRTC; se a conexão direta
+  // não fechar (algumas redes de operadora bloqueiam), a posição passa pelo Supabase, mais devagar.
+  // Cada um joga no próprio celular: física, desafios e cachorros são locais; só a moto do parceiro vem pela rede.
+  const RT_URL = SB.url.replace('https://', 'wss://').replace('/rest/v1/placar', '/realtime/v1/websocket') + '?apikey=' + SB.key + '&vsn=1.0.0';
+  const myId = Math.random().toString(36).slice(2, 10).padEnd(8, '0') + Date.now().toString(36).slice(-3);
+  let guest = '';
+  try { guest = localStorage.getItem('grau80-convidado') || ''; } catch (e) {}
+  if (!guest) { guest = 'Motoca' + Math.floor(100 + Math.random() * 900); try { localStorage.setItem('grau80-convidado', guest); } catch (e) {} }
+  // tira caractere de controle e os invisíveis que embaralham texto
+  const clean = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f​-‏‪-‮⁦-⁩]/g, '').trim().slice(0, n);
+  const netName = () => clean(myName, 16) || guest;
+  const own = (o, k) => o != null && Object.prototype.hasOwnProperty.call(o, k);
+
+  // --- conexão (protocolo Phoenix do Realtime, sem biblioteca) ---
+  const rt = { ws: null, open: false, ref: 0, topics: {}, hb: 0, retry: 0 };
+  function rtConnect() {
+    if (rt.ws && rt.ws.readyState <= 1) return;
+    let ws;
+    try { ws = new WebSocket(RT_URL); } catch (e) { return; }
+    rt.ws = ws;
+    ws.onopen = () => {
+      rt.open = true; rt.retry = 0;
+      for (const t of Object.values(rt.topics)) rtJoin(t);
+      clearInterval(rt.hb); rt.hb = setInterval(() => rtSend('phoenix', 'heartbeat', {}), 25000);
+    };
+    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (_) { return; } const t = rt.topics[m.topic]; if (t) rtOnMsg(t, m); };
+    ws.onclose = () => {
+      rt.open = false; clearInterval(rt.hb);
+      for (const t of Object.values(rt.topics)) t.joined = false;
+      setTimeout(rtConnect, Math.min(20000, 1500 * 2 ** rt.retry++));
+    };
+    ws.onerror = () => {};
+  }
+  function rtSend(topic, event, payload, joinRef, ref) {
+    if (!rt.open || rt.ws.readyState !== 1) return false;
+    try { rt.ws.send(JSON.stringify({ topic, event, payload, ref: ref || String(++rt.ref), join_ref: joinRef })); return true; } catch (e) { return false; }
+  }
+  function rtChannel(name, h) {
+    const t = { topic: 'realtime:' + name, joined: false, joinRef: null, h, pres: {}, presence: {}, meta: null };
+    rt.topics[t.topic] = t;
+    if (rt.open) rtJoin(t); else rtConnect();
+    return t;
+  }
+  function rtJoin(t) {
+    t.joinRef = String(++rt.ref);
+    rtSend(t.topic, 'phx_join', { config: { broadcast: { self: false, ack: false }, presence: { key: myId }, private: false } }, t.joinRef, t.joinRef);
+  }
+  function rtLeave(t) { if (!t) return; rtSend(t.topic, 'phx_leave', {}, t.joinRef); if (rt.topics[t.topic] === t) delete rt.topics[t.topic]; }
+  function rtTrack(t, meta) { if (!t) return; t.meta = meta; if (t.joined) rtSend(t.topic, 'presence', { type: 'presence', event: 'track', payload: meta }, t.joinRef); }
+  function rtCast(t, event, payload) { return !!t && t.joined && rtSend(t.topic, 'broadcast', { type: 'broadcast', event, payload }, t.joinRef); }
+  function rtOnMsg(t, m) {
+    const p = m.payload || {};
+    if (m.event === 'phx_reply' && m.ref === t.joinRef) {
+      if (p.status === 'ok') { t.joined = true; t.pres = {}; t.presence = {}; if (t.h.onJoin) t.h.onJoin(); }
+      else setTimeout(() => { if (rt.topics[t.topic] === t) rtJoin(t); }, 3000);
+    } else if (m.event === 'presence_state' || m.event === 'presence_diff') {
+      if (m.event === 'presence_state') {
+        t.pres = {};
+        for (const [k, v] of Object.entries(p)) if (v && Array.isArray(v.metas) && v.metas.length) t.pres[k] = v.metas.slice();
+      } else {
+        for (const [k, v] of Object.entries(p.joins || {})) if (v && Array.isArray(v.metas)) t.pres[k] = (t.pres[k] || []).concat(v.metas);
+        for (const [k, v] of Object.entries(p.leaves || {})) {
+          if (!t.pres[k] || !v || !Array.isArray(v.metas)) continue;
+          const gone = new Set(v.metas.map(x => x.phx_ref));
+          t.pres[k] = t.pres[k].filter(x => !gone.has(x.phx_ref));
+          if (!t.pres[k].length) delete t.pres[k];
+        }
+      }
+      t.presence = {};
+      for (const [k, metas] of Object.entries(t.pres)) t.presence[k] = metas[metas.length - 1];
+      if (t.h.onPresence) t.h.onPresence(t.presence, m.event === 'presence_state');
+    } else if (m.event === 'broadcast') {
+      const f = own(t.h.ev, p.event) && t.h.ev[p.event];
+      if (f) { try { f(p.payload || {}); } catch (e) {} }
+    } else if (m.event === 'phx_error' || m.event === 'phx_close') {
+      t.joined = false;
+      setTimeout(() => { if (rt.topics[t.topic] === t && !t.joined) rtJoin(t); }, 3000);
+    }
+  }
+
+  // --- chat (texto curto, sem histórico: quem chega vê dali pra frente) ---
+  const floods = new Map();
+  let lastSend = 0;
+  function chatIn(box, m, mine) {
+    const nome = clean(m && m.nome, 16), txt = clean(m && m.txt, 140);
+    if (!nome || !txt) return null;
+    if (!mine) { // quem manda mensagem demais em pouco tempo é ignorado
+      const id = clean(m.id, 24) || nome, now = Date.now();
+      const ts = (floods.get(id) || []).filter(x => now - x < 8000);
+      if (ts.length >= 6) return null;
+      ts.push(now); floods.set(id, ts);
+    }
+    const d = document.createElement('div'); d.className = 'cl' + (mine ? ' me' : '');
+    const b = document.createElement('b'); b.textContent = nome + ':';
+    d.append(b, ' ' + txt);
+    box.appendChild(d);
+    while (box.children.length > 80) box.firstChild.remove();
+    box.scrollTop = box.scrollHeight;
+    return { nome, txt };
+  }
+  function chatSys(box, txt) {
+    const d = document.createElement('div'); d.className = 'cl sys'; d.textContent = txt;
+    box.appendChild(d); while (box.children.length > 80) box.firstChild.remove();
+    box.scrollTop = box.scrollHeight;
+  }
+  function chatOut(ch, box, input) {
+    const txt = clean(input.value, 140);
+    if (!txt) return null;
+    const now = Date.now();
+    if (now - lastSend < 900) return null;
+    const m = { id: myId, nome: netName(), txt };
+    if (!rtCast(ch, 'chat', m)) { chatSys(box, T('Sem conexão com o chat.')); return null; }
+    lastSend = now; input.value = '';
+    return chatIn(box, m, true);
+  }
+
+  // --- saguão: todo mundo online na tela inicial ---
+  const lobby = rtChannel('grau80-saguao', {
+    onJoin: () => rtTrack(lobby, { nome: netName() }),
+    onPresence: renderOnline,
+    ev: { chat: m => { if (chatIn($('lobbyLog'), m) && $('paneChat').hidden) $('tabChat').classList.add('new'); } }
+  });
+  function renderOnline() {
+    const names = Object.values(lobby.presence).map(x => clean(x && x.nome, 16) || '?');
+    $('onlineN').textContent = '· ' + names.length;
+    $('onlineList').textContent = names.length > 1 ? T('Online') + ' (' + names.length + '): ' + names.join(', ') : T('Só tu online agora.');
+    $('onlineList').title = names.join(', ');
+  }
+  function showTab(chat) {
+    $('tabBoard').setAttribute('aria-selected', String(!chat));
+    $('tabChat').setAttribute('aria-selected', String(chat));
+    $('paneBoard').hidden = chat; $('paneChat').hidden = !chat;
+    if (chat) { $('tabChat').classList.remove('new'); $('lobbyLog').scrollTop = $('lobbyLog').scrollHeight; }
+  }
+  $('tabBoard').addEventListener('click', () => showTab(false));
+  $('tabChat').addEventListener('click', () => showTab(true));
+  $('lobbyForm').addEventListener('submit', e => { e.preventDefault(); chatOut(lobby, $('lobbyLog'), $('lobbyIn')); });
+  renderOnline();
+
+  // --- nome (o mesmo do placar global) ---
+  function setName(v) {
+    const n = clean(v, 16);
+    if (n === myName) return;
+    myName = n;
+    try { localStorage.setItem('grau80-nome', n); } catch (e) {}
+    if (!$('gName').disabled) $('gName').value = n;
+    rtTrack(lobby, { nome: netName() });
+    if (room.ch) rtTrack(room.ch, roomMeta());
+    renderRoom();
+  }
+  $('mpName').addEventListener('change', e => setName(e.target.value));
+  $('mpName').placeholder = guest;
+
+  // --- sala ---
+  const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem 0/O e 1/I pra não confundir
+  const newCode = () => Array.from({ length: 4 }, () => CODE_ABC[Math.floor(Math.random() * CODE_ABC.length)]).join('');
+  const roomMeta = () => ({ nome: netName(), at: room.at, look: { ...pick } });
+  const joinOrder = () => Object.keys(room.members).sort((a, b) => room.members[a].at - room.members[b].at || (a < b ? -1 : 1));
+  // eu fico na faixa de sempre; os parceiros, na ordem em que entraram, cada um uma faixa mais pra baixo
+  const laneIds = () => joinOrder().filter(id => id !== myId);
+
+  function enterRoom(code, creating) {
+    leaveRoom(true);
+    room.code = code; room.best = 0; room.at = Date.now(); room.phase = creating ? 'create' : 'join';
+    room.members = {}; room.tries = {};
+    $('mpMsg').textContent = T('Conectando…');
+    $('roomLog').textContent = '';
+    const ch = room.ch = rtChannel('grau80-sala-' + code, {
+      onJoin: () => rtTrack(ch, roomMeta()),
+      onPresence: (p, isState) => { if (room.ch === ch) onRoomPresence(p, isState); },
+      ev: {
+        chat: m => { const r = chatIn($('roomLog'), m); if (r) feed(r.nome, r.txt); },
+        pos: m => onPos(m, null),
+        sig: m => { onSig(m).catch(() => {}); },
+        // alguém apertou Bora: quem está na tela inicial ou já caiu entra na rodada junto
+        go: () => { if (!room.phase && (s.mode === 'ready' || (gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over')))) begin('multi'); }
+      }
+    });
+    clearTimeout(room.timer);
+    room.timer = setTimeout(() => {
+      if (room.ch === ch && room.phase) { leaveRoom(); $('mpMsg').textContent = T('Sem conexão com o chat.'); }
+    }, 12000);
+    mpHud();
+  }
+  function onRoomPresence(p, isState) {
+    if (room.phase) {
+      if (!isState) return; // a primeira lista completa decide se dá pra ficar
+      const others = Object.keys(p).filter(id => id !== myId);
+      if (room.phase === 'create' && others.length) return enterRoom(newCode(), true); // código já em uso: sorteia outro
+      if (room.phase === 'join' && !others.length) { leaveRoom(); $('mpMsg').textContent = T('Sala não encontrada. Confere o código.'); return; }
+      const ids = others.concat(myId).sort((a, b) => ((a === myId ? room.at : +(p[a] && p[a].at) || 0) - (b === myId ? room.at : +(p[b] && p[b].at) || 0)) || (a < b ? -1 : 1));
+      if (ids.indexOf(myId) >= 5) { leaveRoom(); $('mpMsg').textContent = T('Sala cheia (máximo 5).'); return; }
+      room.phase = ''; clearTimeout(room.timer);
+      $('mpMsg').textContent = '';
+      chatSys($('roomLog'), T('Tu entrou na sala') + ' ' + room.code);
+      showRoom();
+    }
+    const prev = room.members, had = Object.keys(prev).length > 0;
+    room.members = {};
+    for (const [id, m] of Object.entries(p)) room.members[id] = { nome: clean(m && m.nome, 16) || '?', at: +(m && m.at) || 0, look: (m && typeof m.look === 'object' && m.look) || {} };
+    room.members[myId] = { nome: netName(), at: room.at, look: pick };
+    for (const id of Object.keys(room.members)) if (id !== myId && !prev[id] && had) { chatSys($('roomLog'), room.members[id].nome + ' ' + T('entrou na sala')); feed('', room.members[id].nome + ' ' + T('entrou na sala')); }
+    for (const id of Object.keys(prev)) if (!room.members[id]) {
+      if (id !== myId) { chatSys($('roomLog'), prev[id].nome + ' ' + T('saiu da sala')); feed('', prev[id].nome + ' ' + T('saiu da sala')); }
+      remotes.delete(id); dropPeer(id);
+    }
+    for (const id of Object.keys(room.members)) if (id !== myId && myId < id && !room.peers[id]) makePeer(id, true);
+    renderRoom(); mpHud();
+  }
+  function leaveRoom(silent) {
+    const wasIn = !!room.code;
+    if (room.ch) rtLeave(room.ch);
+    for (const id of Object.keys(room.peers)) dropPeer(id);
+    room.ch = null; room.code = ''; room.phase = ''; room.members = {}; remotes.clear(); clearTimeout(room.timer);
+    if (micOn) toggleMic();
+    if (silent || !wasIn) return mpHud();
+    showMenu();
+    if (gameMode === 'multi') { if (s.mode !== 'ready') toStart(); gameMode = 'livre'; openMp(); }
+    mpHud();
+  }
+
+  // --- WebRTC: uma conexão por par (o de id menor chama), canal de dados pra posição e áudio pra voz ---
+  const ICE = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+  function makePeer(id, offer) {
+    if (!window.RTCPeerConnection) return null;
+    let pc;
+    try { pc = new RTCPeerConnection({ iceServers: ICE }); } catch (e) { return null; }
+    const P = room.peers[id] = { pc, dc: null, tx: null, audio: null, inQ: [], outQ: [], sent: !offer, timer: 0 };
+    pc.onicecandidate = e => {
+      if (!e.candidate) return;
+      const c = e.candidate.toJSON ? e.candidate.toJSON() : e.candidate;
+      if (P.sent) rtCast(room.ch, 'sig', { to: id, from: myId, ice: c }); else P.outQ.push(c);
+    };
+    pc.ontrack = e => {
+      if (!P.audio) { P.audio = new Audio(); P.audio.autoplay = true; P.audio.setAttribute('playsinline', ''); }
+      P.audio.srcObject = (e.streams && e.streams[0]) || new MediaStream([e.track]);
+      P.audio.play().catch(() => {});
+    };
+    pc.ondatachannel = e => setupDc(id, e.channel);
+    pc.onconnectionstatechange = () => { if (pc.connectionState === 'failed') retryPeer(id, P); };
+    if (offer) {
+      P.tx = pc.addTransceiver('audio', { direction: 'sendrecv' });
+      if (micTrack) P.tx.sender.replaceTrack(micTrack).catch(() => {});
+      setupDc(id, pc.createDataChannel('pos', { ordered: false, maxRetransmits: 0 }));
+      pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => {
+        rtCast(room.ch, 'sig', { to: id, from: myId, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
+        P.sent = true; for (const c of P.outQ) rtCast(room.ch, 'sig', { to: id, from: myId, ice: c }); P.outQ = [];
+      }).catch(() => {});
+      // não fechou em 15 s: tenta de novo (até 3 vezes); enquanto isso a posição vai pelo Supabase
+      P.timer = setTimeout(() => { if (room.peers[id] === P && pc.connectionState !== 'connected') retryPeer(id, P); }, 15000);
+    }
+    return P;
+  }
+  function retryPeer(id, P) {
+    if (room.peers[id] !== P) return;
+    dropPeer(id);
+    room.tries[id] = (room.tries[id] || 0) + 1;
+    if (myId < id && room.members[id] && room.tries[id] < 3) setTimeout(() => { if (room.members[id] && !room.peers[id]) makePeer(id, true); }, 2000);
+  }
+  function dropPeer(id) {
+    const P = room.peers[id];
+    if (!P) return;
+    clearTimeout(P.timer);
+    try { P.pc.close(); } catch (e) {}
+    if (P.audio) { P.audio.pause(); P.audio.srcObject = null; }
+    delete room.peers[id];
+  }
+  function setupDc(id, dc) {
+    const P = room.peers[id];
+    if (!P) return;
+    P.dc = dc;
+    dc.onmessage = e => { if (typeof e.data === 'string' && e.data.length < 600) { try { onPos(JSON.parse(e.data), id); } catch (_) {} } };
+  }
+  async function onSig(m) {
+    if (!m || m.to !== myId || typeof m.from !== 'string' || m.from === myId || m.from.length > 24) return;
+    const from = m.from;
+    let P = room.peers[from];
+    if (m.sdp && (m.sdp.type === 'offer' || m.sdp.type === 'answer') && typeof m.sdp.sdp === 'string') {
+      if (m.sdp.type === 'offer') {
+        if (from > myId) return; // quem chama é sempre o de id menor
+        if (P) dropPeer(from);
+        P = makePeer(from, false);
+        if (!P) return;
+        await P.pc.setRemoteDescription({ type: 'offer', sdp: m.sdp.sdp });
+        P.tx = P.pc.getTransceivers().find(x => x.receiver && x.receiver.track && x.receiver.track.kind === 'audio') || null;
+        if (P.tx) { try { P.tx.direction = 'sendrecv'; } catch (e) {} if (micTrack) await P.tx.sender.replaceTrack(micTrack).catch(() => {}); }
+        const a = await P.pc.createAnswer();
+        await P.pc.setLocalDescription(a);
+        rtCast(room.ch, 'sig', { to: from, from: myId, sdp: { type: P.pc.localDescription.type, sdp: P.pc.localDescription.sdp } });
+      } else if (P && P.pc.signalingState === 'have-local-offer') {
+        await P.pc.setRemoteDescription({ type: 'answer', sdp: m.sdp.sdp });
+      }
+      if (P) { for (const c of P.inQ) P.pc.addIceCandidate(c).catch(() => {}); P.inQ = []; }
+    } else if (m.ice && typeof m.ice === 'object' && P) {
+      if (!P.pc.remoteDescription) P.inQ.push(m.ice);
+      else P.pc.addIceCandidate(m.ice).catch(() => {});
+    }
+  }
+
+  // --- voz: microfone ligado/desligado (troca a trilha sem renegociar) ---
+  async function toggleMic() {
+    if (micOn) {
+      micOn = false;
+      if (micTrack) micTrack.stop();
+      micTrack = null;
+      for (const P of Object.values(room.peers)) if (P.tx) P.tx.sender.replaceTrack(null).catch(() => {});
+      return mpHud();
+    }
+    if (!room.code || room.phase) return;
+    try {
+      const st = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+      if (!room.code) { st.getTracks().forEach(x => x.stop()); return; }
+      micTrack = st.getAudioTracks()[0]; micOn = true;
+      for (const P of Object.values(room.peers)) if (P.tx) P.tx.sender.replaceTrack(micTrack).catch(() => {});
+    } catch (e) {
+      $('mpRoomMsg').textContent = T('Sem acesso ao microfone.');
+      flash(T('Sem acesso ao microfone.'));
+    }
+    mpHud();
+  }
+
+  // --- posição dos parceiros ---
+  function onPos(m, from) {
+    if (!m || typeof m !== 'object') return;
+    const id = from || clean(m.id, 24);
+    if (!id || id === myId || !room.members[id]) return;
+    let r = remotes.get(id);
+    if (!r) { r = { x: 0, v: 0, th: 0, wheel: 0, leg: 0, q: -1, say: 0, fl: 0, tx: null }; remotes.set(id, r); }
+    const q = +m.q || 0;
+    if (q <= r.q) return; // repetido ou atrasado (a mesma posição pode chegar pelos dois caminhos)
+    const num = (v, lo, hi) => Math.min(hi, Math.max(lo, +v || 0));
+    const first = r.tx == null;
+    r.q = q; r.tx = num(m.x, -50, 1e6); r.tv = num(m.v, -40, 40); r.tth = num(m.th, 0, 2);
+    r.st = num(m.st, 0, 1); r.pl = num(m.pl, 0, 1); if (m.fl) r.fl = 0.06;
+    r.m = ['ride', 'over', 'dog', 'menu'].includes(m.m) ? m.m : 'menu';
+    r.b = num(m.b, 0, 1e5); r.c = num(m.c, 0, 1e5); r.mic = !!m.mic;
+    if (m.k && r.m === 'dog') { r.say = 0.28; barkSound(0.9, earshot(near(r.tx))); }
+    if (first || r.m !== r.lastM || Math.abs(r.x - r.tx) > 12) { r.x = r.tx; r.th = r.tth; } // começou rodada nova ou atrasou muito: pula direto
+    r.lastM = r.m; r.rt = performance.now();
+  }
+  function stepRemotes(dt) {
+    if (!remotes.size) return;
+    const now = performance.now();
+    for (const [id, r] of remotes) {
+      if (!room.members[id]) { remotes.delete(id); continue; }
+      if (r.tx == null) continue;
+      // anda pra frente com a última velocidade enquanto o próximo pacote não chega (no máximo meio segundo)
+      const age = Math.min(0.5, (now - r.rt) / 1000);
+      const px = r.tx + r.tv * age, ox = r.x;
+      r.x += (px - r.x) * Math.min(1, dt * 10);
+      r.v = r.tv;
+      r.th += (r.tth - r.th) * Math.min(1, dt * 14);
+      const dx = r.x - ox;
+      r.wheel += Math.max(0, dx) / R; r.leg += Math.abs(dx) * 5;
+      r.say = Math.max(0, r.say - dt); r.fl = Math.max(0, r.fl - dt);
+      r.stale = now - r.rt > 6000;
+    }
+  }
+  const showRemote = r => r && r.tx != null && r.m !== 'menu' && !r.stale;
+  // monta o visual do parceiro (só aceita opções que existem no jogo)
+  function lookOf(lk) {
+    const o = k => (own(lk, k) && own(LOOKS[k].opts, lk[k]) ? LOOKS[k].opts[lk[k]] : Object.values(LOOKS[k].opts)[0]);
+    HELMET = o('helmet'); JERSEY = o('jersey'); SHORTS = o('shorts').c; BAG = o('bag');
+    MODEL = own(lk, 'model') && own(LOOKS.model.opts, lk.model) ? lk.model : 'caicara';
+    FRAME = MODEL === 'bruno' ? LOOKS.model.opts.bruno.c : o('frame').c;
+  }
+  const LANE = 0.3; // quanto cada faixa desce, em metros de tela
+  const REMOTE_FUR = ['#c98b35', '#8f6324'];
+  function drawRemotes(sx, S, yC) {
+    if (!remotes.size) return;
+    const t = performance.now() / 1000;
+    laneIds().forEach((id, i) => {
+      const r = remotes.get(id);
+      if (!showRemote(r)) return;
+      const rx = near(r.x), gy = yC + (i + 1) * LANE * S, x = sx(rx);
+      if (x < -2.5 * S || x > W + 2.5 * S) return;
+      if (r.m === 'dog') {
+        if (Math.abs(r.v) > 0.3) r.dir = r.v < 0 ? -1 : 1;
+        drawDog(sx, wy => gy - wy * S, S, t, { x: rx, v: Math.abs(r.v), dir: r.dir || 1, state: Math.abs(r.v) > 0.6 ? 'run' : 'rest', leg: r.leg, say: r.say, Y: REMOTE_FUR[0], Yd: REMOTE_FUR[1] });
+        return;
+      }
+      C.fillStyle = 'rgba(0, 0, 0, .35)';
+      C.beginPath(); C.ellipse(x + (L / 2) * Math.cos(r.th) * S, gy + 2, (0.5 + 0.4 * Math.cos(r.th)) * S, 0.07 * S, 0, 0, Math.PI * 2); C.fill();
+      // o drawBike desenha a partir do estado e do visual globais: troca pelos do parceiro e devolve
+      const keep = s, look = [HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL];
+      s = { th: r.th, stand: r.st, pull: r.pl, flame: r.fl, wheel: r.wheel, head: null };
+      try { lookOf(room.members[id].look); drawBike(x, gy - R * S, S); r.head = s.head; }
+      finally { s = keep; [HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL] = look; }
+    });
+  }
+  // nome em cima de cada parceiro; quem está fora da tela vira uma seta na borda com a distância
+  function drawRemoteTags(sx, S, yC) {
+    if (!remotes.size) return;
+    C.save();
+    C.textBaseline = 'alphabetic';
+    C.font = `700 ${Math.max(12, Math.round(0.2 * S))}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+    laneIds().forEach((id, i) => {
+      const r = remotes.get(id), mem = room.members[id];
+      if (!mem || !showRemote(r)) return;
+      const rx = near(r.x), gy = yC + (i + 1) * LANE * S, x = sx(rx), dog = r.m === 'dog';
+      const nome = mem.nome + (r.mic ? ' 🎤' : '');
+      if (x > W - 24 || x < 24) {
+        const right = x > W - 24, d = Math.abs(Math.round(rx - s.x));
+        const txt = right ? `${nome} · ${d} m ›` : `‹ ${nome} · ${d} m`;
+        const w = C.measureText(txt).width + 14, bx = right ? W - 10 - w : 10, by = gy - 1.1 * S;
+        C.fillStyle = 'rgba(8, 18, 24, .78)'; rrectS(bx, by - 17, w, 23, 4); C.fill();
+        C.textAlign = 'left'; C.fillStyle = dog ? '#c9d3d8' : '#ffb547';
+        C.fillText(txt, bx + 7, by);
+        return;
+      }
+      let tx = x + 0.3 * S, ty = gy - 0.85 * S;
+      if (!dog && r.head) {
+        const [hx, hy] = r.head, ca = Math.cos(r.th), sa = Math.sin(r.th);
+        tx = x + (hx * ca - hy * sa) * S; ty = gy - R * S - (hx * sa + hy * ca) * S - 0.32 * S;
+      }
+      C.textAlign = 'center';
+      C.fillStyle = 'rgba(0, 0, 0, .65)'; C.fillText(nome, tx + 1, ty + 1);
+      C.fillStyle = dog ? '#c9d3d8' : '#ffb547'; C.fillText(nome, tx, ty);
+    });
+    C.restore();
+  }
+
+  // --- rodada: quem vira pra trás vira caramelo e corre atrás de quem ainda está empinando ---
+  function mpDie() { s.mode = 'over'; s.reason = 'flip'; s.dieT = 0; recordWheelie(); }
+  function mpRecord(d) {
+    const top = Math.max(0, ...[...remotes.values()].map(r => r.b || 0));
+    const rec = d > room.best + 0.05;
+    if (rec) { room.best = best = d; s.newRecord = true; }
+    if (rec && remotes.size && d > top + 0.05) setTimeout(() => flash('Tomou a liderança! ' + d.toFixed(1) + ' m'), 1400);
+    return { d, rec };
+  }
+  function becomeDog() {
+    s.mode = 'dog';
+    s.pet = { x: s.x - 0.4, v: Math.min(s.v, 6), state: 'run', t: 0, leg: 0, say: 0, bark: 0.8, Y: '#e3b25a', Yd: '#b38535' };
+    s.th = 0; s.om = 0; s.thr = 0; s.active = false; s.flame = 0;
+    flash('Virou caramelo! Corre atrás da galera');
+  }
+  function leaderAlive() {
+    let lead = null;
+    // na volta, "na frente" é contado a partir de onde eu estou
+    for (const [id, r] of remotes) {
+      if (!room.members[id] || !showRemote(r) || r.m !== 'ride') continue;
+      const x = near(r.x);
+      if (!lead || x > lead.x) lead = { x, v: r.v };
+    }
+    return lead;
+  }
+  function stepPet(h) {
+    const d = s.pet, lead = leaderAlive();
+    d.t += h; d.say = Math.max(0, d.say - h);
+    // corre até ficar um pouco atrás da moto de quem está na frente (se ela ficou pra trás, volta correndo)
+    const want = lead ? Math.max(-14, Math.min(34, lead.v + (lead.x - 1.6 - d.x) * 1.8)) : 0;
+    d.v += (want - d.v) * Math.min(1, h * 3);
+    d.x += d.v * h; d.leg += Math.abs(d.v) * h * 5;
+    if (Math.abs(d.v) > 0.3) d.dir = d.v < 0 ? -1 : 1;
+    d.state = Math.abs(d.v) > 0.6 ? 'run' : lead ? 'stop' : 'rest';
+    if (d.state === 'run' && lead && Math.abs(lead.x - d.x) < 8 && d.v > 0) {
+      d.bark -= h;
+      if (d.bark <= 0) { d.bark = 0.5 + Math.random() * 0.7; d.say = 0.28; barkSound(1.1, 1); s.barked = true; }
+    }
+    s.x = d.x; s.v = d.v; s.thr = 0;
+    s.rpm += (IDLE - s.rpm) * Math.min(1, h * 3); s.cut = 0; s.scrape = 0;
+  }
+  // re-arma os desafios a cada empinada nova na sala (lá a volta não acaba quando a frente encosta)
+  function rearm() {
+    const L = s.law, F = fresh();
+    for (const k of ['car', 'bikes', 'cg', 'uno', 'thief']) F.law[k] = L[k];
+    s.law = F.law;
+    s.pack = { ...F.pack, dogs: s.pack.dogs.filter(d => d.state !== 'sleep'), cat: s.pack.cat };
+    if (!s.kite) s.kiteDone = false;
+  }
+
+  // envia a própria posição (15x por segundo direto, 5x pelo Supabase se faltar conexão direta com alguém)
+  // e confere se todo mundo já caiu pra começar a próxima rodada
+  function mpTick(dt) {
+    if (!room.code || room.phase) return;
+    const inGame = gameMode === 'multi' && ui.start.hidden;
+    const m = !inGame ? 'menu' : s.mode === 'dog' ? 'dog' : s.mode === 'over' ? 'over' : s.mode === 'ride' ? 'ride' : 'menu';
+    if (inGame && (m === 'dog' || m === 'over')) {
+      const alive = [...remotes.entries()].some(([id, r]) => room.members[id] && showRemote(r) && r.m === 'ride');
+      if (alive) mpRound = 0;
+      else {
+        const before = Math.ceil(3 - mpRound);
+        mpRound += dt;
+        const now = Math.ceil(3 - mpRound);
+        if (mpRound >= 3) { mpRound = 0; begin('multi'); return; }
+        if (now !== before) flash(T('Nova rodada em') + ' ' + now);
+      }
+    } else mpRound = 0;
+    // passou de novo na frente da pastelaria
+    if (inGame && s.mode === 'ride') {
+      const lap = Math.floor((s.x - 1) / LAP);
+      if (lap > (s.lapN || 0)) { s.lapN = lap; flash('Passou no Agenor · volta ' + (lap + 1)); }
+    }
+
+    room.sendAcc += dt; room.castAcc += dt;
+    const fast = m !== 'menu';
+    if (room.sendAcc < (fast ? 1 / 15 : 1)) return;
+    room.sendAcc = 0;
+    const pkt = { id: myId, q: ++room.q, m, x: +s.x.toFixed(2), v: +s.v.toFixed(2), th: +s.th.toFixed(3), st: +s.stand.toFixed(2), pl: +s.pull.toFixed(2),
+      fl: s.flame > 0 ? 1 : 0, b: +room.best.toFixed(1), c: s.active ? +s.wDist.toFixed(1) : 0, mic: micOn ? 1 : 0, k: s.barked ? 1 : 0 };
+    s.barked = false;
+    const str = JSON.stringify(pkt);
+    let need = false;
+    for (const id of Object.keys(room.members)) {
+      if (id === myId) continue;
+      const P = room.peers[id];
+      if (P && P.dc && P.dc.readyState === 'open') { try { P.dc.send(str); } catch (e) { need = true; } }
+      else need = true;
+    }
+    if (need && room.castAcc >= (fast ? 0.2 : 1)) { room.castAcc = 0; rtCast(room.ch, 'pos', pkt); }
+  }
+
+  // --- telas da sala ---
+  function openMp() { $('mpModal').hidden = false; room.code && !room.phase ? showRoom() : showMenu(); }
+  function closeMp() { $('mpModal').hidden = true; }
+  function showMenu() {
+    $('mpMenu').hidden = false; $('mpRoom').hidden = true;
+    $('mpName').value = myName;
+    setTimeout(() => (myName ? $('mpCreate') : $('mpName')).focus(), 0);
+  }
+  function showRoom() {
+    $('mpMenu').hidden = true; $('mpRoom').hidden = false;
+    $('mpCodeBig').textContent = room.code; $('mpRoomMsg').textContent = '';
+    renderRoom();
+    setTimeout(() => $('mpGo').focus(), 0);
+  }
+  function rows() {
+    const out = [{ id: myId, nome: netName(), b: room.best, c: s.active && gameMode === 'multi' ? s.wDist : 0, me: true, mic: micOn,
+      dead: gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over'), off: !(gameMode === 'multi' && ui.start.hidden) }];
+    for (const id of joinOrder()) {
+      if (id === myId) continue;
+      const r = remotes.get(id) || {}, mem = room.members[id];
+      out.push({ id, nome: mem.nome, b: r.b || 0, c: r.m === 'ride' ? r.c || 0 : 0, mic: !!r.mic, dead: r.m === 'dog' || r.m === 'over', off: !r.m || r.m === 'menu' });
+    }
+    return out.sort((a, b) => b.b - a.b);
+  }
+  function renderRoom() {
+    if ($('mpRoom').hidden || !room.code) return;
+    const ol = $('mpList'); ol.textContent = '';
+    for (const x of rows()) {
+      const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
+      b.textContent = x.nome + (x.mic ? ' 🎤' : '') + (x.me ? ' (' + T('tu') + ')' : '');
+      sp.textContent = x.b.toFixed(1) + ' m';
+      if (x.me) li.classList.add('me');
+      li.append(b, sp); ol.appendChild(li);
+    }
+  }
+  // placar da sala no canto, durante o jogo
+  function renderMpBoard() {
+    $('mpBoardTitle').textContent = T('Sala') + ' ' + room.code;
+    const ol = $('mpBoardList'); ol.textContent = '';
+    rows().forEach((x, i) => {
+      const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
+      b.textContent = x.nome + (x.mic ? ' 🎤' : '');
+      sp.textContent = x.b.toFixed(1) + ' m';
+      if (i === 0 && x.b > 0) li.classList.add('king');
+      if (x.me) li.classList.add('me');
+      if (x.dead) li.classList.add('dead');
+      li.append(b, sp);
+      if (x.c >= 1) { const sm = document.createElement('small'); sm.textContent = T('agora') + ' ' + x.c.toFixed(0) + ' m'; li.appendChild(sm); }
+      else if (x.off && !x.me) { const sm = document.createElement('small'); sm.textContent = T('na tela inicial'); li.appendChild(sm); }
+      ol.appendChild(li);
+    });
+  }
+  let mpUiT = 0;
+  function mpUi() { // chamado pelo HUD; atualiza as listas 4x por segundo
+    if (!room.code) return;
+    const now = performance.now();
+    if (now - mpUiT < 250) return;
+    mpUiT = now;
+    if (!$('mpSide').hidden) renderMpBoard();
+    if (!$('mpModal').hidden) renderRoom();
+  }
+  function mpHud() {
+    const on = gameMode === 'multi' && !!room.code && ui.start.hidden;
+    $('mpSide').hidden = !on; $('chatBtn').hidden = !on; $('micBtn').hidden = !on;
+    if (!on) $('mpChat').hidden = true;
+    const ml = 'Mic: ' + (micOn ? 'on' : 'off');
+    $('micBtn').textContent = ml; $('mpMic').textContent = ml;
+    $('micBtn').classList.toggle('on', micOn); $('mpMic').classList.toggle('on', micOn);
+    $('goMulti').textContent = room.code && !room.phase ? T('Sala') + ' ' + room.code : T('Multiplayer');
+    $('hudMode').textContent = modeLabel();
+  }
+  // mensagens da sala aparecendo por cima do jogo e sumindo sozinhas
+  function feed(nome, txt) {
+    const box = $('mpFeed'), d = document.createElement('div');
+    if (nome) { const b = document.createElement('b'); b.textContent = nome + ':'; d.append(b, ' ' + txt); } else d.textContent = txt;
+    box.appendChild(d);
+    while (box.children.length > 4) box.firstChild.remove();
+    setTimeout(() => d.classList.add('old'), 7000);
+    setTimeout(() => d.remove(), 7700);
+  }
+  function openChat() { $('mpChat').hidden = false; $('mpChatIn').focus(); }
+  function closeChat() { $('mpChat').hidden = true; $('mpChatIn').blur(); cv.focus?.(); }
+
+  $('goMulti').addEventListener('click', openMp);
+  $('mpClose').addEventListener('click', closeMp);
+  $('mpModal').addEventListener('click', e => { if (e.target === $('mpModal')) closeMp(); });
+  $('mpCreate').addEventListener('click', () => { setName($('mpName').value); enterRoom(newCode(), true); });
+  $('mpJoinForm').addEventListener('submit', e => {
+    e.preventDefault();
+    setName($('mpName').value);
+    const code = clean($('mpCode').value, 8).toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length !== 4) { $('mpMsg').textContent = T('O código tem 4 letras.'); $('mpCode').focus(); return; }
+    enterRoom(code, false);
+  });
+  $('mpCode').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4); });
+  $('mpCodeBig').addEventListener('click', async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(room.code); ok = true; } catch (e) {}
+    $('mpRoomMsg').textContent = ok ? T('Código copiado!') : room.code;
+  });
+  $('mpGo').addEventListener('click', () => { if (!room.code || room.phase) return; rtCast(room.ch, 'go', {}); begin('multi'); });
+  $('mpMic').addEventListener('click', toggleMic);
+  $('micBtn').addEventListener('click', toggleMic);
+  $('mpLeave').addEventListener('click', () => leaveRoom());
+  $('roomForm').addEventListener('submit', e => { e.preventDefault(); chatOut(room.ch, $('roomLog'), $('roomIn')); });
+  $('chatBtn').addEventListener('click', () => ($('mpChat').hidden ? openChat() : closeChat()));
+  $('mpChat').addEventListener('submit', e => { e.preventDefault(); const r = chatOut(room.ch, $('roomLog'), $('mpChatIn')); if (r) { feed(r.nome, r.txt); closeChat(); } });
+  $('mpChatX').addEventListener('click', closeChat);
+  $('mpChatIn').addEventListener('keydown', e => { if (e.code === 'Escape') { e.preventDefault(); closeChat(); } });
+  // fechou o jogo: avisa a sala na hora em vez de esperar a conexão cair
+  addEventListener('pagehide', () => { if (room.ch) rtLeave(room.ch); });
+  mpHud();
 
   // ---------- loop ----------
   const H_STEP = 1 / 120;
@@ -2874,6 +3699,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (paused) acc = 0;
     else { acc += dt; while (acc >= H_STEP) { step(H_STEP); acc -= H_STEP; } }
     if (W !== cv.clientWidth || H !== cv.clientHeight) resize();
+    stepRemotes(dt); mpTick(dt);
     render(); updateHud(); updateAudio();
     requestAnimationFrame(frame);
   }
