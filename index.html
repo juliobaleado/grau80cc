@@ -152,8 +152,22 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .ptxt.gas { text-align: right; }
 .ptxt.gas.held { color: var(--sodium); }
 .ptxt.brake.held { color: var(--danger); }
-.pbtn.pull { width: 76px; height: 76px; font-size: 14px; border-color: var(--ok); }
+.pbtn.pull { width: calc(76px * var(--k, 1)); height: calc(76px * var(--k, 1)); font-size: 14px; border-color: var(--ok); }
 .pbtn.pull.held { background: var(--ok); border-color: var(--ok); }
+/* controles configuráveis: lado invertido, acelerar/frear em botões, Puxa no meio */
+.pad-r { display: flex; gap: 18px; align-items: flex-end; }
+.pad.flip, .pad.flip .pad-l, .pad.flip .pad-r { flex-direction: row-reverse; }
+.pad.flip .ptxt.gas { text-align: left; }
+.pad.flip .ptxt.brake { text-align: right; }
+.pad.btns .ptxt { --bs: calc(110px * var(--k, 1)); pointer-events: auto; touch-action: none; cursor: pointer; width: var(--bs); height: var(--bs); border-radius: 50%;
+  display: grid; place-items: center; text-align: center; padding: 0; font-size: calc(var(--bs) * .15); letter-spacing: .08em; color: var(--ink);
+  background: rgba(11, 26, 34, .55); border: 2px solid rgba(243, 239, 230, .35); }
+.pad.btns .ptxt kbd { display: none; }
+.pad.btns .ptxt.gas { border-color: var(--sodium); }
+.pad.btns .ptxt.gas.held { background: var(--sodium); color: var(--night); }
+.pad.btns .ptxt.brake { border-color: var(--danger); }
+.pad.btns .ptxt.brake.held { background: var(--danger); color: var(--night); }
+.pad.pmid .pull { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); }
 
 .toast { position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); font: 700 22px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium); opacity: 0; transition: opacity .3s; pointer-events: none; text-align: center; white-space: nowrap; }
 .toast.show { opacity: 1; }
@@ -319,7 +333,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   .value.big { font-size: 48px; }
   .hud-btns { flex-direction: column; align-items: flex-end; gap: 6px; }
   .mute { padding: 4px 8px; font-size: 12px; }
-  .pbtn.pull { width: 58px; height: 58px; font-size: 12px; }
+  .pbtn.pull { width: calc(58px * var(--k, 1)); height: calc(58px * var(--k, 1)); font-size: 12px; }
+  .pad.btns .ptxt { --bs: calc(84px * var(--k, 1)); }
   .pbtn.pull kbd { display: none; }
 }
 @media (max-width: 520px) {
@@ -459,6 +474,43 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .mpchat .go { font-size: 16px; padding: 4px 12px 6px; }
 .mute.on { color: var(--night); background: var(--ok); border-color: var(--ok); }
 .tabs button.new::after { content: " •"; color: var(--ok); }
+/* painel de controles */
+.pixm-card.ctlcard { width: min(100%, 470px); }
+.ctlpane { display: flex; flex-direction: column; gap: 8px; }
+.ctlpane[hidden], .opt[hidden] { display: none; }
+.opt { display: flex; flex-direction: column; gap: 4px; }
+.opt .label b { color: var(--ink); font-weight: 700; }
+.seg { display: flex; gap: 4px; }
+.seg button, .binds button { flex: 1; min-width: 0; font: 600 14px/1.1 var(--hud); color: var(--ink); background: transparent; border: 1px solid rgba(243, 239, 230, .3);
+  border-radius: 2px; padding: 6px 6px; cursor: pointer; }
+.seg button[aria-pressed="true"] { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
+.opt input[type="range"] { width: 100%; accent-color: var(--sodium); margin: 2px 0; }
+.binds { display: grid; grid-template-columns: auto repeat(3, minmax(0, 1fr)); gap: 4px 6px; align-items: center; }
+.binds > b { font: 700 13px var(--hud); letter-spacing: .08em; text-transform: uppercase; padding-right: 4px; }
+.binds button { min-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.binds button:empty::before { content: "—"; color: var(--muted); }
+.binds button.wait { color: var(--sodium); border-color: var(--sodium); animation: ctlBlink 1s infinite; }
+@keyframes ctlBlink { 50% { border-color: rgba(255, 181, 71, .25); } }
+.ctlprev { position: relative; aspect-ratio: 2.1; max-height: 150px; border: 1px solid rgba(243, 239, 230, .3); border-radius: 6px; overflow: hidden;
+  background: linear-gradient(#163039 0 62%, #2e3236 62%); }
+.ctlprev > div { position: absolute; display: grid; place-items: center; text-align: center; font: 700 11px/1 var(--hud); letter-spacing: .08em; text-transform: uppercase; }
+.ctlprev .z { top: 0; bottom: 0; }
+.ctlprev .z.gas { background: rgba(255, 181, 71, .3); color: var(--sodium); }
+.ctlprev .z.brake { background: rgba(255, 90, 74, .18); color: var(--danger); }
+.ctlprev .c { bottom: 7%; border-radius: 50%; border: 2px solid; background: rgba(11, 26, 34, .6); font-size: 9px; }
+.ctlprev .c.gas { border-color: var(--sodium); color: var(--sodium); }
+.ctlprev .c.brake { border-color: var(--danger); color: var(--danger); }
+.ctlprev .c.pull { border-color: var(--ok); color: var(--ok); }
+@media (max-height: 500px) and (orientation: landscape) {
+  .pixm-card.ctlcard { width: min(100%, 640px); padding: 10px 14px; gap: 6px; }
+  .ctlcard h2 { font-size: 22px; }
+  #ctTouch { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 14px; align-items: start; }
+  #ctTouch[hidden] { display: none; }
+  #ctTouch .ctlprev { grid-row: span 3; }
+  .seg button, .binds button { font-size: 12px; padding: 4px; }
+  .binds button { min-height: 26px; }
+  .ctlcard .actions .go { font-size: 14px; padding: 6px 12px 8px; }
+}
 @media (max-height: 500px) and (orientation: landscape) {
   .tabs button { font-size: 10px; padding: 2px 4px; }
   .chatlog { height: 92px; font-size: 12px; }
@@ -500,12 +552,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     </div>
   </div>
 
-  <div class="pad">
-    <div class="pad-l">
-      <div class="ptxt brake" id="btnBrake"><span data-i>‹ Freio</span><kbd data-i>toca na esquerda · ↓ / S</kbd></div>
-      <button class="pbtn pull" id="btnPull" type="button"><span data-i>Puxa</span><kbd>A</kbd></button>
+  <div class="pad" id="pad">
+    <div class="pad-l" id="padL">
+      <div class="ptxt brake" id="btnBrake"><span id="lblBrake">‹ Freio</span><kbd id="kbdBrake">toca na esquerda · ↓ / S</kbd></div>
+      <button class="pbtn pull" id="btnPull" type="button"><span data-i>Puxa</span><kbd id="kbdPull">A</kbd></button>
     </div>
-    <div class="ptxt gas" id="btnGas"><span data-i>Acelera ›</span><kbd data-i>toca na direita · Espaço / ↑</kbd></div>
+    <div class="pad-r" id="padR">
+      <div class="ptxt gas" id="btnGas"><span id="lblGas">Acelera ›</span><kbd id="kbdGas">toca na direita · Espaço / ↑</kbd></div>
+    </div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -562,6 +616,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         <button class="go" id="goStart" type="button" data-i>Modo Motoca</button>
         <button class="go alt" id="goFree" type="button" data-i>Modo Livre</button>
         <button class="go alt" id="goMulti" type="button">Multiplayer</button>
+        <button class="go alt" id="goCtl" type="button" data-i>Controles</button>
       </div>
       <ul class="how">
         <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
@@ -613,6 +668,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <div class="actions">
         <button class="go" id="goResume" type="button" data-i>Continuar</button>
         <button class="go alt" id="goHome" type="button" data-i>Tela inicial</button>
+        <button class="go alt" id="goCtl2" type="button" data-i>Controles</button>
       </div>
     </div>
   </div>
@@ -662,6 +718,46 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     </div>
   </div>
 </div>
+<div class="pixm" id="ctlModal" role="dialog" aria-modal="true" aria-labelledby="ctlTitle" hidden>
+  <div class="pixm-card mpcard ctlcard">
+    <button class="pixm-x" id="ctlClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="ctlTitle" data-i>Controles</h2>
+    <div class="tabs" role="tablist" id="ctlTabs">
+      <button type="button" role="tab" data-ct="ctTouch" data-i>Celular</button>
+      <button type="button" role="tab" data-ct="ctKeys" data-i>Teclado</button>
+      <button type="button" role="tab" data-ct="ctPad" data-i>Controle</button>
+    </div>
+    <div class="ctlpane" id="ctTouch">
+      <div class="ctlprev" id="ctlPrev" aria-hidden="true"></div>
+      <div class="opt"><span class="label" data-i>Acelerar e frear</span>
+        <div class="seg" data-k="touch"><button type="button" data-v="tela" data-i>Tela toda</button><button type="button" data-v="botoes" data-i>Botões</button></div></div>
+      <div class="opt"><span class="label" data-i>Acelerador</span>
+        <div class="seg" data-k="side"><button type="button" data-v="esq" data-i>Na esquerda</button><button type="button" data-v="dir" data-i>Na direita</button></div></div>
+      <div class="opt" id="optArea"><span class="label"><span data-i>Área do acelerador</span> <b id="areaV"></b></span>
+        <input type="range" id="ctlArea" min="30" max="80" step="5" aria-label="Área do acelerador"></div>
+      <div class="opt"><span class="label"><span data-i>Tamanho dos botões</span> <b id="sizeV"></b></span>
+        <input type="range" id="ctlSize" min="70" max="160" step="10" aria-label="Tamanho dos botões"></div>
+      <div class="opt"><span class="label" data-i>Botão Puxa</span>
+        <div class="seg" data-k="pull"><button type="button" data-v="freio" data-i>Do lado do freio</button><button type="button" data-v="meio" data-i>No meio</button><button type="button" data-v="gas" data-i>Do lado do acelerador</button></div></div>
+    </div>
+    <div class="ctlpane" id="ctKeys" hidden>
+      <span class="pixm-msg" data-i>Clica numa tecla e aperta a nova. Esc cancela, Backspace apaga.</span>
+      <div class="binds" id="keyBinds"></div>
+      <div class="opt"><span class="label" data-i>Mouse</span>
+        <div class="seg" data-k="mouse"><button type="button" data-v="normal" data-i>Esquerdo acelera</button><button type="button" data-v="inv" data-i>Direito acelera</button></div></div>
+    </div>
+    <div class="ctlpane" id="ctPad" hidden>
+      <span class="pixm-msg" id="padStatus"></span>
+      <span class="pixm-msg" data-i>Clica num botão aqui e aperta o novo no controle.</span>
+      <div class="binds" id="padBinds"></div>
+      <span class="pixm-msg" data-i>Start começa, pausa e continua. Select volta pra tela inicial.</span>
+    </div>
+    <div class="actions">
+      <button class="go" id="ctlOk" type="button" data-i>Pronto</button>
+      <button class="go alt" id="ctlReset" type="button" data-i>Padrão</button>
+    </div>
+  </div>
+</div>
 <div class="rotate" id="rotate" role="dialog" aria-label="Gire o celular">
   <div class="phone"></div>
   <b data-i>Deita o celular</b>
@@ -704,6 +800,20 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português
   const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde militar":["Army green","Verde militar"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"]};
   Object.assign(I18N, {
+    'Controles': ['Controls', 'Controles'], 'Celular': ['Phone', 'Celular'], 'Teclado': ['Keyboard', 'Teclado'], 'Controle': ['Gamepad', 'Mando'],
+    'Acelerar e frear': ['Throttle and brake', 'Acelerar y frenar'], 'Tela toda': ['Whole screen', 'Pantalla entera'], 'Botões': ['Buttons', 'Botones'],
+    'Acelerador': ['Throttle', 'Acelerador'], 'Na esquerda': ['On the left', 'A la izquierda'], 'Na direita': ['On the right', 'A la derecha'],
+    'Área do acelerador': ['Throttle area', 'Área del acelerador'], 'Tamanho dos botões': ['Button size', 'Tamaño de los botones'], 'Botão Puxa': ['Pull button', 'Botón Tirón'],
+    'Do lado do freio': ['Next to brake', 'Junto al freno'], 'No meio': ['In the middle', 'En el medio'], 'Do lado do acelerador': ['Next to throttle', 'Junto al acelerador'],
+    'Clica numa tecla e aperta a nova. Esc cancela, Backspace apaga.': ['Click a key, then press the new one. Esc cancels, Backspace clears.', 'Haz clic en una tecla y pulsa la nueva. Esc cancela, Retroceso borra.'],
+    'Mouse': ['Mouse', 'Ratón'], 'Esquerdo acelera': ['Left = throttle', 'Izquierdo acelera'], 'Direito acelera': ['Right = throttle', 'Derecho acelera'],
+    'Clica num botão aqui e aperta o novo no controle.': ['Click a slot here, then press the new button on the gamepad.', 'Haz clic en un botón aquí y pulsa el nuevo en el mando.'],
+    'Start começa, pausa e continua. Select volta pra tela inicial.': ['Start begins, pauses and resumes. Select goes back home.', 'Start empieza, pausa y continúa. Select vuelve al inicio.'],
+    'Pronto': ['Done', 'Listo'], 'Padrão': ['Default', 'Por defecto'], '‹ Acelera': ['‹ Throttle', '‹ Acelera'], 'Freio ›': ['Brake ›', 'Freno ›'],
+    'toca na direita': ['tap right', 'toca a la derecha'], 'toca na esquerda': ['tap left', 'toca a la izquierda'], 'Espaço': ['Space', 'Espacio'],
+    'aperta…': ['press…', 'pulsa…'], 'aperta no controle…': ['press on gamepad…', 'pulsa en el mando…'], 'Controle conectado:': ['Gamepad connected:', 'Mando conectado:'],
+    'Controle conectado': ['Gamepad connected', 'Mando conectado'],
+    'Nenhum controle conectado. Liga o controle e aperta qualquer botão.': ['No gamepad connected. Turn it on and press any button.', 'Ningún mando conectado. Enciéndelo y pulsa cualquier botón.'],
     "Chat": ["Chat", "Chat"], "Placar": ["Scores", "Marcador"], "Multi": ["Multi", "Multi"], "Multiplayer": ["Multiplayer", "Multijugador"],
     "Teu nome": ["Your name", "Tu nombre"], "Criar sala": ["Create room", "Crear sala"], "ou entra com o código": ["or join with a code", "o entra con el código"],
     "Entrar": ["Join", "Entrar"], "Código da sala": ["Room code", "Código de la sala"],
@@ -781,14 +891,86 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   s = fresh();
 
   // ---------- entrada ----------
+  // controles que o jogador escolhe (salvos no aparelho): toque, teclado, mouse e controle de videogame
+  const ACTS = ['gas', 'brake', 'pull'];
+  const CTL_DEF = () => ({
+    touch: 'tela', side: 'dir', area: 50, size: 100, pull: 'freio', mouse: 'normal',
+    keys: { gas: ['Space', 'ArrowUp', 'KeyW'], brake: ['ArrowDown', 'KeyS', ''], pull: ['KeyA', '', ''] },
+    // mapeamento padrão do Gamepad: 0 A, 1 B, 2 X, 5 RB, 6 LT, 7 RT, 12 ↑, 13 ↓
+    pad: { gas: [7, 0, 12], brake: [6, 1, 13], pull: [2, 5, -1] }
+  });
+  let ctl = CTL_DEF();
+  try {
+    const o = JSON.parse(localStorage.getItem('grau80-controles') || 'null');
+    if (o && typeof o === 'object') {
+      const pick = (k, ok) => { if (ok.includes(o[k])) ctl[k] = o[k]; };
+      pick('touch', ['tela', 'botoes']); pick('side', ['esq', 'dir']); pick('pull', ['freio', 'meio', 'gas']); pick('mouse', ['normal', 'inv']);
+      if (+o.area >= 30 && +o.area <= 80) ctl.area = +o.area;
+      if (+o.size >= 70 && +o.size <= 160) ctl.size = +o.size;
+      for (const a of ACTS) {
+        if (o.keys && Array.isArray(o.keys[a])) ctl.keys[a] = [0, 1, 2].map(i => typeof o.keys[a][i] === 'string' ? o.keys[a][i].slice(0, 24) : '');
+        if (o.pad && Array.isArray(o.pad[a])) ctl.pad[a] = [0, 1, 2].map(i => Number.isInteger(o.pad[a][i]) && o.pad[a][i] >= -1 && o.pad[a][i] < 32 ? o.pad[a][i] : -1);
+      }
+    }
+  } catch (e) {}
+  const saveCtl = () => { try { localStorage.setItem('grau80-controles', JSON.stringify(ctl)); } catch (e) {} };
+  const keyAct = code => ACTS.find(a => code && ctl.keys[a].includes(code)) || null;
+  const KEYN = { Space: 'Espaço', ArrowUp: '↑', ArrowDown: '↓', ArrowLeft: '←', ArrowRight: '→', ShiftLeft: 'Shift', ShiftRight: 'Shift dir.', ControlLeft: 'Ctrl',
+    ControlRight: 'Ctrl dir.', AltLeft: 'Alt', AltRight: 'AltGr', Enter: 'Enter', Tab: 'Tab', CapsLock: 'Caps', Backquote: "'", Minus: '-', Equal: '=', BracketLeft: '´',
+    BracketRight: '[', Backslash: ']', Semicolon: 'Ç', Quote: '~', Comma: ',', Period: '.', Slash: ';', IntlBackslash: '\\', IntlRo: '/' };
+  const keyName = c => !c ? '' : KEYN[c] ? T(KEYN[c]) : c.replace(/^Key/, '').replace(/^Digit/, '').replace(/^Numpad/, 'Num ');
+  const PADN = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'Select', 'Start', 'L3', 'R3', '↑', '↓', '←', '→', 'Home'];
+  const padName = i => i < 0 ? '' : PADN[i] || 'B' + i;
+  // arruma o pad da tela conforme a escolha: lado do acelerador, tela toda ou botões, Puxa e tamanho
+  function applyCtl() {
+    const pad = $('pad'), flip = ctl.side === 'esq', btns = ctl.touch === 'botoes';
+    pad.classList.toggle('flip', flip); pad.classList.toggle('btns', btns); pad.classList.toggle('pmid', ctl.pull === 'meio');
+    pad.style.setProperty('--k', String(ctl.size / 100));
+    const pull = $('btnPull');
+    if (ctl.pull === 'gas') $('padR').prepend(pull); else $('padL').append(pull);
+    $('lblGas').textContent = T(btns ? 'Acelera' : flip ? '‹ Acelera' : 'Acelera ›');
+    $('lblBrake').textContent = T(btns ? 'Freio' : flip ? 'Freio ›' : '‹ Freio');
+    const kn = a => ctl.keys[a].filter(Boolean).map(keyName).join(' / ');
+    const tap = right => (btns ? '' : T(right ? 'toca na direita' : 'toca na esquerda'));
+    $('kbdGas').textContent = [tap(!flip), kn('gas')].filter(Boolean).join(' · ');
+    $('kbdBrake').textContent = [tap(flip), kn('brake')].filter(Boolean).join(' · ');
+    $('kbdPull').textContent = keyName(ctl.keys.pull.find(Boolean) || '');
+    renderPrev();
+  }
+  // miniatura da tela no painel de controles
+  function renderPrev() {
+    const P = $('ctlPrev');
+    if (!P || $('ctlModal').hidden) return;
+    const pw = P.clientWidth, k = pw / Math.max(innerWidth, innerHeight, 1), flip = ctl.side === 'esq';
+    P.textContent = '';
+    const el = (cls, txt, css) => { const d = document.createElement('div'); d.className = cls; d.textContent = txt; Object.assign(d.style, css); P.append(d); };
+    const sz = ctl.size / 100, small = Math.min(innerWidth, innerHeight) <= 460;
+    const bd = Math.max(26, (small ? 84 : 110) * sz * k), pd = Math.max(20, (small ? 58 : 76) * sz * k);
+    if (ctl.touch === 'tela') {
+      el('z gas', T('Acelera'), { [flip ? 'left' : 'right']: 0, width: ctl.area + '%' });
+      el('z brake', T('Freio'), { [flip ? 'right' : 'left']: 0, width: (100 - ctl.area) + '%' });
+    } else {
+      el('c gas', T('Acelera'), { width: bd + 'px', height: bd + 'px', [flip ? 'left' : 'right']: '3%' });
+      el('c brake', T('Freio'), { width: bd + 'px', height: bd + 'px', [flip ? 'right' : 'left']: '3%' });
+    }
+    const css = { width: pd + 'px', height: pd + 'px' };
+    if (ctl.pull === 'meio') css.left = 'calc(50% - ' + pd / 2 + 'px)';
+    else {
+      const brakeLeft = !flip, left = ctl.pull === 'freio' ? brakeLeft : !brakeLeft;
+      css[left ? 'left' : 'right'] = ctl.touch === 'tela' ? '17%' : 'calc(3% + ' + (bd + 6) + 'px)';
+    }
+    el('c pull', T('Puxa'), css);
+  }
+  // controle de videogame: o que está apertado agora
+  const padHeld = { gas: false, brake: false, pull: false };
   function syncInput() {
-    let gas = keys.has('gas') || !!(mouseBtns & 1), brake = keys.has('brake') || !!(mouseBtns & 2);
+    const mg = ctl.mouse === 'inv' ? 2 : 1, mb = ctl.mouse === 'inv' ? 1 : 2;
+    let gas = keys.has('gas') || !!(mouseBtns & mg) || padHeld.gas, brake = keys.has('brake') || !!(mouseBtns & mb) || padHeld.brake;
     for (const v of ptrs.values()) { if (v === 'gas') gas = true; if (v === 'brake') brake = true; }
     input.gas = gas; input.brake = brake;
     ui.btnGas.classList.toggle('held', gas);
     ui.btnBrake.classList.toggle('held', brake);
   }
-  const KEYMAP = { Space: 'gas', ArrowUp: 'gas', KeyW: 'gas', ArrowDown: 'brake', KeyS: 'brake' };
   // código do modo teste
   let typed = '', titleTaps = [];
   function toggleCheat() {
@@ -808,24 +990,26 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (titleTaps.length >= 5) { titleTaps = []; toggleCheat(); }
   });
   addEventListener('keydown', e => {
+    if (bindWait && bindWait.kind === 'key') { e.preventDefault(); keyBind(e.code); return; } // trocando uma tecla no painel de controles
     if (e.target.tagName === 'INPUT') return;
+    if (!$('ctlModal').hidden) { if (e.code === 'Escape') { e.preventDefault(); closeCtl(); } return; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
     if (e.code === 'Escape' && !$('pixModal').hidden) { e.preventDefault(); closePix(); return; }
     if (e.code === 'Escape' && !$('mpModal').hidden) { e.preventDefault(); closeMp(); return; }
     if (e.code === 'Escape') { e.preventDefault(); if (s.mode !== 'ready') toStart(); return; }
-    if (e.code === 'KeyA') { e.preventDefault(); if (!e.repeat) doPull(); return; }
+    const act = keyAct(e.code);
+    if (act === 'pull') { e.preventDefault(); if (!e.repeat) doPull(); return; }
+    if (act) { e.preventDefault(); wakeAudio(); keys.add(act); syncInput(); return; }
     if (e.code === 'KeyT' && gameMode === 'multi' && room.code && ui.start.hidden) { e.preventDefault(); openChat(); return; }
     if ((e.code === 'Enter' || e.code === 'KeyR') && s.mode !== 'ride') {
       if (gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over')) return; // na sala a rodada recomeça junto
       if (e.code === 'Enter' && e.target.tagName === 'BUTTON') return; // Enter num botão da garagem só escolhe
       e.preventDefault(); begin(); return;
     }
-    const k = KEYMAP[e.code];
-    if (k) { e.preventDefault(); wakeAudio(); keys.add(k); syncInput(); }
   });
-  addEventListener('keyup', e => { if (e.code === 'KeyA') endPull(); const k = KEYMAP[e.code]; if (k) { keys.delete(k); syncInput(); } });
+  addEventListener('keyup', e => { const a = keyAct(e.code); if (a === 'pull') endPull(); else if (a) { keys.delete(a); syncInput(); } });
   addEventListener('blur', () => { keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput(); endPull(); });
 
   function bindHold(el, what) {
@@ -861,7 +1045,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // tela: andando, metade esquerda freia e metade direita acelera (dedo pode deslizar de um lado pro outro);
   // na tela inicial qualquer toque acelera. Mouse: botão esquerdo acelera e direito freia, em qualquer lugar.
   $('game').addEventListener('contextmenu', e => e.preventDefault());
-  const zone = e => s.mode === 'ride' && e.clientX - cv.getBoundingClientRect().left < cv.clientWidth / 2 ? 'brake' : 'gas';
+  // tela toda: o acelerador ocupa a fatia escolhida do lado escolhido; o resto freia
+  const zone = e => {
+    if (s.mode !== 'ride') return 'gas';
+    const fx = (e.clientX - cv.getBoundingClientRect().left) / cv.clientWidth, a = ctl.area / 100;
+    return (ctl.side === 'esq' ? fx < a : fx > 1 - a) ? 'gas' : 'brake';
+  };
+  // com acelerar e frear em botões, tocar na rua andando não faz nada
+  bindHold(ui.btnGas, 'gas'); bindHold(ui.btnBrake, 'brake');
   const mouseZone = e => e.buttons & 3;
   cv.addEventListener('pointerdown', e => {
     // na tela inicial, tocar na faixa "Pastel Solidário" abre o QR do Pix
@@ -872,6 +1063,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     e.preventDefault(); wakeAudio();
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
     if (e.pointerType === 'mouse') mouseBtns = mouseZone(e);
+    else if (ctl.touch === 'botoes' && s.mode === 'ride') return;
     else ptrs.set(e.pointerId, zone(e));
     syncInput();
   });
@@ -2617,7 +2809,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       b.addEventListener('click', () => { LANG = id; try { localStorage.setItem('grau80-lang', id); } catch (e) {} applyLang(); });
       box.appendChild(b);
     }
-    renderGarage(); renderAchList(); renderBoard(); mpHud();
+    renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl();
+    if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
   }
   applyLang();
 
@@ -3690,6 +3883,122 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   addEventListener('pagehide', () => { if (room.ch) rtLeave(room.ch); });
   mpHud();
 
+  // ---------- painel de controles ----------
+  let bindWait = null; // { kind: 'key' | 'pad', a, i } enquanto espera a tecla ou o botão novo
+  const ACT_N = { gas: 'Acelera', brake: 'Freio', pull: 'Puxa' };
+  function openCtl() {
+    keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput(); endPull();
+    bindWait = null;
+    $('ctlModal').hidden = false;
+    renderCtl(); renderBinds(); renderPadStatus(); applyCtl();
+    setTimeout(() => $('ctlOk').focus(), 0);
+  }
+  function closeCtl() { bindWait = null; $('ctlModal').hidden = true; }
+  function showCtlTab(id) {
+    for (const b of $('ctlTabs').querySelectorAll('button')) b.setAttribute('aria-selected', String(b.dataset.ct === id));
+    for (const p of ['ctTouch', 'ctKeys', 'ctPad']) $(p).hidden = p !== id;
+    bindWait = null; renderBinds();
+    if (id === 'ctTouch') requestAnimationFrame(renderPrev);
+  }
+  function renderCtl() {
+    for (const seg of $('ctlModal').querySelectorAll('.seg')) for (const b of seg.querySelectorAll('button')) b.setAttribute('aria-pressed', String(ctl[seg.dataset.k] === b.dataset.v));
+    $('ctlArea').value = ctl.area; $('areaV').textContent = ctl.area + '%';
+    $('ctlSize').value = ctl.size; $('sizeV').textContent = ctl.size + '%';
+    $('optArea').hidden = ctl.touch !== 'tela';
+  }
+  function renderBinds() {
+    for (const [kind, box] of [['key', $('keyBinds')], ['pad', $('padBinds')]]) {
+      box.textContent = '';
+      for (const a of ACTS) {
+        const lab = document.createElement('b'); lab.textContent = T(ACT_N[a]); box.append(lab);
+        for (let i = 0; i < 3; i++) {
+          const v = (kind === 'key' ? ctl.keys : ctl.pad)[a][i];
+          const wait = !!bindWait && bindWait.kind === kind && bindWait.a === a && bindWait.i === i;
+          const b = document.createElement('button'); b.type = 'button';
+          b.textContent = wait ? T(kind === 'key' ? 'aperta…' : 'aperta no controle…') : kind === 'key' ? keyName(v) : padName(v);
+          if (wait) b.className = 'wait';
+          b.addEventListener('click', () => { bindWait = wait ? null : { kind, a, i }; renderBinds(); });
+          box.append(b);
+        }
+      }
+    }
+  }
+  // grava a tecla/botão novo (tira de onde mais estiver, pra não ter dois usos)
+  function setBind(kind, v) {
+    const map = kind === 'key' ? ctl.keys : ctl.pad, none = kind === 'key' ? '' : -1, w = bindWait;
+    bindWait = null;
+    if (v !== none) for (const a of ACTS) map[a] = map[a].map(x => (x === v ? none : x));
+    map[w.a][w.i] = v;
+    saveCtl(); renderBinds(); applyCtl();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  }
+  function keyBind(code) {
+    if (code === 'Escape') { bindWait = null; renderBinds(); return; }
+    setBind('key', code === 'Backspace' || code === 'Delete' ? '' : code);
+  }
+  function renderPadStatus() {
+    $('padStatus').textContent = padId ? T('Controle conectado:') + ' ' + padId.replace(/\s*\(.*$/, '').slice(0, 48)
+      : T('Nenhum controle conectado. Liga o controle e aperta qualquer botão.');
+  }
+  for (const id of ['goCtl', 'goCtl2']) $(id).addEventListener('click', openCtl);
+  $('ctlClose').addEventListener('click', closeCtl);
+  $('ctlOk').addEventListener('click', closeCtl);
+  $('ctlModal').addEventListener('pointerdown', e => { if (e.target === $('ctlModal')) closeCtl(); });
+  $('ctlTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) showCtlTab(b.dataset.ct); });
+  $('ctlModal').querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    ctl[seg.dataset.k] = b.dataset.v; saveCtl(); renderCtl(); applyCtl(); syncInput();
+  }));
+  $('ctlArea').addEventListener('input', e => { ctl.area = +e.target.value; saveCtl(); renderCtl(); applyCtl(); });
+  $('ctlSize').addEventListener('input', e => { ctl.size = +e.target.value; saveCtl(); renderCtl(); applyCtl(); });
+  $('ctlReset').addEventListener('click', () => {
+    const tab = ['ctTouch', 'ctKeys', 'ctPad'].find(p => !$(p).hidden), D = CTL_DEF();
+    // volta pro padrão só a aba aberta
+    if (tab === 'ctTouch') for (const k of ['touch', 'side', 'area', 'size', 'pull']) ctl[k] = D[k];
+    else if (tab === 'ctKeys') { ctl.keys = D.keys; ctl.mouse = D.mouse; }
+    else ctl.pad = D.pad;
+    bindWait = null; saveCtl(); renderCtl(); renderBinds(); applyCtl();
+  });
+  addEventListener('resize', () => renderPrev());
+  // abre na aba do aparelho: celular no toque, teclado no PC
+  showCtlTab(matchMedia('(pointer: coarse)').matches ? 'ctTouch' : 'ctKeys');
+
+  // ---------- controle de videogame (Gamepad API: PC e celular com controle bluetooth/USB) ----------
+  let padId = '', padPrev = [];
+  addEventListener('gamepadconnected', e => { flash(T('Controle conectado')); padId = e.gamepad.id; if (!$('ctlModal').hidden) renderPadStatus(); });
+  addEventListener('gamepaddisconnected', () => { padId = ''; padPrev = []; padHeld.gas = padHeld.brake = false; if (padHeld.pull) endPull(); padHeld.pull = false; syncInput(); if (!$('ctlModal').hidden) renderPadStatus(); });
+  const modalOpen = () => !$('mpModal').hidden || !$('pixModal').hidden || !$('ctlModal').hidden;
+  // Start: começa (tela inicial/fim), pausa e continua
+  function padStart() {
+    if (modalOpen()) return;
+    if (paused) { setPause(false); return; }
+    if (s.mode === 'ride') { setPause(true); return; }
+    if (gameMode === 'multi' && room.code) return; // na sala quem começa é o Bora, e a rodada nova vem sozinha
+    begin();
+  }
+  function pollPad() {
+    let gp = null;
+    try { for (const g of navigator.getGamepads ? navigator.getGamepads() : []) if (g && g.connected) { gp = g; break; } } catch (e) {}
+    if (!gp) return;
+    if (gp.id !== padId) { padId = gp.id; if (!$('ctlModal').hidden) renderPadStatus(); }
+    const now = gp.buttons.map(b => !!b && (b.pressed || b.value > 0.4));
+    const down = i => now[i] && !padPrev[i];
+    if (bindWait && bindWait.kind === 'pad') {
+      const i = now.findIndex((p, j) => p && !padPrev[j]);
+      if (i >= 0) setBind('pad', i);
+      padPrev = now; return;
+    }
+    const held = a => !modalOpen() && ctl.pad[a].some(i => i >= 0 && now[i]);
+    const g = held('gas'), b = held('brake'), p = held('pull');
+    if (p && !padHeld.pull) { wakeAudio(); doPull(); } else if (!p && padHeld.pull) endPull();
+    padHeld.pull = p;
+    if (g !== padHeld.gas || b !== padHeld.brake) { padHeld.gas = g; padHeld.brake = b; if (g || b) wakeAudio(); syncInput(); }
+    const used = i => ACTS.some(a => ctl.pad[a].includes(i));
+    if (down(9) && !used(9)) padStart();
+    if (down(8) && !used(8) && !modalOpen() && s.mode !== 'ready') toStart();
+    padPrev = now;
+  }
+
   // ---------- loop ----------
   const H_STEP = 1 / 120;
   let last = 0, acc = 0;
@@ -3699,7 +4008,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (paused) acc = 0;
     else { acc += dt; while (acc >= H_STEP) { step(H_STEP); acc -= H_STEP; } }
     if (W !== cv.clientWidth || H !== cv.clientHeight) resize();
-    stepRemotes(dt); mpTick(dt);
+    pollPad(); stepRemotes(dt); mpTick(dt);
     render(); updateHud(); updateAudio();
     requestAnimationFrame(frame);
   }
