@@ -1108,6 +1108,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   if (matchMedia('(pointer: coarse)').matches) $('startScreen').addEventListener('pointerdown', e => { if (e.target === $('startScreen') && e.pointerType !== 'mouse') cvDown(e); });
   // iPhone ignora user-scalable=no: bloqueia o zoom de pinça
   document.addEventListener('gesturestart', e => e.preventDefault());
+  // tocar fora de um campo de texto fecha o teclado (o toque na rua cancela o padrão, então o campo não perdia o foco sozinho)
+  document.addEventListener('pointerdown', e => {
+    const f = document.activeElement;
+    if (f && f.matches && f.matches('input, textarea') && !(e.target.closest && e.target.closest('input, textarea, button, label, select'))) f.blur();
+  }, true);
   cv.addEventListener('pointermove', e => {
     if (e.pointerType === 'mouse') { if (mouseZone(e) !== mouseBtns) { mouseBtns = mouseZone(e); syncInput(); } }
     else if (ptrs.has(e.pointerId) && ptrs.get(e.pointerId) !== zone(e)) { ptrs.set(e.pointerId, zone(e)); syncInput(); }
