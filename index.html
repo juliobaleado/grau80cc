@@ -496,11 +496,15 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 .mplist li.me { color: var(--sodium); }
 .mplist li span { color: var(--muted); font-variant-numeric: tabular-nums; }
 #mpRoom .chatlog { height: 110px; padding: 6px 8px; background: rgba(243, 239, 230, .04); border-radius: 3px; }
-.mpside { position: absolute; top: 10px; left: max(16px, env(safe-area-inset-left, 0px)); width: 190px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.mpside { position: absolute; top: 10px; left: max(16px, env(safe-area-inset-left, 0px)); width: 240px; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
 .mpboard { pointer-events: none; padding: 6px 10px 8px; }
 .mpboard li.king::before { content: "👑"; }
 .mpboard li.dead b { color: var(--muted); text-decoration: line-through; }
 .mpboard li small { grid-column: 2 / -1; font-size: 11px; color: var(--muted); margin-top: -2px; }
+/* grau de agora do lado do nome */
+.mpboard li b { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
+.mpboard li b .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.mpboard li b em { flex: none; padding-right: 6px; font-style: normal; font-weight: 700; color: var(--ok); font-variant-numeric: tabular-nums; }
 .mpfeed { display: flex; flex-direction: column; gap: 3px; font-size: 14px; font-weight: 600; text-shadow: 0 1px 4px rgba(0, 0, 0, .9); }
 .mpfeed div { overflow-wrap: anywhere; transition: opacity .6s; }
 .mpfeed div.old { opacity: 0; }
@@ -571,7 +575,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   .mpcode { font-size: 28px; padding: 3px 10px 5px; }
   .mplist { font-size: 13px; }
   .mpcard .actions .go { font-size: 14px; padding: 6px 12px 8px; }
-  .mpside { width: 160px; top: 6px; left: max(10px, env(safe-area-inset-left, 0px)); }
+  .mpside { width: 200px; top: 6px; left: max(10px, env(safe-area-inset-left, 0px)); }
   .mpboard li { font-size: 12px; }
   .mpfeed { font-size: 12px; }
   .mpchat { bottom: 8px; padding: 5px; }
@@ -656,6 +660,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       <div class="actions">
         <button class="go" id="goStart" type="button" data-i>Modo Motoca</button>
         <button class="go alt" id="goFree" type="button" data-i>Modo Livre</button>
+        <!-- dentro de uma sala: só dá pra começar a rodada ou sair (os modos sozinho somem) -->
+        <button class="go" id="goBora" type="button" data-i hidden>Bora!</button>
+        <button class="go alt" id="goLeave" type="button" data-i hidden>Sair da sala</button>
         <button class="go alt" id="goMulti" type="button">Multiplayer</button>
         <button class="go alt" id="goCtl" type="button" data-i>Controles</button>
       </div>
@@ -668,7 +675,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         <li><b data-i>Freio</b><span data-i>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
         <li><b data-i>Motoca</b><span data-i>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
         <li><b data-i>Livre</b><span data-i>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
-        <li><b data-i>Multi</b><span data-i>Cria uma sala e manda o código, ou entra com o código de um parceiro (até 5). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Quando todo mundo cai, começa outra rodada.</span></li>
+        <li><b data-i>Multi</b><span data-i>Cria uma sala e manda o código, ou entra com o código de um parceiro (até 7). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Passou no Agenor de caramelo, volta pra moto. Quando todo mundo cai, começa outra rodada.</span></li>
         <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
         <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
       </ul>
@@ -866,13 +873,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     "Só tu online agora.": ["Just you online right now.", "Solo tú en línea ahora."], "Conectando…": ["Connecting…", "Conectando…"],
     "Sem conexão com o chat.": ["No chat connection.", "Sin conexión al chat."],
     "Sala não encontrada. Confere o código.": ["Room not found. Check the code.", "Sala no encontrada. Revisa el código."],
-    "Sala cheia (máximo 5).": ["Room is full (max 5).", "Sala llena (máximo 5)."], "O código tem 4 letras.": ["The code has 4 characters.", "El código tiene 4 caracteres."],
+    "Sala cheia (máximo 7).": ["Room is full (max 7).", "Sala llena (máximo 7)."], "O código tem 4 letras.": ["The code has 4 characters.", "El código tiene 4 caracteres."],
     "Código copiado!": ["Code copied!", "¡Código copiado!"], "Sem acesso ao microfone.": ["No microphone access.", "Sin acceso al micrófono."],
     "Tu entrou na sala": ["You joined room", "Entraste a la sala"], "entrou na sala": ["joined the room", "entró a la sala"], "saiu da sala": ["left the room", "salió de la sala"],
     "Nova rodada em": ["New round in", "Nueva ronda en"], "agora": ["now", "ahora"], "na tela inicial": ["on the menu", "en el menú"], "tu": ["you", "tú"],
-    "Cria uma sala e manda o código, ou entra com o código de um parceiro (até 5). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Quando todo mundo cai, começa outra rodada.":
-      ["Create a room and share the code, or join a friend's code (up to 5). Each player sees their own challenges. Front wheel down resets your wheelie; flip over and you turn into a stray dog chasing whoever is still riding. When everyone falls, a new round starts.",
-       "Crea una sala y comparte el código, o entra con el código de un amigo (hasta 5). Cada uno ve sus propios desafíos. Si la rueda delantera toca el suelo, el caballito vuelve a cero; si te das vuelta, te conviertes en perro y corres detrás de quien sigue en una rueda. Cuando todos caen, empieza otra ronda."]
+    "Cria uma sala e manda o código, ou entra com o código de um parceiro (até 7). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Passou no Agenor de caramelo, volta pra moto. Quando todo mundo cai, começa outra rodada.":
+      ["Create a room and share the code, or join a friend's code (up to 7). Each player sees their own challenges. Front wheel down resets your wheelie; flip over and you turn into a stray dog chasing whoever is still riding. Pass the Agenor stall as a dog and you get your bike back. When everyone falls, a new round starts.",
+       "Crea una sala y comparte el código, o entra con el código de un amigo (hasta 7). Cada uno ve sus propios desafíos. Si la rueda delantera toca el suelo, el caballito vuelve a cero; si te das vuelta, te conviertes en perro y corres detrás de quien sigue en una rueda. Si pasas por el Agenor siendo perro, vuelves a la moto. Cuando todos caen, empieza otra ronda."]
   });
   // bandeiras em SVG (emoji de bandeira não aparece no Windows)
   const FLAG = {
@@ -890,12 +897,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   let gameMode = 'motoca'; // 'motoca', 'livre' ou 'multi' (sala: livre com desafios, cada um no seu celular)
   try { if (localStorage.getItem('grau80-mode') === 'livre') gameMode = 'livre'; } catch (e) {}
   // estado da sala (multiplayer): declarado cedo porque o HUD e o idioma consultam
-  const room = { code: '', ch: null, phase: '', at: 0, best: 0, members: {}, peers: {}, tries: {}, q: 0, sendAcc: 0, castAcc: 0, timer: 0 };
+  const room = { code: '', ch: null, phase: '', at: 0, best: 0, members: {}, peers: {}, tries: {}, q: 0, sendAcc: 0, castAcc: 0, timer: 0, rnd: 0 };
   const remotes = new Map(); // id → o que chegou do parceiro (posição, ângulo, placar)
   // na sala a rua é uma volta: a cada 1000 m passa de novo na pastelaria (todo mundo se acha mais fácil)
   const LAP = 1000;
   const lapK = () => (gameMode === 'multi' ? Math.round(s.x / LAP) : 0);
   // posição de alguém trazida pra volta em que eu estou (o mais perto de mim, pra frente ou pra trás)
+  const lapOf = x => Math.max(0, Math.floor((x - 1) / LAP)); // volta em que está (o começo, antes da pastelaria, conta como a primeira)
   const near = x => { if (gameMode !== 'multi') return x; const d = x - s.x; return s.x + d - LAP * Math.round(d / LAP); };
   let micOn = false, micTrack = null, mpRound = 0;
   const CHAL = () => gameMode === 'motoca' || gameMode === 'multi'; // tem desafios
@@ -1151,7 +1159,12 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   $('goHome').addEventListener('click', toStart);
   $('goResume').addEventListener('click', () => setPause(false));
   $('pauseBtn').addEventListener('click', () => setPause(!paused));
-  document.addEventListener('visibilitychange', () => { if (document.hidden) setPause(true); });
+  // sozinho, sair da aba pausa; na sala o jogo continua rodando (Alt+Tab não pausa, a galera segue vendo a gente)
+  document.addEventListener('visibilitychange', () => {
+    const inRoom = gameMode === 'multi' && room.code;
+    if (document.hidden && !inRoom) setPause(true);
+    bgClock(document.hidden && inRoom);
+  });
 
   let paused = false;
   function setPause(p) {
@@ -1365,11 +1378,16 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   $('goLand').addEventListener('click', goLandscape);
   // qualquer toque no celular pede tela cheia de novo se ela tiver saído (o toque libera o pedido)
   if (touchDev) addEventListener('touchend', () => { if (!document.fullscreenElement) goLandscape(); }, { passive: true });
-  function begin(mode) {
+  function begin(mode, rnd) {
+    // numa sala não tem modo sozinho: qualquer começo (Enter, R, botão) vira o Bora da sala
+    if (room.code && !room.phase && mode !== 'multi') { if (s.mode === 'ready') bora(); return; }
     goLandscape();
     if (mode === 'motoca' || mode === 'livre' || mode === 'multi') gameMode = mode;
     if (gameMode === 'multi' && !room.code) gameMode = 'livre';
-    if (gameMode === 'multi') { if (cheat) toggleCheat(); closeMp(); mpRound = 0; rtTrack(room.ch, roomMeta()); }
+    if (gameMode === 'multi') {
+      if (cheat) toggleCheat(); closeMp(); mpRound = 0; rtTrack(room.ch, roomMeta());
+      room.rnd = rnd > 0 ? rnd : Math.max(room.rnd, ...[...remotes.values()].map(r => r.rn || 0)) + 1;
+    }
     else try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
     best = gameMode === 'multi' ? room.best : bests[gameMode];
     $('hudMode').textContent = modeLabel();
@@ -3309,7 +3327,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
   // ---------- multiplayer ----------
   // Supabase Realtime: uma conexão só, com dois canais. O saguão junta todo mundo que está com o jogo aberto
-  // (quantos estão online + chat da tela inicial). A sala junta até 5 jogadores (presença, chat, sinal do WebRTC
+  // (quantos estão online + chat da tela inicial). A sala junta até 7 jogadores (presença, chat, sinal do WebRTC
   // e posição de reserva). Posição e voz vão direto de celular pra celular por WebRTC; se a conexão direta
   // não fechar (algumas redes de operadora bloqueiam), a posição passa pelo Supabase, mais devagar.
   // Cada um joga no próprio celular: física, desafios e cachorros são locais; só a moto do parceiro vem pela rede.
@@ -3493,7 +3511,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   function enterRoom(code, creating) {
     leaveRoom(true);
     room.code = code; room.best = 0; room.at = Date.now(); room.phase = creating ? 'create' : 'join';
-    room.members = {}; room.tries = {};
+    room.members = {}; room.tries = {}; room.rnd = 0;
     $('mpMsg').textContent = T('Conectando…');
     $('roomLog').textContent = '';
     const ch = room.ch = rtChannel('grau80-sala-' + code, {
@@ -3504,7 +3522,14 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
         pos: m => onPos(m, null),
         sig: m => { onSig(m).catch(() => {}); },
         // alguém apertou Bora: quem está na tela inicial ou já caiu entra na rodada junto
-        go: () => { if (!room.phase && (s.mode === 'ready' || (gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over')))) begin('multi'); }
+        // o número da rodada evita que alguém fique de fora (ou entre duas vezes) quando dois recomeçam quase juntos
+        go: m => {
+          if (room.phase) return;
+          const r = Math.max(0, Math.min(1e6, Math.floor(+(m && m.r) || 0)));
+          const fallen = gameMode === 'multi' && ui.start.hidden && (s.mode === 'dog' || s.mode === 'over');
+          if (s.mode === 'ready' || (fallen && (!r || r > room.rnd))) begin('multi', r);
+          else if (gameMode === 'multi' && s.mode === 'ride' && r > room.rnd) room.rnd = r; // ainda empinando: já conta como da rodada nova
+        }
       }
     });
     clearTimeout(room.timer);
@@ -3520,7 +3545,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
       if (room.phase === 'create' && others.length) return enterRoom(newCode(), true); // código já em uso: sorteia outro
       if (room.phase === 'join' && !others.length) { leaveRoom(); $('mpMsg').textContent = T('Sala não encontrada. Confere o código.'); return; }
       const ids = others.concat(myId).sort((a, b) => ((a === myId ? room.at : +(p[a] && p[a].at) || 0) - (b === myId ? room.at : +(p[b] && p[b].at) || 0)) || (a < b ? -1 : 1));
-      if (ids.indexOf(myId) >= 5) { leaveRoom(); $('mpMsg').textContent = T('Sala cheia (máximo 5).'); return; }
+      if (ids.indexOf(myId) >= 7) { leaveRoom(); $('mpMsg').textContent = T('Sala cheia (máximo 7).'); return; }
       room.phase = ''; clearTimeout(room.timer);
       $('mpMsg').textContent = '';
       chatSys($('roomLog'), T('Tu entrou na sala') + ' ' + room.code);
@@ -3667,7 +3692,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     r.q = q; r.tx = num(m.x, -50, 1e6); r.tv = num(m.v, -40, 40); r.tth = num(m.th, 0, 2);
     r.st = num(m.st, 0, 1); r.pl = num(m.pl, 0, 1); if (m.fl) r.fl = 0.06;
     r.m = ['ride', 'over', 'dog', 'menu'].includes(m.m) ? m.m : 'menu';
-    r.b = num(m.b, 0, 1e5); r.c = num(m.c, 0, 1e5); r.mic = !!m.mic;
+    r.b = num(m.b, 0, 1e5); r.c = num(m.c, 0, 1e5); r.mic = !!m.mic; r.rn = Math.floor(num(m.rn, 0, 1e6));
     if (m.k && r.m === 'dog') { r.say = 0.28; barkSound(0.9, earshot(near(r.tx))); }
     if (first || r.m !== r.lastM || Math.abs(r.x - r.tx) > 12) { r.x = r.tx; r.th = r.tth; } // começou rodada nova ou atrasou muito: pula direto
     r.lastM = r.m; r.rt = performance.now();
@@ -3767,7 +3792,15 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     s.mode = 'dog';
     s.pet = { x: s.x - 0.4, v: Math.min(s.v, 6), state: 'run', t: 0, leg: 0, say: 0, bark: 0.8, Y: '#e3b25a', Yd: '#b38535' };
     s.th = 0; s.om = 0; s.thr = 0; s.active = false; s.flame = 0;
+    s.dogLap = lapOf(s.x); s.dogLaps = {};
     flash('Virou caramelo! Corre atrás da galera');
+  }
+  // caramelo que completa a volta (passa na pastelaria) ganha a moto de volta, ali mesmo, na mesma rodada
+  function backToBike(lap) {
+    s.mode = 'ride'; s.reason = ''; s.dieT = 0; s.pet = null;
+    s.th = 0; s.om = 0; s.active = false; s.wDist = 0; s.v = Math.max(0, s.v);
+    s.lapN = lap;
+    flash('Passou no Agenor · de volta pra moto!');
   }
   function leaderAlive() {
     let lead = null;
@@ -3811,19 +3844,37 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const inGame = gameMode === 'multi' && ui.start.hidden;
     const m = !inGame ? 'menu' : s.mode === 'dog' ? 'dog' : s.mode === 'over' ? 'over' : s.mode === 'ride' ? 'ride' : 'menu';
     if (inGame && (m === 'dog' || m === 'over')) {
+      // a rodada nova já começou sem mim (o aviso se perdeu ou cheguei atrasado): entra nela agora
+      let newer = 0;
+      for (const [id, r] of remotes) if (room.members[id] && showRemote(r) && r.m === 'ride' && (r.rn || 0) > room.rnd) newer = Math.max(newer, r.rn);
+      if (newer) { begin('multi', newer); return; }
       const alive = [...remotes.entries()].some(([id, r]) => room.members[id] && showRemote(r) && r.m === 'ride');
       if (alive) mpRound = 0;
       else {
         const before = Math.ceil(3 - mpRound);
         mpRound += dt;
         const now = Math.ceil(3 - mpRound);
-        if (mpRound >= 3) { mpRound = 0; begin('multi'); return; }
+        if (mpRound >= 3) { mpRound = 0; begin('multi'); rtCast(room.ch, 'go', { r: room.rnd }); return; }
         if (now !== before) flash(T('Nova rodada em') + ' ' + now);
       }
     } else mpRound = 0;
+    // ainda empinando quando outro recomeçou: passa a contar como da rodada nova
+    if (inGame && s.mode === 'ride') for (const [id, r] of remotes) if (room.members[id] && (r.rn || 0) > room.rnd) room.rnd = r.rn;
     // passou de novo na frente da pastelaria
+    if (inGame && s.mode === 'dog') {
+      const lap = lapOf(s.x);
+      if (lap > (s.dogLap ?? lap)) { backToBike(lap); return; }
+      // quem ainda está no grau passou na pastelaria: todo caramelo volta pra bike, mesmo se ficou pra trás
+      const laps = s.dogLaps || (s.dogLaps = {});
+      for (const [id, r] of remotes) {
+        if (!room.members[id] || !showRemote(r) || r.m !== 'ride' || r.tx == null) continue;
+        const rl = lapOf(r.tx);
+        if (laps[id] == null) laps[id] = rl;
+        else if (rl > laps[id]) { backToBike(Math.max(lap, s.lapN || 0)); return; }
+      }
+    }
     if (inGame && s.mode === 'ride') {
-      const lap = Math.floor((s.x - 1) / LAP);
+      const lap = lapOf(s.x);
       if (lap > (s.lapN || 0)) { s.lapN = lap; flash('Passou no Agenor · volta ' + (lap + 1)); }
     }
 
@@ -3832,7 +3883,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     if (room.sendAcc < (fast ? 1 / 15 : 1)) return;
     room.sendAcc = 0;
     const pkt = { id: myId, q: ++room.q, m, x: +s.x.toFixed(2), v: +s.v.toFixed(2), th: +s.th.toFixed(3), st: +s.stand.toFixed(2), pl: +s.pull.toFixed(2),
-      fl: s.flame > 0 ? 1 : 0, b: +room.best.toFixed(1), c: s.active ? +s.wDist.toFixed(1) : 0, mic: micOn ? 1 : 0, k: s.barked ? 1 : 0 };
+      fl: s.flame > 0 ? 1 : 0, b: +room.best.toFixed(1), c: s.active ? +s.wDist.toFixed(1) : 0, mic: micOn ? 1 : 0, k: s.barked ? 1 : 0, rn: room.rnd };
     s.barked = false;
     const str = JSON.stringify(pkt);
     let need = false;
@@ -3886,14 +3937,15 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     const ol = $('mpBoardList'); ol.textContent = '';
     rows().forEach((x, i) => {
       const li = document.createElement('li'), b = document.createElement('b'), sp = document.createElement('span');
-      b.textContent = x.nome + (x.mic ? ' 🎤' : '');
+      const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = x.nome + (x.mic ? ' 🎤' : '');
+      b.appendChild(nm);
+      if (x.c >= 1) { const em = document.createElement('em'); em.textContent = x.c.toFixed(1) + ' m'; b.appendChild(em); }
       sp.textContent = x.b.toFixed(1) + ' m';
       if (i === 0 && x.b > 0) li.classList.add('king');
       if (x.me) li.classList.add('me');
       if (x.dead) li.classList.add('dead');
       li.append(b, sp);
-      if (x.c >= 1) { const sm = document.createElement('small'); sm.textContent = T('agora') + ' ' + x.c.toFixed(0) + ' m'; li.appendChild(sm); }
-      else if (x.off && !x.me) { const sm = document.createElement('small'); sm.textContent = T('na tela inicial'); li.appendChild(sm); }
+      if (x.off && !x.me) { const sm = document.createElement('small'); sm.textContent = T('na tela inicial'); li.appendChild(sm); }
       ol.appendChild(li);
     });
   }
@@ -3914,6 +3966,9 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     $('micBtn').textContent = ml; $('mpMic').textContent = ml;
     $('micBtn').classList.toggle('on', micOn); $('mpMic').classList.toggle('on', micOn);
     $('goMulti').textContent = room.code && !room.phase ? T('Sala') + ' ' + room.code : T('Multiplayer');
+    const inRoom = !!room.code && !room.phase;
+    $('goStart').hidden = $('goFree').hidden = inRoom;
+    $('goBora').hidden = $('goLeave').hidden = !inRoom;
     $('hudMode').textContent = modeLabel();
   }
   // mensagens da sala aparecendo por cima do jogo e sumindo sozinhas
@@ -3945,7 +4000,11 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
     try { await navigator.clipboard.writeText(room.code); ok = true; } catch (e) {}
     $('mpRoomMsg').textContent = ok ? T('Código copiado!') : room.code;
   });
-  $('mpGo').addEventListener('click', () => { if (!room.code || room.phase) return; rtCast(room.ch, 'go', {}); begin('multi'); });
+  // Bora: começa a rodada e chama todo mundo da sala
+  function bora() { if (!room.code || room.phase) return; begin('multi'); rtCast(room.ch, 'go', { r: room.rnd }); }
+  $('mpGo').addEventListener('click', bora);
+  $('goBora').addEventListener('click', bora);
+  $('goLeave').addEventListener('click', () => { leaveRoom(); closeMp(); });
   $('mpMic').addEventListener('click', toggleMic);
   $('micBtn').addEventListener('click', toggleMic);
   $('mpLeave').addEventListener('click', () => leaveRoom());
@@ -4077,15 +4136,26 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   // ---------- loop ----------
   const H_STEP = 1 / 120;
   let last = 0, acc = 0;
-  function frame(t) {
-    const dt = Math.min(0.05, (t - (last || t)) / 1000);
+  function tick(t, hidden) {
+    const dt = Math.min(hidden ? 0.5 : 0.05, (t - (last || t)) / 1000);
     last = t;
     if (paused) acc = 0;
     else { acc += dt; while (acc >= H_STEP) { step(H_STEP); acc -= H_STEP; } }
+    if (hidden) { stepRemotes(dt); mpTick(dt); updateAudio(); return; } // escondido: só a física, a rede e o som
     if (W !== cv.clientWidth || H !== cv.clientHeight) resize();
     pollPad(); stepRemotes(dt); mpTick(dt);
     render(); updateHud(); updateAudio();
-    requestAnimationFrame(frame);
+  }
+  function frame(t) { if (!bgW) tick(t, false); requestAnimationFrame(frame); }
+  // com a aba escondida o navegador para o requestAnimationFrame e segura os timers; o relógio de um worker não é segurado
+  let bgW = null;
+  function bgClock(on) {
+    if (on && !bgW) {
+      try {
+        bgW = new Worker(URL.createObjectURL(new Blob(['setInterval(() => postMessage(0), 16)'], { type: 'text/javascript' })));
+        bgW.onmessage = () => tick(performance.now(), true);
+      } catch (e) { bgW = null; }
+    } else if (!on && bgW) { bgW.terminate(); bgW = null; last = performance.now(); }
   }
 
   function start(data) {
