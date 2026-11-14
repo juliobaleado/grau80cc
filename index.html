@@ -432,8 +432,20 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   border: 1px solid rgba(243, 239, 230, .2); border-radius: 2px; padding: 3px 6px; cursor: pointer; }
 .tabs button[aria-selected="true"] { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
 #paneBoard { display: flex; flex-direction: column; gap: 6px; }
-.lobby { display: flex; flex-direction: column; gap: 6px; }
-.lobby .label { text-transform: none; letter-spacing: .02em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.leftcol { z-index: 2; }
+.lobby { position: absolute; z-index: 1; top: 0; bottom: max(14px, env(safe-area-inset-bottom, 0px)); left: max(16px, env(safe-area-inset-left, 0px));
+  width: min(36vw, 420px); display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.lobbylog { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 3px;
+  font-size: 15px; font-weight: 600; line-height: 1.25; text-shadow: 0 1px 3px rgba(0, 0, 0, .95), 0 0 8px rgba(0, 0, 0, .6); }
+.lobbylog .cl { flex: none; overflow-wrap: anywhere; }
+.lobbylog .cl b { color: var(--sodium); font-weight: 700; }
+.lobbylog .cl.me b { color: var(--ok); }
+.lobbylog .cl.sys { color: var(--muted); font-style: italic; }
+.lobbyon { font: 600 12px var(--hud); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 1px 3px rgba(0, 0, 0, .9); }
+.lobby .chatrow { pointer-events: auto; }
+.lobby .chatrow input { background: rgba(8, 18, 24, .7); }
+#startScreen .lobby .go { font-size: 16px; padding: 5px 14px 7px; }
+#startScreen .leftcol .board { background: rgba(8, 18, 24, .95); }
 .chatlog { height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; font-size: 14px; line-height: 1.25; overscroll-behavior: contain;
   user-select: text; -webkit-user-select: text; touch-action: pan-y; }
 .chatlog .cl { overflow-wrap: anywhere; }
@@ -514,6 +526,10 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 @media (max-height: 500px) and (orientation: landscape) {
   .tabs button { font-size: 10px; padding: 2px 4px; }
   .chatlog { height: 92px; font-size: 12px; }
+  .lobby { bottom: max(8px, env(safe-area-inset-bottom, 0px)); left: max(10px, env(safe-area-inset-left, 0px)); gap: 4px; }
+  .lobbylog { font-size: 12px; gap: 2px; }
+  .lobbyon { font-size: 10px; }
+  #startScreen .lobby .go { font-size: 13px; padding: 3px 10px 4px; }
   .chatrow input { font-size: 14px; padding: 3px 6px; }
   .chatrow .go { font-size: 13px; padding: 3px 10px 4px; }
   .pixm-card.mpcard { display: flex; width: min(100%, 560px); padding: 10px 14px; gap: 6px; }
@@ -580,24 +596,21 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   </form>
 
   <div class="screen" id="startScreen">
+    <!-- chat de todo mundo online: o lado esquerdo inteiro, sem moldura; as mensagens sobem e passam por trás do placar -->
+    <section class="lobby" aria-label="Chat de todo mundo online">
+      <div class="lobbylog" id="lobbyLog" aria-live="polite"></div>
+      <span class="lobbyon" id="onlineList">Online</span>
+      <form class="chatrow" id="lobbyForm">
+        <input id="lobbyIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Fala com a galera…" data-ip="Fala com a galera…" aria-label="Mensagem pra todo mundo online">
+        <button class="go" type="submit" data-i>Enviar</button>
+      </form>
+    </section>
     <div class="leftcol">
       <aside class="board" aria-label="Placar global">
-        <div class="tabs" role="tablist">
-          <button type="button" role="tab" id="tabBoard" aria-selected="true" data-i>Placar</button>
-          <button type="button" role="tab" id="tabChat" aria-selected="false"><span data-i>Chat</span> <span id="onlineN">· 0</span></button>
-        </div>
         <div id="paneBoard">
           <span class="label" data-i>Placar global · top 10</span>
           <ol id="boardList"><li class="board-msg" data-i>Carregando…</li></ol>
           <span class="board-tip" data-i>Bate o primeiro pra tomar a coroa 👑</span>
-        </div>
-        <div id="paneChat" class="lobby" hidden>
-          <span class="label" id="onlineList">Online</span>
-          <div class="chatlog" id="lobbyLog"></div>
-          <form class="chatrow" id="lobbyForm">
-            <input id="lobbyIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Fala com a galera…" data-ip="Fala com a galera…" aria-label="Mensagem pra todo mundo online">
-            <button class="go" type="submit" aria-label="Enviar">›</button>
-          </form>
         </div>
       </aside>
       <button class="pix-card" id="pixOpen" type="button">
@@ -3377,22 +3390,13 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   const lobby = rtChannel('grau80-saguao', {
     onJoin: () => rtTrack(lobby, { nome: netName() }),
     onPresence: renderOnline,
-    ev: { chat: m => { if (chatIn($('lobbyLog'), m) && $('paneChat').hidden) $('tabChat').classList.add('new'); } }
+    ev: { chat: m => { chatIn($('lobbyLog'), m); } }
   });
   function renderOnline() {
     const names = Object.values(lobby.presence).map(x => clean(x && x.nome, 16) || '?');
-    $('onlineN').textContent = '· ' + names.length;
     $('onlineList').textContent = names.length > 1 ? T('Online') + ' (' + names.length + '): ' + names.join(', ') : T('Só tu online agora.');
     $('onlineList').title = names.join(', ');
   }
-  function showTab(chat) {
-    $('tabBoard').setAttribute('aria-selected', String(!chat));
-    $('tabChat').setAttribute('aria-selected', String(chat));
-    $('paneBoard').hidden = chat; $('paneChat').hidden = !chat;
-    if (chat) { $('tabChat').classList.remove('new'); $('lobbyLog').scrollTop = $('lobbyLog').scrollHeight; }
-  }
-  $('tabBoard').addEventListener('click', () => showTab(false));
-  $('tabChat').addEventListener('click', () => showTab(true));
   $('lobbyForm').addEventListener('submit', e => { e.preventDefault(); chatOut(lobby, $('lobbyLog'), $('lobbyIn')); });
   renderOnline();
 
