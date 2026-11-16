@@ -1245,13 +1245,14 @@ html.kid #grow-dog { display: none !important; }
   }
 
   // ---------- som: 2 tempos sintetizado ----------
-  let ac = null, nodes = null, muted = false;
+  let ac = null, nodes = null, muted = false, sfx = null; // sfx: motor e efeitos (calam na tela inicial, onde só toca a música)
   try { muted = localStorage.getItem('grau80-mute') === '1'; } catch (e) {}
   ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
   function wakeAudio() {
     if (ac) { if (ac.state === 'suspended' && !muted) ac.resume(); return; }
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
+      sfx = ac.createGain(); sfx.connect(ac.destination);
       const o1 = ac.createOscillator(); o1.type = 'sawtooth';
       const o2 = ac.createOscillator(); o2.type = 'square';
       const g2 = ac.createGain(); g2.gain.value = 0.35;
@@ -1265,18 +1266,18 @@ html.kid #grow-dog { display: none !important; }
       const out = ac.createGain(); out.gain.value = 0;
       o1.connect(filt); o2.connect(g2).connect(filt);
       noise.connect(nf).connect(ng).connect(out);
-      filt.connect(out).connect(ac.destination);
+      filt.connect(out).connect(sfx);
       o1.start(); o2.start(); noise.start();
       // raspada: chiado contínuo que só abre quando o paralama encosta
       const sn = ac.createBufferSource(); sn.buffer = buf; sn.loop = true;
       const sbp = ac.createBiquadFilter(); sbp.type = 'bandpass'; sbp.frequency.value = 2600; sbp.Q.value = 1.2;
       const scrapeG = ac.createGain(); scrapeG.gain.value = 0;
-      sn.connect(sbp).connect(scrapeG).connect(ac.destination); sn.start();
+      sn.connect(sbp).connect(scrapeG).connect(sfx); sn.start();
       // sirene: onda quadrada com o tom variando (viatura = lamento lento, Rocam = yelp rápido)
       const so = ac.createOscillator(); so.type = 'square';
       const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1900;
       const sirenG = ac.createGain(); sirenG.gain.value = 0;
-      so.connect(slp).connect(sirenG).connect(ac.destination); so.start();
+      so.connect(slp).connect(sirenG).connect(sfx); so.start();
       // 4 tempos monocilíndrico sem filtro: uma explosão a cada 2 voltas (pulso estreito = "bu-bu-bu" grosso),
       // corpo grave por baixo e o ronco rouco da admissão aberta, que cresce com o acelerador
       const nh = 40, re = new Float32Array(nh), im = new Float32Array(nh);
@@ -1290,11 +1291,100 @@ html.kid #grow-dog { display: none !important; }
       const out4 = ac.createGain(); out4.gain.value = 0;
       p4.connect(lp4); sub4.connect(sub4G).connect(lp4); lp4.connect(out4);
       p4.connect(honk).connect(honkG).connect(out4);
-      out4.connect(ac.destination);
+      out4.connect(sfx);
       p4.start(); sub4.start();
       nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4 };
       if (muted) ac.suspend();
+      startMusic();
     } catch (e) { ac = null; }
+  }
+  // ---------- música da tela inicial: funk 130 BPM (versão estendida do vídeo), 32 compassos em loop sem emenda ----------
+  // FUNK-START
+  function renderFunk(SR) {
+    // cada som (bumbo, 808, palma, chimbal, tamborzão, apito, stab) é sintetizado uma vez só e a música é montada somando as amostras:
+    // rápido até em celular fraco. O que passa do fim dá a volta pro começo, então o loop emenda sem estalo.
+    const BPM = 130, STEP = 60 / BPM / 4, BAR = STEP * 16, NB = 32, LOOP = Math.round(NB * BAR * SR), SLOT = 1.6;
+    const OC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const shots = [], idx = {};
+    const shot = (key, draw) => { if (!(key in idx)) { idx[key] = shots.length; shots.push(draw); } return key; };
+    const ev = []; // [tecla, tempo, volume]
+    const env = (oc, g, t, a, v, d) => { g.gain.value = 0; g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d); };
+    const nz = (oc, out, nb, t, type, freq, q, v, d) => { const s = oc.createBufferSource(); s.buffer = nb; const f = oc.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q; const g = oc.createGain(); env(oc, g, t, 0.001, v, d); s.connect(f); f.connect(g); g.connect(out); s.start(t, Math.random() * 0.5); s.stop(t + d + 0.05); };
+    const curve = new Float32Array(257); for (let i = 0; i < 257; i++) curve[i] = Math.tanh((i / 128 - 1) * 2.2); // ímpar: silêncio sai 0, sem corrente contínua
+    const kick = (t, v = 1) => ev.push([shot('k', (oc, o, nb, t) => { const s = oc.createOscillator(), g = oc.createGain(); s.frequency.setValueAtTime(160, t); s.frequency.exponentialRampToValueAtTime(42, t + 0.12); env(oc, g, t, 0.002, 0.95, 0.32); s.connect(g); g.connect(o); s.start(t); s.stop(t + 0.4); }), t, v]);
+    const bass = (t, f, len, v = 0.55) => ev.push([shot('b' + f + '_' + len, (oc, o, nb, t) => { const s = oc.createOscillator(), g = oc.createGain(), sh = oc.createWaveShaper(); sh.curve = curve; s.frequency.setValueAtTime(f * 1.5, t); s.frequency.exponentialRampToValueAtTime(f, t + 0.05); env(oc, g, t, 0.004, 1, len); s.connect(sh); sh.connect(g); g.connect(o); s.start(t); s.stop(t + len + 0.1); }), t, v]);
+    const clap = (t, v = 1) => ev.push([shot('c', (oc, o, nb, t) => { for (let k = 0; k < 3; k++) nz(oc, o, nb, t + k * 0.011, 'bandpass', 1400, 1.2, 0.5, 0.06 + (k === 2 ? 0.12 : 0)); }), t, v]);
+    const hat = (t, v = 1) => ev.push([shot('h' + (Math.floor(t / STEP) % 3), (oc, o, nb, t) => nz(oc, o, nb, t, 'highpass', 7500, 0.7, 0.16, 0.035)), t, v]);
+    const tamb = (t, f, v = 1) => ev.push([shot('t' + f, (oc, o, nb, t) => { const s = oc.createOscillator(), g = oc.createGain(); s.type = 'triangle'; s.frequency.setValueAtTime(f * 1.8, t); s.frequency.exponentialRampToValueAtTime(f, t + 0.03); env(oc, g, t, 0.001, 0.42, 0.14); s.connect(g); g.connect(o); s.start(t); s.stop(t + 0.2); nz(oc, o, nb, t, 'bandpass', f * 4, 2, 0.12, 0.04); }), t, v]);
+    const apito = (t, n = 2) => { for (let k = 0; k < n; k++) ev.push([shot('a', (oc, o, nb, s) => { const w = oc.createOscillator(), g = oc.createGain(), lfo = oc.createOscillator(), lg = oc.createGain(); w.frequency.value = 2850; lfo.frequency.value = 38; lg.gain.value = 120; lfo.connect(lg); lg.connect(w.frequency); env(oc, g, s, 0.005, 0.13, STEP * 1.1); w.connect(g); g.connect(o); w.start(s); w.stop(s + STEP * 1.3); lfo.start(s); lfo.stop(s + STEP * 1.3); }), t + k * STEP * 1.5, 1]); };
+    const stab = (t, f, v = 0.12, cut = 2400) => ev.push([shot('s' + f + '_' + cut, (oc, o, nb, t) => { for (const m of [1, 1.189, 1.498]) { const w = oc.createOscillator(), g = oc.createGain(), fl = oc.createBiquadFilter(); w.type = 'sawtooth'; w.frequency.value = f * m; fl.type = 'lowpass'; fl.frequency.setValueAtTime(cut, t); fl.frequency.exponentialRampToValueAtTime(500, t + 0.18); env(oc, g, t, 0.003, 1, 0.16); w.connect(fl); fl.connect(g); g.connect(o); w.start(t); w.stop(t + 0.25); } }), t, v]);
+    const KICK = [0, 3, 6, 10], CLAP = [4, 12], GHOST = [7, 15], TAMB = { 2: 196, 5: 147, 8: 220, 11: 165, 14: 196 };
+    const ROOT = [41.2, 41.2, 32.7, 36.7]; // Mi, Mi, Dó, Ré
+    // 0 intro · 1–15 baile (8–15 com stab em todo compasso) · 16–19 breakdown sem grave · 20–30 baile · 31 virada que cai na intro
+    for (let bi = 0; bi < NB; bi++) {
+      const t0 = bi * BAR, root = ROOT[Math.floor(bi / 2) % 4];
+      const intro = bi === 0, brk = bi >= 16 && bi <= 19, turn = bi === NB - 1, hype = bi >= 8 && bi < 16;
+      for (let st = 0; st < 16; st++) {
+        const t = t0 + st * STEP + (st % 2 ? STEP * 0.08 : 0);
+        if (intro) { if (KICK.includes(st)) kick(t, st === 0 ? 1 : 0.85); if (st % 2 === 0) hat(t, 0.8); continue; }
+        if (turn) { // virada: tamborzão picado e palma acelerando até o 1 da intro
+          if (st === 0) { kick(t); bass(t, root, 0.34); }
+          if (st < 8 && TAMB[st]) tamb(t, TAMB[st], 0.9);
+          if (st >= 8) clap(t, 0.3 + (st - 8) * 0.08);
+          if (st % 2 === 0) hat(t, 0.6);
+          continue;
+        }
+        if (!brk && KICK.includes(st)) { kick(t, st === 0 ? 1 : 0.85); bass(t, root * (st === 10 ? 1.5 : 1), st === 0 ? 0.34 : 0.22); }
+        if (hype && st === 13) bass(t, root * 2, 0.12, 0.4);
+        if (CLAP.includes(st)) clap(t, brk ? 0.8 : 1);
+        if (GHOST.includes(st) && !brk) clap(t, 0.35);
+        if (TAMB[st]) tamb(t, TAMB[st], st === 8 ? 1 : 0.8);
+        if (brk && (st === 9 || st === 15)) tamb(t, 247, 0.6);
+        hat(t, brk ? 0.4 : st % 4 === 2 ? 1 : 0.55);
+        if ((hype || bi % 4 >= 2) && (st === 0 || st === 3 || st === 6)) stab(t, root * 8, brk ? 0.09 : 0.12, brk ? 1100 : 2400);
+        if (brk && st === 10) stab(t, root * 8, 0.09, 1100);
+        if (bi === 19 && st >= 8) clap(t, 0.25 + (st - 8) * 0.07);
+      }
+      if (bi % 4 === 1 && !brk) apito(t0 + STEP * 12, 2);
+    }
+    apito((NB - 1) * BAR + STEP * 2, 3);
+    // sintetiza as amostras lado a lado num contexto offline curto
+    const oc = new OC(1, Math.ceil(shots.length * SLOT * SR), SR);
+    const nb = oc.createBuffer(1, SR, SR); { const d = nb.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+    shots.forEach((draw, i) => draw(oc, oc.destination, nb, i * SLOT + 0.001));
+    return oc.startRendering().then(buf => {
+      const src = buf.getChannelData(0), L = Math.round(SLOT * SR), d = new Float32Array(LOOP);
+      for (const [k, t, v] of ev) {
+        const o = idx[k] * L, at = Math.round(t * SR);
+        for (let i = 0; i < L; i++) { const x = src[o + i]; if (x) d[(at + i) % LOOP] += x * v; }
+      }
+      let pk = 0; for (let i = 0; i < LOOP; i++) { d[i] = Math.tanh(d[i] * 1.6); if (Math.abs(d[i]) > pk) pk = Math.abs(d[i]); }
+      const g = 0.75 / (pk || 1); for (let i = 0; i < LOOP; i++) d[i] *= g;
+      return d;
+    });
+  }
+  // FUNK-END
+  const music = { st: 0, src: null, g: null };
+  function startMusic() {
+    if (!ac || music.st) return;
+    music.st = 1;
+    const SR = 32000;
+    try {
+      renderFunk(SR).then(d => {
+        const b = ac.createBuffer(1, d.length, SR); b.getChannelData(0).set(d);
+        music.g = ac.createGain(); music.g.gain.value = 0; music.g.connect(ac.destination);
+        music.src = ac.createBufferSource(); music.src.buffer = b; music.src.loop = true; music.src.connect(music.g); music.src.start();
+        music.st = 2; music.on = undefined; updateMusic();
+      }).catch(() => { music.st = 0; });
+    } catch (e) { music.st = 0; }
+  }
+  function updateMusic() { // a música toca só na tela inicial (e lá o motor fica mudo); no jogo ela some num fade e o motor volta
+    if (!sfx) return;
+    const on = !ui.start.hidden && !document.hidden;
+    if (on === music.on) return;
+    music.on = on; const t = ac.currentTime;
+    sfx.gain.setTargetAtTime(on ? 0 : 1, t, on ? 0.1 : 0.2);
+    if (music.g) music.g.gain.setTargetAtTime(on ? 0.8 : 0, t, on ? 0.4 : 0.15);
   }
   ui.mute.addEventListener('click', () => {
     muted = !muted;
@@ -1304,6 +1394,7 @@ html.kid #grow-dog { display: none !important; }
     if (ac) muted ? ac.suspend() : ac.resume();
   });
   function updateAudio() {
+    updateMusic();
     if (!nodes || muted) return;
     const t = ac.currentTime, f = s.rpm / 60, four = MODEL === 'bruno';
     nodes.o1.frequency.setTargetAtTime(f, t, 0.03);
@@ -1359,7 +1450,7 @@ html.kid #grow-dog { display: none !important; }
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(1.0 * k, t + 0.003);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-    src.connect(f).connect(g).connect(ac.destination);
+    src.connect(f).connect(g).connect(sfx);
     src.start(t, Math.random() * 0.8, 0.12);
     const o = ac.createOscillator(); o.type = 'sine';
     o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(45, t + 0.08);
@@ -1367,7 +1458,7 @@ html.kid #grow-dog { display: none !important; }
     og.gain.setValueAtTime(0.0001, t);
     og.gain.exponentialRampToValueAtTime(1.1 * k, t + 0.004);
     og.gain.exponentialRampToValueAtTime(0.0001, t + 0.1);
-    o.connect(og).connect(ac.destination); o.start(t); o.stop(t + 0.12);
+    o.connect(og).connect(sfx); o.start(t); o.stop(t + 0.12);
   }
   function revTo(target, rate, h) {
     if (s.cut > 0) { s.cut -= h; s.rpm -= 6000 * h; return; }
@@ -1423,7 +1514,7 @@ html.kid #grow-dog { display: none !important; }
       g.gain.setValueAtTime(0.0001, t0);
       g.gain.exponentialRampToValueAtTime(0.25, t0 + 0.02);
       g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35);
-      o.connect(g).connect(ac.destination); o.start(t0); o.stop(t0 + 0.4);
+      o.connect(g).connect(sfx); o.start(t0); o.stop(t0 + 0.4);
     });
   }
   renderAchList();
@@ -1810,7 +1901,7 @@ html.kid #grow-dog { display: none !important; }
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(0.22, t + 0.03);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-    src.connect(f).connect(g).connect(ac.destination);
+    src.connect(f).connect(g).connect(sfx);
     src.start(t, 0.2, 0.5);
   }
   // matilha: 3 caramelos dormindo na rua aos 100 m de grau; acordam quando a moto passa empinando,
@@ -1991,7 +2082,7 @@ html.kid #grow-dog { display: none !important; }
       g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02);
       g.gain.setValueAtTime(0.12, t0 + 0.16); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22);
       const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1800;
-      f.connect(g).connect(ac.destination);
+      f.connect(g).connect(sfx);
       for (const hz of [415, 520]) { const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = hz; o.connect(f); o.start(t0); o.stop(t0 + 0.24); }
     }
   }
@@ -2003,7 +2094,7 @@ html.kid #grow-dog { display: none !important; }
     const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1400;
     const g = ac.createGain();
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.45); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.5);
-    o.connect(f).connect(g).connect(ac.destination); o.start(t); o.stop(t + 1.6);
+    o.connect(f).connect(g).connect(sfx); o.start(t); o.stop(t + 1.6);
   }
 
   // pipa: linha de cerol cruzando a rua na altura do pescoço aos 20 m de grau; a moto passa e corta
@@ -2036,12 +2127,12 @@ html.kid #grow-dog { display: none !important; }
     o.frequency.setValueAtTime(2600, t); o.frequency.exponentialRampToValueAtTime(1700, t + 0.35);
     const g = ac.createGain();
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.25, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
-    o.connect(g).connect(ac.destination); o.start(t); o.stop(t + 0.45);
+    o.connect(g).connect(sfx); o.start(t); o.stop(t + 0.45);
     const src = ac.createBufferSource(); src.buffer = nodes.noiseBuf;
     const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 4000;
     const ng = ac.createGain();
     ng.gain.setValueAtTime(0.0001, t); ng.gain.exponentialRampToValueAtTime(0.3, t + 0.003); ng.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
-    src.connect(hp).connect(ng).connect(ac.destination); src.start(t, 0.3, 0.08);
+    src.connect(hp).connect(ng).connect(sfx); src.start(t, 0.3, 0.08);
   }
   function barkSound(pitch = 1, vol = 1) {
     if (!nodes || muted || paused || vol < 0.03) return;
@@ -2053,7 +2144,7 @@ html.kid #grow-dog { display: none !important; }
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(0.5 * vol, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
-    o.connect(f).connect(g).connect(ac.destination); o.start(t); o.stop(t + 0.14);
+    o.connect(f).connect(g).connect(sfx); o.start(t); o.stop(t + 0.14);
   }
 
   // ponto local da bike (y pra cima, origem no eixo traseiro) → mundo
