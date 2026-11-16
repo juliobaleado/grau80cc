@@ -4084,7 +4084,9 @@ html.kid #grow-dog { display: none !important; }
         C.fillText(txt, bx + 7, by);
         return;
       }
-      let tx = x + 0.3 * S, ty = gy - 0.85 * S;
+      // super caramelo voa ~0.65 acima do chão: o nome sobe junto pra ficar em cima dele, não por cima
+      const voa = dog && mem.look && mem.look.dog === 'vento' && r.tv > 1;
+      let tx = x + 0.3 * S, ty = gy - (voa ? 1.62 : 0.85) * S;
       if (!dog && r.head) {
         const [hx, hy] = r.head, ca = Math.cos(r.th), sa = Math.sin(r.th);
         tx = x + (hx * ca - hy * sa) * S; ty = gy - R * S - (hx * sa + hy * ca) * S - 0.32 * S;
