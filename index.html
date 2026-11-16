@@ -2814,9 +2814,10 @@ html.kid #grow-dog { display: none !important; }
       line([[0.03, 0.08], [0.13, 0.2]], 0.03, '#c9b6ff');
       C.fillStyle = '#7ed957'; C.beginPath(); C.ellipse(0.11, -0.055, 0.06, 0.022, 0, 0, Math.PI * 2); C.fill();
     }
-    if (fat > 1.2) { // coleirinha vermelha com plaquinha
-      line([[-0.1, -0.04], [0.02, -0.1]], 0.035, '#d81f26');
-      C.fillStyle = '#ffd21f'; C.beginPath(); C.arc(-0.025, -0.125, 0.022, 0, Math.PI * 2); C.fill();
+    if (fat > 1.2 || sk === 'vento') { // coleirinha vermelha com plaquinha (o Super caramelo também usa)
+      const sup = sk === 'vento'; // o do Super caramelo é dourado com plaquinha vermelha, pra não sumir na capa
+      line([[-0.1, -0.04], [0.02, -0.1]], 0.035, sup ? '#ffd21f' : '#d81f26');
+      C.fillStyle = sup ? '#d81f26' : '#ffd21f'; C.beginPath(); C.arc(-0.025, -0.125, 0.022, 0, Math.PI * 2); C.fill();
     }
     if (d.say > 0) { C.fillStyle = '#3a1410'; C.beginPath(); C.moveTo(0.08, -0.06); C.lineTo(0.17, -0.05); C.lineTo(0.15, -0.1); C.closePath(); C.fill(); }
     C.fillStyle = '#16181b';
