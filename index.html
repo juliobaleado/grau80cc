@@ -3392,16 +3392,19 @@ html.kid #grow-dog { display: none !important; }
       C.scale(0.0035, -0.0035); C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
       C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CB 99', 0, 0);
       C.restore();
-      // farol com aro cromado, painel redondo, buzina e piscas da frente
-      C.fillStyle = BK; C.beginPath(); C.ellipse(0.98, 0.66, 0.065, 0.085, 0.3, 0, Math.PI * 2); C.fill();
-      C.strokeStyle = CR; C.lineWidth = 0.012; C.beginPath(); C.ellipse(1.0, 0.66, 0.035, 0.07, 0.3, 0, Math.PI * 2); C.stroke();
-      C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.02, 0.66, 0.025, 0.06, 0.3, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#26282c'; C.beginPath(); C.arc(0.9, 0.79, 0.045, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#e8eef2'; C.beginPath(); C.arc(0.905, 0.795, 0.03, 0, Math.PI * 2); C.fill();
-      line([[0.905, 0.795], [0.92, 0.81]], 0.006, '#d0202a');
+      // frente moderna em seta: carenagem pontuda na cor do quadro, farol em V, viseira fumê e painel digital
+      const poly = (pts, c) => { C.fillStyle = c; C.beginPath(); C.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) C.lineTo(pts[i][0], pts[i][1]); C.closePath(); C.fill(); };
       C.fillStyle = '#2b2e33'; C.beginPath(); C.arc(0.93, 0.52, 0.025, 0, Math.PI * 2); C.fill();
-      line([[0.95, 0.74], [1.03, 0.76]], 0.012, BK);
-      C.fillStyle = AMB; C.beginPath(); C.ellipse(1.045, 0.765, 0.03, 0.018, 0.2, 0, Math.PI * 2); C.fill();
+      poly([[0.875, 0.775], [0.935, 0.765], [0.925, 0.87], [0.885, 0.85]], 'rgba(40, 52, 62, .85)');
+      poly([[0.89, 0.775], [0.925, 0.77], [0.92, 0.815], [0.893, 0.81]], '#16181b');
+      poly([[0.895, 0.785], [0.918, 0.782], [0.915, 0.805], [0.897, 0.803]], '#5ad1ff');
+      poly([[0.86, 0.79], [0.98, 0.785], [1.11, 0.655], [1.0, 0.54], [0.89, 0.57], [0.87, 0.66]], V);
+      poly([[1.11, 0.655], [1.0, 0.54], [0.93, 0.56], [1.02, 0.6]], Vd);
+      poly([[0.88, 0.775], [0.975, 0.77], [1.05, 0.7], [0.96, 0.745]], Vl);
+      poly([[0.955, 0.735], [1.085, 0.66], [1.0, 0.585], [1.02, 0.655]], BK);
+      poly([[0.975, 0.722], [1.07, 0.66], [1.008, 0.603], [1.028, 0.656]], '#fff3c4');
+      poly([[0.99, 0.708], [1.05, 0.662], [1.035, 0.66]], '#ffffff');
+      poly([[0.94, 0.79], [1.0, 0.765], [0.955, 0.772]], AMB);
       bars([0.9, 0.66], 0.84, [0.8, 0.8], '#2b2e33', '#16181b');
       // baú de alumínio na garupa, com rebites e fecho
       C.fillStyle = '#c9ced3'; rrect(-0.36, 0.62, 0.38, 0.27, 0.03); C.fill();
