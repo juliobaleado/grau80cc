@@ -1399,6 +1399,15 @@ html.kid #grow-dog { display: none !important; }
     music.on = on; const t = ac.currentTime;
     if (music.g) music.g.gain.setTargetAtTime(on ? 0.8 : 0, t, on ? 0.4 : 0.15);
   }
+  // o navegador só libera som depois de um gesto: qualquer toque/tecla na tela já acorda o áudio (e a música da tela inicial).
+  // No app o WebView libera sem gesto, então já tenta ao abrir.
+  const UNLOCK = ['pointerdown', 'touchend', 'keydown'];
+  function unlockAudio() {
+    wakeAudio();
+    if (ac && (ac.state === 'running' || muted)) UNLOCK.forEach(ev => removeEventListener(ev, unlockAudio, true));
+  }
+  UNLOCK.forEach(ev => addEventListener(ev, unlockAudio, true));
+  setTimeout(() => { wakeAudio(); if (ac && ac.state === 'suspended' && !muted) ac.resume().catch(() => {}); }, 0);
   ui.mute.addEventListener('click', () => {
     muted = !muted;
     ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
