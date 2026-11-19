@@ -307,6 +307,10 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
   border: 0; padding: 12px 28px 14px; border-radius: 3px; cursor: pointer;
 }
 .go:hover { filter: brightness(1.08); }
+/* atalho pra jogar: no celular os botões de modo ficam lá embaixo, depois da garagem */
+.quickplay { position: fixed; z-index: 5; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  pointer-events: auto; box-shadow: 0 6px 22px rgba(0, 0, 0, .55); padding: 10px 22px 12px; line-height: 1; }
+@media (pointer: coarse) { .hud-btns .mute { min-height: 40px; min-width: 64px; } }
 .go.alt { background: transparent; color: var(--ink); border: 1px solid rgba(243, 239, 230, .35); }
 .actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .garage { display: grid; gap: 8px; padding-block: 12px; border-block: 1px solid rgba(243, 239, 230, .15); }
@@ -660,6 +664,7 @@ html.kid #grow-dog { display: none !important; }
 
   <div class="screen" id="startScreen">
     <!-- chat de todo mundo online: o lado esquerdo inteiro, sem moldura; as mensagens sobem e passam por trás do placar -->
+    <button class="go quickplay" id="quickPlay" type="button" hidden><span data-i>▶ Jogar</span></button>
     <section class="lobby" aria-label="Chat de todo mundo online">
       <div class="lobbylog" id="lobbyLog" aria-live="polite"></div>
       <span class="lobbyon" id="onlineList">Online</span>
@@ -918,6 +923,7 @@ html.kid #grow-dog { display: none !important; }
     'Esse nome já é de outro jogador. Escolhe outro.': ['That name belongs to another player. Pick another one.', 'Ese nombre ya es de otro jugador. Elige otro.'],
     'Esse nome não pode. Escolhe outro.': ['That name is not allowed. Pick another one.', 'Ese nombre no está permitido. Elige otro.'],
     'Muito envio seguido. Tenta daqui a pouco.': ['Too many submissions in a row. Try again in a bit.', 'Demasiados envíos seguidos. Inténtalo en un rato.'],
+    '▶ Jogar': ['▶ Play', '▶ Jugar'],
     'Esse grau já foi enviado.': ['This wheelie was already sent.', 'Este caballito ya fue enviado.'],
     'O placar não aceitou esse grau.': ['The leaderboard rejected this wheelie.', 'El ranking no aceptó este caballito.'],
     'Pagamento pendente: o caramelo libera sozinho quando a Google Play confirmar.': ['Payment pending: the stray unlocks by itself once Google Play confirms it.', 'Pago pendiente: el perro se desbloquea solo cuando Google Play lo confirme.']
@@ -1233,6 +1239,13 @@ html.kid #grow-dog { display: none !important; }
   cv.addEventListener('lostpointercapture', cvUp);
 
   $('goStart').addEventListener('click', () => begin('motoca'));
+  // botão Jogar flutuante: só aparece enquanto os botões de modo estão fora da tela
+  $('quickPlay').addEventListener('click', () => ($('goStart').hidden ? $('goBora') : $('goStart')).click());
+  if (window.IntersectionObserver) {
+    const seen = new Map(); // some se os botões de modo ou o campo do chat estão na tela (pra não cobrir o Enviar)
+    const io = new IntersectionObserver(es => { for (const e of es) seen.set(e.target, e.isIntersecting); $('quickPlay').hidden = [...seen.values()].some(Boolean); }, { root: $('startScreen'), threshold: 0.3 });
+    io.observe($('startScreen').querySelector('.actions')); io.observe($('lobbyForm'));
+  }
   $('goFree').addEventListener('click', () => begin('livre'));
   $('goAgain').addEventListener('click', () => begin());
   // volta pra tela inicial (garagem); a empinada em andamento ainda é anotada
