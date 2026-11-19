@@ -19,7 +19,7 @@
 <body>
 <main>
   <h1>Política de privacidade · Grau 80cc</h1>
-  <p class="muted">Última atualização: 16 de novembro de 2026</p>
+  <p class="muted">Última atualização: 19 de novembro de 2026</p>
 
   <p>O Grau 80cc é um jogo independente feito por Julio Godoy. Esta página explica quais dados o jogo usa, pra quê e como pedir pra apagar. O jogo não tem anúncios, não tem login e não usa ferramentas de análise ou rastreamento.</p>
 
@@ -28,6 +28,10 @@
 
   <h2>2. Placar global</h2>
   <p>Quando tu entra no top 10 e escolhe mandar, o jogo envia o apelido que tu digitou, a distância, o tempo e a bike usada. Esses dados ficam guardados num banco de dados (Supabase) e aparecem publicamente pra todo mundo que joga. Não use teu nome completo nem dados pessoais no apelido.</p>
+  <p><b>Código do aparelho:</b> na primeira vez, o jogo cria um código aleatório que fica no teu aparelho. Quando tu manda um recorde, ele vai junto pra provar que o apelido é teu; no servidor fica guardada só uma versão embaralhada (hash) desse código, ligada ao apelido, pra ninguém usar o teu apelido no placar. O código não identifica tua pessoa nem teu aparelho fora do jogo.</p>
+
+  <h2>2a. Prevenção de abuso no placar</h2>
+  <p>Pra dificultar recorde falso e envio em massa, cada partida do Modo Motoca pede um "bilhete" ao servidor. Junto com o bilhete fica guardada uma versão embaralhada (hash com chave secreta) do endereço IP de quem pediu, que serve só pra limitar quantas partidas e envios saem do mesmo lugar em pouco tempo. O IP em si não é guardado. Os bilhetes e esse hash são apagados automaticamente em até 6 horas. Não usamos isso pra localização, publicidade ou perfil.</p>
 
   <h2>3. Chat, multiplayer e voz</h2>
   <ul>
@@ -41,8 +45,11 @@
   <p>Tocando no nome de alguém no chat, dá pra silenciar (essa pessoa some do teu chat e fica muda na voz; isso fica só no teu aparelho) ou denunciar. A denúncia envia pra moderação o apelido e o identificador da sessão de quem foi denunciado, a mensagem, onde aconteceu e o teu apelido e identificador. Isso fica guardado pra moderação analisar e tirar do jogo quem desrespeita as regras.</p>
   <p><b>Regras do chat:</b> não é permitido ofensa, discurso de ódio, assédio, ameaça, conteúdo sexual, golpe, spam ou divulgar dados pessoais de ninguém. Quem desrespeitar pode ser silenciado, denunciado e removido do placar.</p>
 
-  <h2>5. Doações</h2>
-  <p>No app da Google Play, as doações ("Me paga um pastel") são compras únicas feitas pela própria Google Play. Cada pastel libera um visual especial de caramelo pra quando a pessoa vira cachorro no multiplayer; não muda nada na disputa. O pagamento é processado pelo Google, e o jogo não recebe nem guarda dados de cartão ou de pagamento: ele só consulta na Google Play quais pastéis a conta já comprou, pra liberar os visuais. No site, a doação é por Pix, direto no app do teu banco, e não libera visual.</p>
+  <h2>5. Compras e doações</h2>
+  <p>No app da Google Play, os pastéis ("Me paga um pastel") são compras únicas feitas pela própria Google Play, que apoiam o desenvolvedor. Cada pastel libera um visual especial de caramelo pra quando a pessoa vira cachorro no multiplayer; não muda nada na disputa. O pagamento é processado pelo Google, e o jogo não recebe nem guarda dados de cartão ou de pagamento: ele só consulta na Google Play quais pastéis a conta já comprou, pra liberar os visuais. No site, a doação é por Pix, direto no app do teu banco, e não libera visual.</p>
+
+  <h2>5a. Serviços de terceiros</h2>
+  <p>O jogo usa: Supabase (banco de dados do placar e das denúncias, e o serviço em tempo real do chat e das salas), Google Play (compras no app), servidores STUN do Google (ligação direta entre aparelhos nas salas) e GitHub Pages (onde fica o site; o app consulta lá um arquivo com o número da versão mais nova, pra avisar quando tem atualização). Cada um recebe o teu endereço IP ao ser acessado, como qualquer serviço da internet, segundo a política dele.</p>
 
   <h2>6. Crianças</h2>
   <p>Na primeira vez que abre, o jogo pergunta o ano de nascimento. Essa informação fica só no aparelho. Pra quem tem menos de 13 anos, o jogo entra no <b>modo sem chat</b>: o chat de texto, a voz, o apelido digitado, o envio pro placar global e as doações ficam desligados. No multiplayer, a criança aparece só com um apelido automático (tipo "Motoca123"), e a posição da bike passa pelo servidor do jogo, sem conexão direta com os outros aparelhos. Não coletamos de propósito dados pessoais de crianças.</p>
@@ -54,7 +61,7 @@
     <li>Diz o apelido que tu usou no jogo (e, se lembrar, a data aproximada).</li>
     <li>A gente responde confirmando em até 30 dias.</li>
   </ol>
-  <p><b>O que é apagado:</b> teu apelido e tuas distâncias no placar global, e as denúncias feitas com o teu apelido ou contra ele. Nada disso fica guardado depois do pedido. Mensagens do chat e a voz não são guardadas no servidor, então não há o que apagar delas.</p>
+  <p><b>O que é apagado:</b> teu apelido e tuas distâncias no placar global, o vínculo do apelido com o código do aparelho, e as denúncias feitas com o teu apelido ou contra ele. Nada disso fica guardado depois do pedido. Mensagens do chat e a voz não são guardadas no servidor, então não há o que apagar delas.</p>
   <p><b>Dados no aparelho:</b> nome, visual, recordes e configurações ficam só no teu celular ou navegador. Tu apaga desinstalando o app ou limpando os dados dele. As compras de pastel ficam registradas na tua conta Google pela Google Play, conforme a política do Google.</p>
 
   <h2>8. Contato</h2>
@@ -63,7 +70,7 @@
   <hr>
 
   <h1>Privacy policy · Grau 80cc</h1>
-  <p class="muted">Last updated: November 16, 2026</p>
+  <p class="muted">Last updated: November 19, 2026</p>
   <p>Grau 80cc is an independent game by Julio Godoy. It has no ads, no login and no analytics or tracking.</p>
   <ul>
     <li><b>On your device:</b> records, achievements, settings, your nickname and your mute list are stored locally only.</li>
@@ -71,7 +78,9 @@
     <li><b>Chat and rooms:</b> chat messages are relayed in real time through Supabase and are not stored. In a room, your nickname, a random session id and your in-game position are shared with the other players.</li>
     <li><b>Voice:</b> the microphone is used only when you turn on "Mic" in a room, after Android asks for permission. Audio goes peer to peer (WebRTC) and is never recorded or stored. Your IP address is visible to room peers and to Google STUN servers used to connect.</li>
     <li><b>Muting and reports:</b> you can mute players (stored on your device) or report them. A report sends the reported nickname, session id, message and location, plus your nickname and session id, for moderation. Hate speech, harassment, threats, sexual content, scams, spam and sharing personal data are not allowed.</li>
-    <li><b>Donations:</b> in the Google Play app, donations are one-time in-app purchases processed by Google Play; each one unlocks a cosmetic stray-dog look in multiplayer. The game only asks Google Play which items the account owns. We never receive payment details.</li>
+    <li><b>Abuse prevention:</b> each Motoca run asks the server for a ticket; a keyed hash of your IP address (never the IP itself) is stored with it only to rate-limit runs and submissions, and is deleted within 6 hours. A random device code (stored hashed on the server) proves a leaderboard nickname is yours.</li>
+    <li><b>Third parties:</b> Supabase (database and realtime), Google Play (purchases), Google STUN servers (room connections) and GitHub Pages (website and a version file the app checks for updates).</li>
+    <li><b>Purchases:</b> in the Google Play app, pastéis are one-time in-app purchases processed by Google Play that support the developer; each one unlocks a cosmetic stray-dog look in multiplayer. The game only asks Google Play which items the account owns. We never receive payment details.</li>
     <li><b>Children:</b> on first launch the game asks for the birth year, which stays on the device. Players under 13 get a no-chat mode: text chat, voice, typed nicknames, leaderboard submissions and donations are off; in multiplayer they appear only under an automatic nickname and their position goes through the game server, with no direct peer connection.</li>
     <li><b>Deletion and contact:</b> email <a href="mailto:grau80ccgame@gmail.com">grau80ccgame@gmail.com</a> to remove your nickname from the leaderboard or delete a report (within 30 days).</li>
   </ul>
