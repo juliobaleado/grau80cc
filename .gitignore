@@ -17,3 +17,8 @@
 !/testes/
 !/trailer/
 !/versao.json
+
+# backups e exportações do banco (podem ter dado pessoal): nunca vão pro GitHub
+*.csv
+*.sql.gz
+*.dump
