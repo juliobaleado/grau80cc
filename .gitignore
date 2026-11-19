@@ -15,3 +15,4 @@
 # migrações do banco e testes automatizados (sem segredo: só SQL e scripts)
 !/supabase/
 !/testes/
+!/trailer/
