@@ -11,3 +11,7 @@
 
 # versão local de teste com a Titan 99 liberada (não sobe pro GitHub)
 /cb99.html
+
+# migrações do banco e testes automatizados (sem segredo: só SQL e scripts)
+!/supabase/
+!/testes/
