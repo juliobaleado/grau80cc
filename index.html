@@ -308,6 +308,8 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 }
 .go:hover { filter: brightness(1.08); }
 /* atalho pra jogar: no celular os botões de modo ficam lá embaixo, depois da garagem */
+.updbar { position: fixed; z-index: 60; top: max(8px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); max-width: calc(100% - 32px);
+  font: 700 14px var(--hud); letter-spacing: .04em; color: var(--night); background: var(--sodium); border: 0; border-radius: 3px; padding: 10px 16px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
 .quickplay { position: fixed; z-index: 5; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(14px, env(safe-area-inset-bottom, 0px));
   pointer-events: auto; box-shadow: 0 6px 22px rgba(0, 0, 0, .55); padding: 10px 22px 12px; line-height: 1; }
 @media (pointer: coarse) { .hud-btns .mute { min-height: 40px; min-width: 64px; } }
@@ -776,7 +778,7 @@ html.kid #grow-dog { display: none !important; }
     <h2 id="doaTitle">Me paga um pastel!</h2>
     <p data-i>Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.</p>
     <div class="doagrid" id="doaGrid"></div>
-    <span class="pixm-msg" data-i>Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.</span>
+    <span class="pixm-msg" data-i>Cada pastel é uma compra única que apoia o desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Fica guardada na tua conta Google.</span>
     <span class="pixm-msg" id="doaMsg" aria-live="polite"></span>
   </div>
 </div>
@@ -924,6 +926,10 @@ html.kid #grow-dog { display: none !important; }
     'Esse nome não pode. Escolhe outro.': ['That name is not allowed. Pick another one.', 'Ese nombre no está permitido. Elige otro.'],
     'Muito envio seguido. Tenta daqui a pouco.': ['Too many submissions in a row. Try again in a bit.', 'Demasiados envíos seguidos. Inténtalo en un rato.'],
     '▶ Jogar': ['▶ Play', '▶ Jugar'],
+    'Caramelos especiais · Google Play': ['Special strays · Google Play', 'Perros especiales · Google Play'],
+    'TOCA PRA VER': ['TAP TO SEE', 'TOCA PARA VER'],
+    'Cada pastel é uma compra única que apoia o desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Fica guardada na tua conta Google.': ['Each pastel is a one-time purchase that supports the developer and unlocks a special stray for when you turn into a dog in multiplayer. It does not change the competition: it is just cosmetic. Saved to your Google account.', 'Cada pastel es una compra única que apoya al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Queda guardada en tu cuenta de Google.'],
+    'Tem versão nova do Grau 80cc. Toca pra atualizar na Play Store.': ['There is a new version of Grau 80cc. Tap to update on the Play Store.', 'Hay una versión nueva de Grau 80cc. Toca para actualizar en Play Store.'],
     'Esse grau já foi enviado.': ['This wheelie was already sent.', 'Este caballito ya fue enviado.'],
     'O placar não aceitou esse grau.': ['The leaderboard rejected this wheelie.', 'El ranking no aceptó este caballito.'],
     'Pagamento pendente: o caramelo libera sozinho quando a Google Play confirmar.': ['Payment pending: the stray unlocks by itself once Google Play confirms it.', 'Pago pendiente: el perro se desbloquea solo cuando Google Play lo confirme.']
@@ -1668,7 +1674,7 @@ html.kid #grow-dog { display: none !important; }
   // palavrão e quem tenta se passar pela moderação (a mesma lista do banco, grau_nome_proibido)
   const BAD_ROOT = /(caralh|bucet|bocet|xoxot|piroc|pirok|punhet|arrombad|filhodaput|fdput|viadinh|viadao|estupr|pedofil|nazis|hitler|retardad|vagabund|nigg|fuck|cunt|bitch)/;
   const BAD_WORD = new Set(['puta', 'putas', 'puto', 'cu', 'fdp', 'vsf', 'tnc', 'pnc', 'pqp', 'kct', 'krl', 'porra', 'viado', 'viados', 'bixa', 'bicha', 'corno', 'cuzao', 'merda', 'buceta', 'pau', 'rola']);
-  const FAKE_MOD = /(admin|moderad|moderac|suport|grau80|staff|oficial)/;
+  const FAKE_MOD = /(admin|moderad|moderac|suport|grau80|graubo|staff|oficial)/; // graubo = grau80 depois de 8→b e 0→o
   const norm = v => String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[0134578@$!|]/g, c => ({ 0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', 8: 'b', '@': 'a', $: 's', '!': 'i', '|': 'i' })[c]);
   const badWord = w => { const n = norm(w).replace(/[^a-z]/g, ''); return !!n && (BAD_WORD.has(n) || BAD_ROOT.test(n)); };
@@ -1771,8 +1777,8 @@ html.kid #grow-dog { display: none !important; }
   let Store = null, storeReady = false;
   if (NATIVE) {
     try { Store = window.Capacitor.registerPlugin ? window.Capacitor.registerPlugin('NativePurchases') : window.Capacitor.Plugins.NativePurchases; } catch (e) {}
-    $('pixSub').dataset.pt = 'Doação pela Google Play';
-    $('pixSub').textContent = T('Doação pela Google Play');
+    $('pixSub').dataset.pt = 'Caramelos especiais · Google Play';
+    $('pixSub').textContent = T('Caramelos especiais · Google Play');
   }
   function renderDoa(busy) {
     const g = $('doaGrid'); g.textContent = '';
@@ -1816,6 +1822,18 @@ html.kid #grow-dog { display: none !important; }
       for (const p of PASTEIS) if (got.has(p.id) !== owned.has(p.id)) { got.has(p.id) ? owned.add(p.id) : owned.delete(p.id); changed = true; }
       if (changed) { saveOwned(); renderGarage(); if (!$('doaModal').hidden) renderDoa(); }
     } catch (e) {}
+  }
+  // aviso de versão nova: o app consulta versao.json no site; se a versão dele for menor que o "minimo", pede pra
+  // atualizar (é assim que dá pra aposentar uma versão antiga com segurança, ex.: antes de fechar o envio antigo do placar)
+  const APP_BUILD = 6; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
+  if (NATIVE) {
+    fetch('https://juliobaleado.github.io/grau80cc/versao.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null)).then(v => {
+        if (!v || !(+v.minimo > APP_BUILD)) return;
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'updbar'; b.textContent = T('Tem versão nova do Grau 80cc. Toca pra atualizar na Play Store.');
+        b.addEventListener('click', () => { location.href = 'https://play.google.com/store/apps/details?id=com.grau80cc.app'; });
+        document.body.appendChild(b);
+      }).catch(() => {});
   }
   if (NATIVE) { setTimeout(syncOwned, 1500); document.addEventListener('visibilitychange', () => { if (!document.hidden) syncOwned(); }); }
   function closeDoa() { $('doaModal').hidden = true; }
@@ -2504,7 +2522,8 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#c8102e'; C.fillRect(ba, bTop, bw, 0.28 * S);
       C.fillStyle = '#ffd21f'; C.textAlign = 'center'; C.textBaseline = 'middle';
       C.font = `700 ${Math.round(0.13 * S)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.fillText('PASTEL', ba + bw / 2, bTop + 0.08 * S); C.fillText('SOLIDÁRIO', ba + bw / 2, bTop + 0.2 * S);
+      // no app não é doação solidária: é compra (que apoia o dev) de caramelo especial, então a faixa diz isso
+      C.fillText(NATIVE ? 'CARAMELOS' : 'PASTEL', ba + bw / 2, bTop + 0.08 * S); C.fillText(NATIVE ? 'ESPECIAIS' : 'SOLIDÁRIO', ba + bw / 2, bTop + 0.2 * S);
       const q = Math.round(0.64 * S), qx = Math.round(ba + (bw - q) / 2), qy = Math.round(bTop + 0.31 * S);
       const sm = C.imageSmoothingEnabled; C.imageSmoothingEnabled = false;
       if (NATIVE) { // no app não tem Pix: desenha um pastel
@@ -2516,7 +2535,7 @@ html.kid #grow-dog { display: none !important; }
       } else C.drawImage(pixImg, qx, qy, q, q);
       C.imageSmoothingEnabled = sm;
       C.fillStyle = '#16181b'; C.font = `700 ${Math.max(9, Math.round(0.075 * S))}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.fillText(T(NATIVE ? 'TOCA PRA DOAR' : 'PIX · TOCA PRA AMPLIAR'), ba + bw / 2, qy + q + 0.055 * S);
+      C.fillText(T(NATIVE ? 'TOCA PRA VER' : 'PIX · TOCA PRA AMPLIAR'), ba + bw / 2, qy + q + 0.055 * S);
     }
 
     // toldo listrado com a barra recortada
@@ -4254,7 +4273,8 @@ html.kid #grow-dog { display: none !important; }
       if (!room.members[id]) { remotes.delete(id); continue; }
       if (r.tx == null) continue;
       // anda pra frente com a última velocidade enquanto o próximo pacote não chega (no máximo meio segundo)
-      const age = Math.min(0.5, (now - r.rt) / 1000);
+      // pela conexão direta chega 15x/s; pelo Supabase pode vir só 1–2x/s, então prevê por até 1,2 s
+      const age = Math.min(1.2, (now - r.rt) / 1000);
       const px = r.tx + r.tv * age, ox = r.x;
       r.x += (px - r.x) * Math.min(1, dt * 10);
       r.v = r.tv;
@@ -4440,16 +4460,22 @@ html.kid #grow-dog { display: none !important; }
       fl: s.flame > 0 ? 1 : 0, b: +room.best.toFixed(1), c: s.active ? +s.wDist.toFixed(1) : 0, mic: micOn ? 1 : 0, k: s.barked ? 1 : 0, rn: room.rnd };
     s.barked = false;
     const str = JSON.stringify(pkt);
-    let need = false;
+    let need = false, seen = false;
     for (const id of Object.keys(room.members)) {
       if (id === myId) continue;
       const P = room.peers[id];
-      if (P && P.dc && P.dc.readyState === 'open') { try { P.dc.send(str); } catch (e) { need = true; } }
-      else need = true;
+      if (P && P.dc && P.dc.readyState === 'open') { try { P.dc.send(str); continue; } catch (e) {} }
+      need = true;
+      const r = remotes.get(id); // quem depende do Supabase está perto (na tela)?
+      if (!r || r.tx == null || Math.abs(near(r.tx) - s.x) < 45) seen = true;
     }
     // pelo Supabase cada pacote conta 1 mensagem por pessoa da sala (a cota grátis é 2 milhões/mês):
     // 4x por segundo empinando (o jogo completa o movimento entre um e outro) e 1 a cada 4 s parado no menu
-    if (need && room.castAcc >= (fast ? 0.25 : 4)) { room.castAcc = 0; rtCast(room.ch, 'pos', pkt); }
+    // orçamento: perto e correndo, até 4x/s (menos em sala grande, porque cada pacote é cobrado 1x por pessoa da sala);
+    // longe da tela, 1 a cada 2 s; caramelo, 1,5x mais espaçado; menu, 1 a cada 4 s
+    const others = Math.max(1, Object.keys(room.members).length - 1);
+    const every = !fast ? 4 : !seen ? 2 : Math.min(0.6, Math.max(0.25, others * 0.15)) * (m === 'dog' ? 1.5 : 1);
+    if (need && room.castAcc >= every) { room.castAcc = 0; rtCast(room.ch, 'pos', pkt); }
   }
 
   // --- telas da sala ---
