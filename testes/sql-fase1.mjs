@@ -11,7 +11,7 @@ const { PGlite } = await import(pathToFileURL(path.join(base, '@electric-sql/pgl
 const { pgcrypto } = await import(pathToFileURL(path.join(base, '@electric-sql/pglite/dist/contrib/pgcrypto.js')).href);
 const F1 = fs.readFileSync(path.join(DIR, '..', 'supabase', '01-placar-seguro.sql'), 'utf8');
 const F2 = fs.readFileSync(path.join(DIR, '..', 'supabase', '02-fechar-insert-direto.sql'), 'utf8');
-const undo = (sql, marker) => sql.slice(sql.indexOf(marker)).split('\n').filter(l => /^-- (drop|grant|create)/.test(l)).map(l => l.slice(3)).join('\n');
+const undo = (sql, marker) => sql.slice(sql.indexOf(marker)).split('\n').filter(l => /^-- (drop|grant|create|alter)/.test(l)).map(l => l.slice(3)).join('\n');
 const REAL = process.argv[2] ? JSON.parse(fs.readFileSync(process.argv[2], 'utf8')) : [];
 
 let pass = 0, fail = 0;
@@ -123,6 +123,16 @@ ok(await send(db, t0, 'Plausivel', 1100, 57, 'bruno') === 'partida_usada', 'o me
 const t1 = await ticket(db); await age(db, t1, 14 * 60);
 ok(await send(db, t1, 'Paciente', 19500, 800, 'bruno') === 'ok', '…e com 14 min de espera dá até o teto (19.500 m): a barreira é tempo, não prova de jogo');
 
+console.log('\nD2. Evidência pra fase 2 (coluna via)');
+{ const r = await api(db, "insert into placar (nome, metros, segundos, bike, via) values ('Espertinho', 500, 40, 'monark', 'bilhete')", [], { keep: false });
+  ok(!r.ok, 'a API não consegue marcar um insert direto como "bilhete"', r.code); }
+{ const r = await api(db, "insert into placar (nome, metros, segundos, bike) values ('Antigo14', 500, 40, 'monark')");
+  const v = (await db.query("select via from placar where nome = 'Antigo14'")).rows[0]?.via;
+  ok(r.ok && v === 'direto', 'insert direto (versão 1.4) fica marcado como "direto"', v); }
+{ const v = (await db.query("select via from placar where nome = 'Plausivel'")).rows[0]?.via; ok(v === 'bilhete', 'recorde pelo grau_enviar fica marcado como "bilhete"', v); }
+{ const mx = REAL.length ? Math.max(...REAL.map(r => r.id)) : 0; const v = (await db.query("select count(*)::int n from placar where via <> 'direto' and id <= " + mx)).rows[0].n; ok(v === 0, 'os recordes antigos ficam como "direto"', v); }
+await db.query("delete from placar where nome = 'Antigo14'");
+
 console.log('\nE. Nomes');
 for (const n of ['C4R4LH0', 'Admin', 'Suporte Grau', 'p.o.r.r.a', 'filho da puta', 'grau80cc'])
   { const t = await ticket(db); await age(db, t, 120); ok(await send(db, t, n, 500, 40) === 'nome_proibido', `"${n}" recusado`); }
@@ -181,7 +191,8 @@ console.log('\nH. Recuperação (rollback testado)');
   ok((await api(dbr, `insert into placar (nome, metros, segundos, bike) values ('Volta', 10, 5, 'monark')`, [], { keep: false })).ok, 'desfazer a fase 2 reabre o envio da versão 1.4');
   await dbr.exec(undo(F1, '-- ROLLBACK'));
   const left = (await dbr.query(`select count(*)::int n from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname like 'grau%'`)).rows[0].n
-    + (await dbr.query(`select count(*)::int n from pg_tables where schemaname='public' and tablename like 'grau%'`)).rows[0].n;
+    + (await dbr.query(`select count(*)::int n from pg_tables where schemaname='public' and tablename like 'grau%'`)).rows[0].n
+    + (await dbr.query(`select count(*)::int n from information_schema.columns where table_name='placar' and column_name='via'`)).rows[0].n;
   ok(left === 0 && (await sum(dbr)).h === h0, 'desfazer a fase 1 remove tudo e o placar fica igual ao original', left);
 }
 

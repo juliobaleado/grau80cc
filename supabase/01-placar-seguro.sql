@@ -12,6 +12,9 @@
 --
 -- Desfazer tudo: ver o bloco "ROLLBACK" no fim do arquivo.
 
+-- tudo numa transação só: se qualquer linha falhar, nada muda no banco
+begin;
+
 create extension if not exists pgcrypto with schema extensions;
 
 -- sal aleatório pra transformar o IP em hash (o IP em si nunca é guardado)
@@ -45,6 +48,12 @@ create table if not exists public.grau_nomes (
 );
 alter table public.grau_nomes enable row level security;
 revoke all on public.grau_nomes from anon, authenticated;
+
+-- por onde cada recorde entrou: 'direto' (insert antigo, versões até a 1.4) ou 'bilhete' (grau_enviar).
+-- É a evidência pra fase 2: quando parar de chegar 'direto', ninguém mais depende do caminho antigo.
+-- A API não escreve nessa coluna (o insert do jogo só tem permissão em nome, metros, segundos e bike),
+-- então ninguém marca um recorde direto como 'bilhete'. Coluna com valor padrão constante: não reescreve a tabela.
+alter table public.placar add column if not exists via text not null default 'direto';
 
 -- hash do IP de quem chamou (PostgREST repassa os cabeçalhos da requisição).
 -- Ordem de confiança: cf-connecting-ip (a Cloudflare na frente do Supabase sobrescreve, o cliente não forja),
@@ -156,7 +165,7 @@ begin
 
   update grau_corridas set usado_em = now() where token = p_token;
   insert into grau_nomes (nome_chave, dono_hash) values (chave, dono) on conflict (nome_chave) do nothing;
-  insert into placar (nome, metros, segundos, bike) values (nome, round(p_metros, 1), round(p_segundos, 1), p_bike);
+  insert into placar (nome, metros, segundos, bike, via) values (nome, round(p_metros, 1), round(p_segundos, 1), p_bike, 'bilhete');
   return 'ok';
 end $$;
 
@@ -186,6 +195,8 @@ create index if not exists placar_criado_idx on public.placar (criado_em);
 
 notify pgrst, 'reload schema';
 
+commit;
+
 -- ROLLBACK (só se precisar desfazer a fase 1):
 -- drop trigger if exists grau_denuncia_limite on public.denuncias;
 -- drop function if exists public.grau_denuncia_limite();
@@ -195,3 +206,4 @@ notify pgrst, 'reload schema';
 -- drop function if exists public.grau_ip();
 -- drop table if exists public.grau_nomes, public.grau_corridas, public.grau_config;
 -- drop index if exists public.denuncias_criado_idx, public.placar_criado_idx;
+-- alter table public.placar drop column if exists via;
