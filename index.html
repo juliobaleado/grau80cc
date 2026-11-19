@@ -926,6 +926,9 @@ html.kid #grow-dog { display: none !important; }
     'Esse nome não pode. Escolhe outro.': ['That name is not allowed. Pick another one.', 'Ese nombre no está permitido. Elige otro.'],
     'Muito envio seguido. Tenta daqui a pouco.': ['Too many submissions in a row. Try again in a bit.', 'Demasiados envíos seguidos. Inténtalo en un rato.'],
     '▶ Jogar': ['▶ Play', '▶ Jugar'],
+    'Sem conexão direta com': ['No direct connection with', 'Sin conexión directa con'],
+    'aparece com um pouco de atraso.': ['they show up with a little delay.', 'aparece con un poco de retraso.'],
+    'Teu aparelho não fez conexão direta: os parceiros aparecem com um pouco de atraso.': ['Your device could not connect directly: partners show up with a little delay.', 'Tu dispositivo no hizo conexión directa: los compañeros aparecen con un poco de retraso.'],
     'Caramelos especiais · Google Play': ['Special strays · Google Play', 'Perros especiales · Google Play'],
     'TOCA PRA VER': ['TAP TO SEE', 'TOCA PARA VER'],
     'Cada pastel é uma compra única que apoia o desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Fica guardada na tua conta Google.': ['Each pastel is a one-time purchase that supports the developer and unlocks a special stray for when you turn into a dog in multiplayer. It does not change the competition: it is just cosmetic. Saved to your Google account.', 'Cada pastel es una compra única que apoya al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Queda guardada en tu cuenta de Google.'],
@@ -3816,7 +3819,16 @@ html.kid #grow-dog { display: none !important; }
   const own = (o, k) => o != null && Object.prototype.hasOwnProperty.call(o, k);
 
   // --- conexão (protocolo Phoenix do Realtime, sem biblioteca) ---
-  const rt = { ws: null, open: false, ref: 0, topics: {}, hb: 0, retry: 0 };
+  const rt = { ws: null, open: false, ref: 0, topics: {}, hb: 0, retry: 0, paused: false, again: 0 };
+  // contador de mensagens desta sessão (o que o Supabase cobra: cada broadcast enviado e cada um recebido)
+  const net = window.grauNet = { env: 0, rec: 0, desde: Date.now(), porHora() { return Math.round((this.env + this.rec) / Math.max(1, (Date.now() - this.desde) / 3.6e6)); } };
+  // app escondido por 1 min fora de sala: fecha a conexão (economiza conexão simultânea, presença e chat recebido)
+  let rtHideT = 0;
+  document.addEventListener('visibilitychange', () => {
+    clearTimeout(rtHideT);
+    if (document.hidden) { rtHideT = setTimeout(() => { if (document.hidden && !room.code && rt.ws) { rt.paused = true; try { rt.ws.close(); } catch (e) {} } }, 60000); }
+    else if (rt.paused) { rt.paused = false; rt.retry = 0; rtConnect(); }
+  });
   function rtConnect() {
     if (rt.ws && rt.ws.readyState <= 1) return;
     let ws;
@@ -3827,11 +3839,13 @@ html.kid #grow-dog { display: none !important; }
       for (const t of Object.values(rt.topics)) rtJoin(t);
       clearInterval(rt.hb); rt.hb = setInterval(() => rtSend('phoenix', 'heartbeat', {}), 25000);
     };
-    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (_) { return; } const t = rt.topics[m.topic]; if (t) rtOnMsg(t, m); };
+    ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (_) { return; } if (m.event === 'broadcast') net.rec++; const t = rt.topics[m.topic]; if (t) rtOnMsg(t, m); };
     ws.onclose = () => {
       rt.open = false; clearInterval(rt.hb);
       for (const t of Object.values(rt.topics)) t.joined = false;
-      setTimeout(rtConnect, Math.min(20000, 1500 * 2 ** rt.retry++));
+      if (rt.paused) return; // fechada de propósito (app escondido): volta quando o jogo aparecer de novo
+      clearTimeout(rt.again);
+      rt.again = setTimeout(() => { if (document.hidden && !room.code) rt.paused = true; else rtConnect(); }, Math.min(60000, 1500 * 2 ** Math.min(6, rt.retry++)));
     };
     ws.onerror = () => {};
   }
@@ -3851,7 +3865,7 @@ html.kid #grow-dog { display: none !important; }
   }
   function rtLeave(t) { if (!t) return; rtSend(t.topic, 'phx_leave', {}, t.joinRef); if (rt.topics[t.topic] === t) delete rt.topics[t.topic]; }
   function rtTrack(t, meta) { if (!t) return; t.meta = meta; if (t.joined) rtSend(t.topic, 'presence', { type: 'presence', event: 'track', payload: meta }, t.joinRef); }
-  function rtCast(t, event, payload) { return !!t && t.joined && rtSend(t.topic, 'broadcast', { type: 'broadcast', event, payload }, t.joinRef); }
+  function rtCast(t, event, payload) { const ok = !!t && t.joined && rtSend(t.topic, 'broadcast', { type: 'broadcast', event, payload }, t.joinRef); if (ok) net.env++; return ok; }
   function rtOnMsg(t, m) {
     const p = m.payload || {};
     if (m.event === 'phx_reply' && m.ref === t.joinRef) {
@@ -4060,7 +4074,7 @@ html.kid #grow-dog { display: none !important; }
   // --- sala ---
   const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem 0/O e 1/I pra não confundir
   const newCode = () => Array.from({ length: 4 }, () => CODE_ABC[Math.floor(Math.random() * CODE_ABC.length)]).join('');
-  const roomMeta = () => ({ nome: netName(), at: room.at, look: { ...pick } });
+  const roomMeta = () => ({ nome: netName(), at: room.at, look: { ...pick }, rtc: canRtc() });
   const joinOrder = () => Object.keys(room.members).sort((a, b) => room.members[a].at - room.members[b].at || (a < b ? -1 : 1));
   // eu fico na faixa de sempre; os parceiros, na ordem em que entraram, cada um uma faixa mais pra baixo
   const laneIds = () => joinOrder().filter(id => id !== myId);
@@ -4106,11 +4120,12 @@ html.kid #grow-dog { display: none !important; }
       room.phase = ''; clearTimeout(room.timer);
       $('mpMsg').textContent = '';
       chatSys($('roomLog'), T('Tu entrou na sala') + ' ' + room.code);
+      if (!KID && !window.RTCPeerConnection) chatSys($('roomLog'), T('Teu aparelho não fez conexão direta: os parceiros aparecem com um pouco de atraso.'));
       showRoom();
     }
     const prev = room.members, had = Object.keys(prev).length > 0;
     room.members = {};
-    for (const [id, m] of Object.entries(p)) room.members[id] = { nome: showName(clean(m && m.nome, 16)) || '?', at: +(m && m.at) || 0, look: (m && typeof m.look === 'object' && m.look) || {} };
+    for (const [id, m] of Object.entries(p)) room.members[id] = { nome: showName(clean(m && m.nome, 16)) || '?', at: +(m && m.at) || 0, look: (m && typeof m.look === 'object' && m.look) || {}, rtc: !(m && m.rtc === false) };
     // sala é de 7: quem entrou depois disso (cliente modificado que não saiu sozinho) é ignorado
     const order = Object.keys(room.members).filter(id => id !== myId).sort((a, b) => room.members[a].at - room.members[b].at || (a < b ? -1 : 1));
     for (const id of order.slice(6)) delete room.members[id];
@@ -4120,7 +4135,7 @@ html.kid #grow-dog { display: none !important; }
       if (id !== myId) { chatSys($('roomLog'), prev[id].nome + ' ' + T('saiu da sala')); feed('', prev[id].nome + ' ' + T('saiu da sala')); }
       remotes.delete(id); dropPeer(id);
     }
-    for (const id of Object.keys(room.members)) if (id !== myId && myId < id && !room.peers[id]) makePeer(id, true);
+    for (const id of Object.keys(room.members)) if (id !== myId && myId < id && !room.peers[id] && peerOk(id)) makePeer(id, true);
     renderRoom(); mpHud();
   }
   function leaveRoom(silent) {
@@ -4137,17 +4152,23 @@ html.kid #grow-dog { display: none !important; }
 
   // --- WebRTC: uma conexão por par (o de id menor chama), canal de dados pra posição e áudio pra voz ---
   const ICE = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
+  // espera o navegador juntar os candidatos de conexão (no máximo 2,5 s)
+  const iceDone = pc => new Promise(res => {
+    if (pc.iceGatheringState === 'complete') return res();
+    const t = setTimeout(res, 2500);
+    pc.addEventListener('icegatheringstatechange', () => { if (pc.iceGatheringState === 'complete') { clearTimeout(t); res(); } });
+  });
+  // dá pra conexão direta com esse parceiro? (criança e aparelho sem WebRTC avisam na presença que não)
+  const canRtc = () => !KID && !!window.RTCPeerConnection;
+  const peerOk = id => canRtc() && room.members[id] && room.members[id].rtc !== false;
   function makePeer(id, offer) {
     if (KID) return null; // sem conexão direta (nada de voz): a posição vai pelo servidor
     if (!window.RTCPeerConnection) return null;
     let pc;
     try { pc = new RTCPeerConnection({ iceServers: ICE }); } catch (e) { return null; }
     const P = room.peers[id] = { pc, dc: null, tx: null, audio: null, inQ: [], outQ: [], sent: !offer, timer: 0 };
-    pc.onicecandidate = e => {
-      if (!e.candidate) return;
-      const c = e.candidate.toJSON ? e.candidate.toJSON() : e.candidate;
-      if (P.sent) rtCast(room.ch, 'sig', { to: id, from: myId, ice: c }); else P.outQ.push(c);
-    };
+    // candidatos não vão um por um (cada broadcast é cobrado de todo mundo da sala): vão juntos dentro da descrição
+    pc.onicecandidate = () => {};
     pc.ontrack = e => {
       if (!P.audio) { P.audio = new Audio(); P.audio.autoplay = true; P.audio.setAttribute('playsinline', ''); P.audio.hidden = true; document.body.appendChild(P.audio); }
       P.audio.srcObject = (e.streams && e.streams[0]) || new MediaStream([e.track]);
@@ -4160,20 +4181,29 @@ html.kid #grow-dog { display: none !important; }
       P.tx = pc.addTransceiver('audio', { direction: 'sendrecv' });
       if (micTrack) P.tx.sender.replaceTrack(micTrack).catch(() => {});
       setupDc(id, pc.createDataChannel('pos', { ordered: false, maxRetransmits: 0 }));
-      pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => {
+      pc.createOffer().then(o => pc.setLocalDescription(o)).then(() => iceDone(pc)).then(() => {
+        if (room.peers[id] !== P) return;
         rtCast(room.ch, 'sig', { to: id, from: myId, sdp: { type: pc.localDescription.type, sdp: pc.localDescription.sdp } });
-        P.sent = true; for (const c of P.outQ) rtCast(room.ch, 'sig', { to: id, from: myId, ice: c }); P.outQ = [];
+        P.sent = true;
       }).catch(() => {});
       // não fechou em 15 s: tenta de novo (até 3 vezes); enquanto isso a posição vai pelo Supabase
       P.timer = setTimeout(() => { if (room.peers[id] === P && pc.connectionState !== 'connected') retryPeer(id, P); }, 15000);
     }
     return P;
   }
+  // sem conexão direta com alguém: a posição dele vem pelo servidor, mais espaçada; avisa uma vez por pessoa
+  const degWarned = new Set();
+  function degraded(nome) {
+    if (KID || degWarned.has(nome)) return; degWarned.add(nome);
+    const msg = T('Sem conexão direta com') + ' ' + nome + ': ' + T('aparece com um pouco de atraso.');
+    chatSys($('roomLog'), msg); flash(msg);
+  }
   function retryPeer(id, P) {
     if (room.peers[id] !== P) return;
     dropPeer(id);
     room.tries[id] = (room.tries[id] || 0) + 1;
     if (myId < id && room.members[id] && room.tries[id] < 3) setTimeout(() => { if (room.members[id] && !room.peers[id]) makePeer(id, true); }, 2000);
+    else if (room.tries[id] === 3 && room.members[id]) degraded(room.members[id].nome);
   }
   function dropPeer(id) {
     const P = room.peers[id];
@@ -4210,6 +4240,7 @@ html.kid #grow-dog { display: none !important; }
         if (P.tx) { try { P.tx.direction = 'sendrecv'; } catch (e) {} if (micTrack) await P.tx.sender.replaceTrack(micTrack).catch(() => {}); }
         const a = await P.pc.createAnswer();
         await P.pc.setLocalDescription(a);
+        await iceDone(P.pc);
         rtCast(room.ch, 'sig', { to: from, from: myId, sdp: { type: P.pc.localDescription.type, sdp: P.pc.localDescription.sdp } });
       } else if (P && P.pc.signalingState === 'have-local-offer') {
         await P.pc.setRemoteDescription({ type: 'answer', sdp: m.sdp.sdp });
@@ -4264,7 +4295,7 @@ html.kid #grow-dog { display: none !important; }
     r.b = num(m.b, 0, 1e5); r.c = num(m.c, 0, 1e5); r.mic = !!m.mic; r.rn = Math.floor(num(m.rn, 0, 1e6));
     if (m.k && r.m === 'dog') { r.say = 0.28; barkSound(0.9, earshot(near(r.tx))); }
     if (first || r.m !== r.lastM || Math.abs(r.x - r.tx) > 12) { r.x = r.tx; r.th = r.tth; } // começou rodada nova ou atrasou muito: pula direto
-    r.lastM = r.m; r.rt = performance.now();
+    r.lastM = r.m; r.rt = performance.now(); r.viaRt = !from;
   }
   function stepRemotes(dt) {
     if (!remotes.size) return;
@@ -4274,7 +4305,7 @@ html.kid #grow-dog { display: none !important; }
       if (r.tx == null) continue;
       // anda pra frente com a última velocidade enquanto o próximo pacote não chega (no máximo meio segundo)
       // pela conexão direta chega 15x/s; pelo Supabase pode vir só 1–2x/s, então prevê por até 1,2 s
-      const age = Math.min(1.2, (now - r.rt) / 1000);
+      const age = Math.min(r.viaRt ? 3 : 0.6, (now - r.rt) / 1000);
       const px = r.tx + r.tv * age, ox = r.x;
       r.x += (px - r.x) * Math.min(1, dt * 10);
       r.v = r.tv;
@@ -4469,13 +4500,24 @@ html.kid #grow-dog { display: none !important; }
       const r = remotes.get(id); // quem depende do Supabase está perto (na tela)?
       if (!r || r.tx == null || Math.abs(near(r.tx) - s.x) < 45) seen = true;
     }
-    // pelo Supabase cada pacote conta 1 mensagem por pessoa da sala (a cota grátis é 2 milhões/mês):
-    // 4x por segundo empinando (o jogo completa o movimento entre um e outro) e 1 a cada 4 s parado no menu
-    // orçamento: perto e correndo, até 4x/s (menos em sala grande, porque cada pacote é cobrado 1x por pessoa da sala);
-    // longe da tela, 1 a cada 2 s; caramelo, 1,5x mais espaçado; menu, 1 a cada 4 s
-    const others = Math.max(1, Object.keys(room.members).length - 1);
-    const every = !fast ? 4 : !seen ? 2 : Math.min(0.6, Math.max(0.25, others * 0.15)) * (m === 'dog' ? 1.5 : 1);
-    if (need && room.castAcc >= every) { room.castAcc = 0; rtCast(room.ch, 'pos', pkt); }
+    // Pelo Supabase (só quando falta conexão direta com alguém) cada pacote custa 1 + 1 por pessoa da sala, e o plano
+    // grátis derruba as conexões do projeto acima de 100 mensagens/s. Então:
+    //  - envio por previsão: quem recebe já prevê o movimento (posição + velocidade); só manda quando a previsão
+    //    erraria (> 35 cm ou > 0,1 rad de grau), quando muda o modo/late, ou 1 pacote de manutenção por segundo;
+    //  - teto da sala: ~20 mensagens/s no total, repartidas entre quem manda (intervalo mínimo cresce com a sala);
+    //  - longe da tela: no máximo 1 a cada 2 s; no menu: 1 a cada 5 s (o parceiro some da rua no menu mesmo).
+    if (pkt.k) room.kPend = true;
+    if (!need) { room.lastCast = null; return; }
+    const N = Object.keys(room.members).length, L = room.lastCast, age = room.castAcc;
+    const gap = Math.max(N * (N - 1) / 20, !fast ? 5 : !seen ? 2 : m === 'dog' ? 0.35 : 0.2);
+    const urgent = !L || pkt.m !== L.m || room.kPend || pkt.rn !== L.rn;
+    const off = L && (Math.abs(pkt.x - (L.x + L.v * age)) > 0.35 || Math.abs(pkt.th - L.th) > 0.1);
+    const keep = age >= (fast ? 1 : 5);
+    if ((urgent && age >= 0.15) || ((off || keep) && age >= gap)) {
+      const k = room.kPend ? 1 : 0; // latido que aconteceu entre um pacote e outro vai junto
+      room.castAcc = 0; room.lastCast = pkt; room.kPend = false;
+      rtCast(room.ch, 'pos', { ...pkt, k });
+    }
   }
 
   // --- telas da sala ---
