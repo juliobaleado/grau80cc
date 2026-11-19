@@ -1140,6 +1140,17 @@ html.kid #grow-dog { display: none !important; }
       e.preventDefault(); begin(); return;
     }
   });
+  // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
+  // tela inicial; só na tela inicial ele devolve false e o Android sai do app
+  window.grauBack = () => {
+    for (const [id, close] of [['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
+      if (!$(id).hidden) { close(); return true; }
+    }
+    if (!$('ageModal').hidden) return false;
+    if (s.mode === 'ride' && !paused && !(gameMode === 'multi' && room.code)) { setPause(true); return true; }
+    if (s.mode !== 'ready') { toStart(); return true; }
+    return false;
+  };
   addEventListener('keyup', e => { const a = keyAct(e.code); if (a === 'pull') endPull(); else if (a) { keys.delete(a); syncInput(); } });
   addEventListener('blur', () => { keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput(); endPull(); });
 
