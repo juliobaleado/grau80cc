@@ -46,26 +46,32 @@ create table if not exists public.grau_nomes (
 alter table public.grau_nomes enable row level security;
 revoke all on public.grau_nomes from anon, authenticated;
 
--- hash do IP de quem chamou (PostgREST repassa os cabeçalhos da requisição)
+-- hash do IP de quem chamou (PostgREST repassa os cabeçalhos da requisição).
+-- Ordem de confiança: cf-connecting-ip (a Cloudflare na frente do Supabase sobrescreve, o cliente não forja),
+-- x-real-ip, e por último o ÚLTIMO item do x-forwarded-for (o primeiro item é o cliente que escreve).
 create or replace function public.grau_ip() returns text
-language plpgsql stable security definer set search_path = public, extensions as $$
+language plpgsql stable security definer set search_path = public, extensions, pg_temp as $$
 declare
   h json := nullif(current_setting('request.headers', true), '')::json;
+  xff text[] := regexp_split_to_array(coalesce(h->>'x-forwarded-for', ''), '\s*,\s*');
   ip text;
 begin
   ip := coalesce(
-    nullif(btrim(split_part(coalesce(h->>'x-forwarded-for', ''), ',', 1)), ''),
-    nullif(h->>'cf-connecting-ip', ''),
-    nullif(h->>'x-real-ip', ''),
-    'sem-ip');
-  return encode(extensions.digest(ip || (select valor from grau_config where chave = 'sal_ip'), 'sha256'), 'hex');
+    nullif(btrim(h->>'cf-connecting-ip'), ''),
+    nullif(btrim(h->>'x-real-ip'), ''),
+    nullif(btrim(xff[array_length(xff, 1)]), ''),
+    '');
+  -- sem IP identificável: devolve 'sem-ip' e as funções pulam o limite por IP (ficam só os limites globais),
+  -- pra não travar todo mundo junto se o Supabase não repassar nenhum desses cabeçalhos
+  if ip = '' then return 'sem-ip'; end if;
+  return encode(extensions.digest(ip || (select valor from public.grau_config where chave = 'sal_ip'), 'sha256'), 'hex');
 end $$;
 revoke all on function public.grau_ip() from public, anon, authenticated;
 
 -- nomes proibidos: palavrão/ofensa óbvia e quem tenta se passar pela moderação.
 -- A mesma lista está no jogo (NOME_RUIM). Não pega tudo: é uma barreira, não um filtro perfeito.
 create or replace function public.grau_nome_proibido(p text) returns boolean
-language sql immutable as $$
+language sql immutable set search_path = pg_catalog, pg_temp as $$
   with n as (
     select translate(lower(coalesce(p, '')),
       'áàâãäéèêëíìîïóòôõöúùûüç0134578@$!|',
@@ -75,21 +81,21 @@ language sql immutable as $$
            regexp_split_to_array(regexp_replace(t, '[^a-z]+', ' ', 'g'), ' ') as palavras
     from n
   )
-  select junto ~ '(caralh|bucet|bocet|xoxot|piroc|pirok|punhet|arrombad|filhodaput|fdput|viadinh|viadao|estupr|pedofil|nazis|hitler|retardad|vagabund|nigg|fuck|cunt|bitch|admin|moderad|moderac|suport|grau80|staff|oficial)'
+  select junto ~ '(caralh|bucet|bocet|xoxot|piroc|pirok|punhet|arrombad|filhodaput|fdput|viadinh|viadao|estupr|pedofil|nazis|hitler|retardad|vagabund|nigg|fuck|cunt|bitch|admin|moderad|moderac|suport|grau80|graubo|staff|oficial)'
       or (palavras || array[junto]) && array['puta','putas','puto','cu','fdp','vsf','tnc','pnc','pqp','kct','krl','porra','viado','viados','bixa','bicha','corno','cuzao','merda','buceta','pau','rola']
   from j
 $$;
 
 -- começa uma partida do Modo Motoca e devolve o bilhete
 create or replace function public.grau_iniciar() returns uuid
-language plpgsql volatile security definer set search_path = public, extensions as $$
+language plpgsql volatile security definer set search_path = public, extensions, pg_temp as $$
 declare
   ip text := grau_ip();
   t uuid;
 begin
   delete from grau_corridas where criado_em < now() - interval '6 hours';
   -- generoso porque muita gente no Brasil divide o mesmo IP da operadora (CGNAT)
-  if (select count(*) from grau_corridas where ip_hash = ip and criado_em > now() - interval '10 minutes') >= 300 then
+  if ip <> 'sem-ip' and (select count(*) from grau_corridas where ip_hash = ip and criado_em > now() - interval '10 minutes') >= 300 then
     raise exception 'muitas_partidas' using errcode = 'P0001';
   end if;
   if (select count(*) from grau_corridas) >= 200000 then
@@ -104,7 +110,7 @@ create or replace function public.grau_enviar(
   p_token uuid, p_nome text, p_metros numeric, p_segundos numeric, p_bike text, p_dono text,
   p_teste boolean default false
 ) returns text
-language plpgsql volatile security definer set search_path = public, extensions as $$
+language plpgsql volatile security definer set search_path = public, extensions, pg_temp as $$
 declare
   c grau_corridas%rowtype;
   ip text := grau_ip();
@@ -139,7 +145,7 @@ begin
   select * into d from grau_nomes where nome_chave = chave;
   if found and d.dono_hash <> dono then return 'nome_em_uso'; end if;
 
-  if (select count(*) from grau_corridas where ip_hash = ip and usado_em > now() - interval '10 minutes') >= 20 then
+  if ip <> 'sem-ip' and (select count(*) from grau_corridas where ip_hash = ip and usado_em > now() - interval '10 minutes') >= 20 then
     return 'muitos_envios';
   end if;
   if (select count(*) from placar where criado_em > now() - interval '1 minute') >= 30 then
@@ -154,6 +160,8 @@ begin
   return 'ok';
 end $$;
 
+-- o jogo tem a própria cópia da lista; a função do banco não precisa ficar exposta como RPC
+revoke all on function public.grau_nome_proibido(text) from public, anon, authenticated;
 revoke all on function public.grau_iniciar() from public;
 revoke all on function public.grau_enviar(uuid, text, numeric, numeric, text, text, boolean) from public;
 grant execute on function public.grau_iniciar() to anon, authenticated;
@@ -162,7 +170,7 @@ grant execute on function public.grau_enviar(uuid, text, numeric, numeric, text,
 -- denúncias: no máximo 20 por minuto e 300 por hora no total (denúncia de verdade é rara;
 -- isso só impede alguém de encher o banco com um script)
 create or replace function public.grau_denuncia_limite() returns trigger
-language plpgsql security definer set search_path = public as $$
+language plpgsql security definer set search_path = public, pg_temp as $$
 begin
   if (select count(*) from denuncias where criado_em > now() - interval '1 minute') >= 20
      or (select count(*) from denuncias where criado_em > now() - interval '1 hour') >= 300 then
