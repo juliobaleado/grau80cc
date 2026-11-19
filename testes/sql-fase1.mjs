@@ -22,10 +22,24 @@ const PROD = `
 create role anon nologin; create role authenticated nologin;
 create schema if not exists extensions;
 grant usage on schema public to anon, authenticated; grant usage on schema extensions to anon, authenticated;
--- privilégios padrão do Supabase: toda tabela/função nova nasce com tudo liberado pra anon e authenticated
+${process.env.PERFIL === 'real' ? `
+-- privilégios padrão LIDOS do banco real (19/11/2026) pro papel postgres, que é quem roda o SQL Editor:
+-- tabela nova: anon/authenticated só com TRUNCATE/REFERENCES/TRIGGER/MAINTAIN; função nova: sem EXECUTE pra ninguém além do dono
+alter default privileges in schema public grant truncate, references, trigger, maintain on tables to anon, authenticated;
+alter default privileges revoke execute on functions from public;
+-- gatilho do Supabase (ensure_rls): liga RLS em toda tabela nova do public
+create function public.rls_auto_enable() returns event_trigger language plpgsql security definer as $$
+declare r record; begin
+  for r in select * from pg_event_trigger_ddl_commands() where command_tag in ('CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO') and schema_name = 'public' loop
+    execute format('alter table %s enable row level security', r.object_identity);
+  end loop; end $$;
+create event trigger ensure_rls on ddl_command_end when tag in ('CREATE TABLE', 'CREATE TABLE AS', 'SELECT INTO') execute function public.rls_auto_enable();
+` : `
+-- perfil permissivo (pior caso): toda tabela/função nova nasce com tudo liberado pra anon e authenticated
 alter default privileges in schema public grant all on tables to anon, authenticated;
 alter default privileges in schema public grant all on functions to anon, authenticated;
 alter default privileges in schema public grant all on sequences to anon, authenticated;
+`}
 create table public.placar (
   id bigint generated always as identity primary key, nome text, metros numeric, segundos numeric,
   bike text default 'monark', criado_em timestamptz default now(),
@@ -90,9 +104,9 @@ ok((await sum(db)).h === s0.h, 'rodar a fase 1 de novo (idempotente) não muda n
 console.log('\nB. SECURITY DEFINER: dono, search_path e quem executa');
 const defs = (await db.query(`select p.proname, pg_get_userbyid(p.proowner) dono, p.proconfig cfg,
   has_function_privilege('anon', p.oid, 'execute') anon_exec from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-  where n.nspname = 'public' and p.prosecdef order by 1`)).rows;
+  where n.nspname = 'public' and p.prosecdef and p.proname like 'grau%' order by 1`)).rows;
 for (const d of defs) ok((d.cfg || []).some(c => /search_path=.*pg_temp$/.test(c)), `${d.proname}: dono ${d.dono}, search_path fixo com pg_temp no fim, anon executa: ${d.anon_exec}`, (d.cfg || []).join(' '));
-const expected = { grau_enviar: true, grau_iniciar: true, grau_ip: false, grau_denuncia_limite: true };
+const expected = { grau_enviar: true, grau_iniciar: true, grau_ip: false, grau_denuncia_limite: process.env.PERFIL !== 'real' }; // gatilho não precisa de EXECUTE pra disparar
 ok(defs.every(d => d.anon_exec === expected[d.proname]), 'anon só executa grau_iniciar/grau_enviar (o trigger não roda fora de trigger)');
 ok(!(await api(db, `select grau_nome_proibido('x')`)).ok, 'grau_nome_proibido não é chamável pela API');
 ok(!(await api(db, `select grau_ip()`)).ok, 'grau_ip não é chamável pela API');
