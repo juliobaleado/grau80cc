@@ -129,7 +129,7 @@ const HIDE = `.pad, .hud-btns, #ach, #chatBtn, #micBtn, #quickPlay, #iosTip, .lo
     await c.p.close();
   }
 
-  // B: grau sozinho com a viatura chegando
+  // B: grau sozinho com a Caravana da D.U.R.O. chegando
   if (want('B')) {
     const c = await session({ model: 'caicara', frame: 'agua' });
     await c.ev(() => __t.begin('motoca'));

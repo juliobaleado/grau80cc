@@ -24,7 +24,7 @@ const V_CROP = [150, 0, 1440, 1080];
 // legendas: t0/t1 em segundos do vídeo
 const LEGENDAS = [
   { t0: 0.1, t1: 3.0, hook: ['EMPINA A BIKE.', 'DESAFIA A GALERA.', 'VIRA CARAMELO.'], at: [0.1, 1.05, 2.0] },
-  { t0: 3.25, t1: 8.8, k: 'Modo Motoca', t: 'SEGURA O GRAU', s: 'cada metro conta · foge da viatura' },
+  { t0: 3.25, t1: 8.8, k: 'Modo Motoca', t: 'SEGURA O GRAU', s: 'cada metro conta · foge do D.U.R.O.' },
   { t0: 9.25, t1: 14.8, k: 'Multiplayer', t: 'JOGA COM A GALERA', s: 'até 7 na mesma rua · chat e voz' },
   { t0: 15.6, t1: 18.85, k: 'Virou pra trás?', t: 'VIRA CARAMELO', s: 'e corre atrás de quem ainda tá no grau' },
   { t0: 19.25, t1: 21.9, k: 'Passou no Agenor?', t: 'VOLTA PRA BIKE' },

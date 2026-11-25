@@ -234,6 +234,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .card p { margin: 0; font-size: 19px; line-height: 1.35; font-weight: 500; }
 .eyerow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .langs { display: flex; gap: 4px; }
+.ficcao { margin: 10px 0 64px; font-size: 11px; line-height: 1.35; color: var(--muted); opacity: .8; }
 .eyetools { display: flex; align-items: center; gap: 4px; }
 .musicbtn { font: 700 12px var(--hud); letter-spacing: .1em; color: var(--muted); background: transparent; border: 1px solid rgba(243, 239, 230, .25); border-radius: 2px; padding: 3px 7px; cursor: pointer; white-space: nowrap; }
 .musicbtn[aria-pressed="true"] { color: var(--sodium); border-color: rgba(255, 181, 71, .6); }
@@ -718,6 +719,7 @@ html.kid #grow-dog { display: none !important; }
         <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
         <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
       </ul>
+      <p class="ficcao" data-i>As instituições, corporações e personagens deste jogo são fictícios. Qualquer semelhança com órgãos reais é coincidência.</p>
     </div>
   </div>
 
@@ -919,8 +921,8 @@ html.kid #grow-dog { display: none !important; }
   const powerNow = rpm => (MODEL === 'bruno' ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
-  // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português
-  const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde militar":["Army green","Verde militar"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
+  // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português (exceto as falas da D.U.R.O.)
+  const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde oliva":["Olive green","Verde oliva"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
   Object.assign(I18N, {
     'Esse nome já é de outro jogador. Escolhe outro.': ['That name belongs to another player. Pick another one.', 'Ese nombre ya es de otro jugador. Elige otro.'],
     'Esse nome não pode. Escolhe outro.': ['That name is not allowed. Pick another one.', 'Ese nombre no está permitido. Elige otro.'],
@@ -969,6 +971,24 @@ html.kid #grow-dog { display: none !important; }
     "Cria uma sala e manda o código, ou entra com o código de um parceiro (até 7). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Passou no Agenor de caramelo, volta pra moto. Quando todo mundo cai, começa outra rodada.":
       ["Create a room and share the code, or join a friend's code (up to 7). Each player sees their own challenges. Front wheel down resets your wheelie; flip over and you turn into a stray dog chasing whoever is still riding. Pass the Agenor stall as a dog and you get your bike back. When everyone falls, a new round starts.",
        "Crea una sala y comparte el código, o entra con el código de un amigo (hasta 7). Cada uno ve sus propios desafíos. Si la rueda delantera toca el suelo, el caballito vuelve a cero; si te das vuelta, te conviertes en perro y corres detrás de quien sigue en una rueda. Si pasas por el Agenor siendo perro, vuelves a la moto. Cuando todos caen, empieza otra ronda."]
+  });
+  // D.U.R.O.: as falas da repartição são traduzidas (o resto das frases do jogo continua em português)
+  Object.assign(I18N, {
+    'Você foi notificado': ['You have been served', 'Has sido notificado'],
+    'Seu grau foi indeferido': ['Wheelie request: DENIED', 'Tu caballito fue denegado'],
+    'A Esquadrilha do Protocolo chegou': ['The Paperwork Squadron is here', 'Llegó la Escuadrilla del Trámite'],
+    'Faltou a terceira via': ['You forgot copy #3', 'Te faltó la tercera copia'],
+    'Sujou! Lá vem o D.U.R.O.': ['Uh-oh! Here comes D.U.R.O.', '¡Se armó! Ahí viene el D.U.R.O.'],
+    'Compareça ao guichê 80!': ['Please proceed to window 80!', '¡Pase por la ventanilla 80!'],
+    'Faltou a terceira via!': ['Copy #3 is missing!', '¡Falta la tercera copia!'],
+    'Recurso negado!': ['Appeal denied!', '¡Recurso denegado!'],
+    'Sua roda dianteira está irregular!': ['Your front wheel lacks a permit!', '¡Su rueda delantera está irregular!'],
+    'Pegue uma senha!': ['Take a number!', '¡Saque su número!'],
+    'Atendimento das 9h às 9h05': ['Open 9:00 to 9:05 a.m.', 'Atención de 9:00 a 9:05'],
+    'SENHA': ['NUMBER', 'TURNO'],
+    'As instituições, corporações e personagens deste jogo são fictícios. Qualquer semelhança com órgãos reais é coincidência.':
+      ['All institutions, agencies and characters in this game are fictional. Any resemblance to real organizations is coincidental.',
+       'Las instituciones, corporaciones y personajes de este juego son ficticios. Cualquier parecido con organismos reales es coincidencia.']
   });
   // bandeiras em SVG (emoji de bandeira não aparece no Windows)
   const FLAG = {
@@ -1020,12 +1040,12 @@ html.kid #grow-dog { display: none !important; }
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
       last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, achSeen: {}, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, gearN: 1, chapa: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
-      // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, viatura 300–400,
-      // Rocam 500–600, Uno 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
+      // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, Caravana da D.U.R.O. 300–400,
+      // Esquadrilha do Protocolo 500–600, Uno 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at: 100 },
-      law: { car: null, bikes: [], cg: null, carDone: false, rocamDone: false, carEscaped: false, rocamEscaped: false,
+      law: { car: null, bikes: [], cg: null, carDone: false, esqDone: false, carEscaped: false, esqEscaped: false,
              uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
-             at: { kite: 20, car: 300, rocam: 500, uno: 700, thief: 900 }, dur: { car: 100, rocam: 100, uno: 100, thief: 100 },
+             at: { kite: 20, car: 300, esq: 500, uno: 700, thief: 900 }, dur: { car: 100, esq: 100, uno: 100, thief: 100 },
              nextLoop: 1000, loopI: 0 },
       kite: null, kiteDone: false, sparks: [], scrape: 0, dieT: 0, pet: null,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
@@ -1318,9 +1338,9 @@ html.kid #grow-dog { display: none !important; }
       const sbp = ac.createBiquadFilter(); sbp.type = 'bandpass'; sbp.frequency.value = 2600; sbp.Q.value = 1.2;
       const scrapeG = ac.createGain(); scrapeG.gain.value = 0;
       sn.connect(sbp).connect(scrapeG).connect(sfx); sn.start();
-      // sirene: onda quadrada com o tom variando (viatura = lamento lento, Rocam = yelp rápido)
-      const so = ac.createOscillator(); so.type = 'square';
-      const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1900;
+      // D.U.R.O.: corneta de três toques da Caravana e apito de repartição da Esquadrilha (mesmo canal, liga nas mesmas condições)
+      const so = ac.createOscillator(); so.type = 'sawtooth';
+      const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1300;
       const sirenG = ac.createGain(); sirenG.gain.value = 0;
       so.connect(slp).connect(sirenG).connect(sfx); so.start();
       // 4 tempos monocilíndrico sem filtro: uma explosão a cada 2 voltas (pulso estreito = "bu-bu-bu" grosso),
@@ -1338,7 +1358,7 @@ html.kid #grow-dog { display: none !important; }
       p4.connect(honk).connect(honkG).connect(out4);
       out4.connect(sfx);
       p4.start(); sub4.start();
-      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4 };
+      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, sirenLp: slp, sirenWas: false, p4, sub4, lp4, honk, honkG, out4 };
       if (muted) ac.suspend();
       startMusic();
     } catch (e) { ac = null; }
@@ -1482,13 +1502,23 @@ html.kid #grow-dog { display: none !important; }
       if (Math.random() < 0.3) s.flame = 0.05;
     }
     nodes.scrapeG.gain.setTargetAtTime(paused ? 0 : s.scrape > 0 ? 0.1 + 0.1 * s.scrape : 0, t, 0.02);
-    const L = s.law, rocamOn = L.bikes.some(b => b.state === 'chase' || (b.state === 'hunt' && Math.abs(b.x - s.x) < 35));
-    const sirenOn = !paused && (rocamOn || (L.car && L.car.state === 'chase'));
+    const L = s.law, esqOn = L.bikes.some(b => b.state === 'chase' || (b.state === 'hunt' && Math.abs(b.x - s.x) < 35));
+    const sirenOn = !paused && (esqOn || (L.car && L.car.state === 'chase'));
     const now = performance.now() / 1000;
-    const sirenHz = rocamOn ? 750 + 450 * (0.5 + 0.5 * Math.sin(now * Math.PI * 2 / 0.35))
-                            : 700 + 500 * (0.5 + 0.5 * Math.sin(now * Math.PI * 2 / 2.6));
-    nodes.siren.frequency.setTargetAtTime(sirenHz, t, 0.02);
-    nodes.sirenG.gain.setTargetAtTime(sirenOn ? 0.05 : 0, t, sirenOn ? 0.3 : 0.9); // some num fade quando escapa
+    let sirenHz, sirenVol;
+    if (esqOn) { // apito: trinado agudo, "fiiii · fi"
+      const ph = (now % 0.9) / 0.9;
+      if (nodes.siren.type !== 'sine') { nodes.siren.type = 'sine'; nodes.sirenLp.frequency.value = 6000; }
+      sirenHz = 2350 + 160 * Math.sin(now * Math.PI * 2 * 26); sirenVol = ph < 0.45 || (ph > 0.56 && ph < 0.7) ? 0.03 : 0;
+    } else { // corneta de repartição em três toques, "tá-tá-tááá" (diferente da buzina dupla do Uno)
+      const ph = (now % 1.3) / 1.3;
+      if (nodes.siren.type !== 'sawtooth') { nodes.siren.type = 'sawtooth'; nodes.sirenLp.frequency.value = 1300; }
+      sirenHz = ph < 0.33 ? 311 : 415; sirenVol = ph < 0.11 || (ph > 0.17 && ph < 0.28) || (ph > 0.36 && ph < 0.62) ? 0.06 : 0;
+    }
+    nodes.siren.frequency.setTargetAtTime(sirenHz, t, 0.004);
+    nodes.sirenG.gain.setTargetAtTime(sirenOn ? sirenVol : 0, t, sirenOn ? 0.012 : 0.9); // some num fade quando escapa
+    if (sirenOn && !nodes.sirenWas) duroPlim(t);
+    nodes.sirenWas = sirenOn;
   }
 
   // corte de giro: o som some por um instante e às vezes o escape dá um tiro
@@ -1533,8 +1563,8 @@ html.kid #grow-dog { display: none !important; }
   const ACHS = [
     { id: 'grau30', why: 'Primeiros 30 m de grau', name: 'Acima de mim só Deus e a roda da frente', test: () => s.active && s.wDist >= 30 },
     { id: 'grau100', why: '200 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
-    { id: 'grau200', why: '400 m de grau com a viatura na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
-    { id: 'grau300', why: '600 m de grau com a Rocam na cola', name: 'Motoka 244', test: () => s.law.rocamEscaped },
+    { id: 'grau200', why: '400 m de grau com o D.U.R.O. na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
+    { id: 'grau300', why: '600 m de grau com a Esquadrilha do Protocolo na cola', name: 'Motoka 244', test: () => s.law.esqEscaped },
     { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
     { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
     { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
@@ -1643,8 +1673,8 @@ html.kid #grow-dog { display: none !important; }
     flip: ['Passou do ponto', 'Perdeu os lanche'],
     landed: ['Frente no chão', 'Piloto de azeitona'],
     gang: ['Os caramelo venceram', 'Caiu no beco da mordida'],
-    car: ['A viatura encostou', 'Pegaro os lanche'],
-    rocam: ['A Rocam encostou', 'É só trocar ideia'],
+    car: ['Você foi notificado', 'Seu grau foi indeferido'],
+    esq: ['A Esquadrilha do Protocolo chegou', 'Faltou a terceira via'],
     thief: ['Os cara encostou', 'Perdeu Playboy'],
     uno: ['O Uno ganhou o racha', 'Levou Benga']
   };
@@ -1878,14 +1908,14 @@ html.kid #grow-dog { display: none !important; }
     if (gameMode === 'multi') return mpDie(); // na sala ninguém para: quem cai vira caramelo e corre atrás da galera
     const L = s.law;
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
-      : L.bikes.some(b => b.state === 'chase') ? 'rocam'
+      : L.bikes.some(b => b.state === 'chase') ? 'esq'
       : L.car && L.car.state === 'chase' ? 'car'
       : L.uno && L.uno.state === 'race' ? 'uno'
       : gangChasing() ? 'gang' : how;
     s.mode = 'over'; s.reason = how;
     recordWheelie();
-    ui.endEyebrow.textContent = END_TEXT[msg][0];
-    ui.endTitle.textContent = END_TEXT[msg][1];
+    ui.endEyebrow.textContent = T(END_TEXT[msg][0]);
+    ui.endTitle.textContent = T(END_TEXT[msg][1]);
     $('endLabel').textContent = T(gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando');
     $('endCountRow').hidden = gameMode !== 'livre';
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
@@ -2091,10 +2121,10 @@ html.kid #grow-dog { display: none !important; }
   }
   // volume do latido: some aos poucos conforme o cachorro fica longe da moto
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
-  // perseguição: viatura aos 300 m (fura o pneu aos 400 m), 3 motos da Rocam aos 500 m (vão atrás de uma CG aos 600 m),
-  // racha com o Uno aos 700 m (funde aos 800 m) e a Titan dos ladrões aos 900 m (a Rocam espanta aos 1.000 m)
-  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, viatura, Rocam, Uno, ladrões)
-  const LOOP = ['pack', 'car', 'rocam', 'uno', 'thief'];
+  // perseguição: Caravana 3 Vias aos 300 m (fura o pneu aos 400 m), 3 motos da Esquadrilha aos 500 m (vão atrás de uma CG aos 600 m),
+  // racha com o Uno aos 700 m (funde aos 800 m) e a Titan dos ladrões aos 900 m (a Esquadrilha espanta aos 1.000 m)
+  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, Caravana, Esquadrilha, Uno, ladrões)
+  const LOOP = ['pack', 'car', 'esq', 'uno', 'thief'];
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
     if (CHAL() && riding && s.wDist >= L.nextLoop) {
@@ -2103,13 +2133,13 @@ html.kid #grow-dog { display: none !important; }
       L.nextLoop += 200;
       if (kind === 'pack') { s.pack = { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at }; s.kite = null; s.kiteDone = false; L.at.kite = at - 60; }
       else if (kind === 'car') { L.car = null; L.carDone = false; L.at.car = at; }
-      else if (kind === 'rocam') { L.bikes = []; L.cg = null; L.rocamDone = false; L.at.rocam = at; }
+      else if (kind === 'esq') { L.bikes = []; L.cg = null; L.esqDone = false; L.at.esq = at; }
       else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; }
       else { L.thief = null; L.thiefDone = false; L.at.thief = at; }
     }
     if (CHAL() && riding) {
       if (!L.car && !L.carDone && s.wDist >= L.at.car) L.car = { x: s.x - 14, v: s.v + 6, state: 'chase', t: 0, flat: 0 };
-      if (!L.bikes.length && !L.rocamDone && s.wDist >= L.at.rocam) {
+      if (!L.bikes.length && !L.esqDone && s.wDist >= L.at.esq) {
         L.bikes = [0, 1, 2].map(i => ({ x: s.x - 11 - i * 2.5, v: s.v + 5, gap: 2.2 + i * 1.7, lane: [0.22, 0.1, 0][i], state: 'chase', t: 0, phase: i * 0.5 }));
       }
     }
@@ -2148,8 +2178,8 @@ html.kid #grow-dog { display: none !important; }
         b.v = Math.max(0, b.v - 8 * h); b.x += b.v * h;
       }
     }
-    if (!L.rocamDone && riding && s.wDist >= L.at.rocam + L.dur.rocam && L.bikes.some(b => b.state === 'chase')) {
-      L.rocamDone = true; L.rocamEscaped = true;
+    if (!L.esqDone && riding && s.wDist >= L.at.esq + L.dur.esq && L.bikes.some(b => b.state === 'chase')) {
+      L.esqDone = true; L.esqEscaped = true;
       L.cg = { x: s.x - 9, v: 34 };
       L.bikes.forEach(b => { b.state = 'go'; b.t = 0; });
       cgSound(); checkAch();
@@ -2190,7 +2220,7 @@ html.kid #grow-dog { display: none !important; }
       if (s.x - u.x > 50) L.uno = null;
     }
 
-    // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Rocam e eles vazam
+    // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Esquadrilha e eles vazam
     if (CHAL() && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
       L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
     }
@@ -2202,7 +2232,7 @@ html.kid #grow-dog { display: none !important; }
         else if (s.wDist >= L.at.thief + L.dur.thief) {
           th.state = 'flee'; th.t = 0; L.thiefDone = true; L.thiefEscaped = true;
           L.bikes = [0, 1, 2].map(i => ({ x: s.x - 14 - i * 2.5, v: s.v + 8, gap: 0, lane: [0.22, 0.1, 0][i], state: 'hunt', t: 0, phase: i * 0.5 }));
-          flash('Sujou! A Rocam chegou'); checkAch();
+          flash(T('Sujou! Lá vem o D.U.R.O.')); checkAch();
         }
         const tx = s.x - 1.5 - 0.5 * Math.sin(th.t * 1.3);
         th.v += (Math.min(s.v + 7, s.v + (tx - th.x) * 1.5) - th.v) * Math.min(1, h * 3);
@@ -2227,6 +2257,16 @@ html.kid #grow-dog { display: none !important; }
       f.connect(g).connect(sfx);
       for (const hz of [415, 520]) { const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = hz; o.connect(f); o.start(t0); o.stop(t0 + 0.24); }
     }
+  }
+  // "plim-plom" de painel de senha: a D.U.R.O. chegou
+  function duroPlim(t) {
+    if (!nodes || muted || paused) return;
+    [[1319, 0], [988, 0.16]].forEach(([f, d]) => {
+      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.12, t + d + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5);
+      o.connect(g).connect(sfx); o.start(t + d); o.stop(t + d + 0.55);
+    });
   }
   function cgSound() {
     if (!nodes || muted || paused) return;
@@ -2408,7 +2448,7 @@ html.kid #grow-dog { display: none !important; }
     for (const d of s.pack.dogs) drawDog(sx, sy, S, performance.now() / 1000, d);
     drawRunCat(sx, sy, S, performance.now() / 1000);
     drawCar(sx, sy, S, performance.now() / 1000);
-    drawRocams(sx, sy, S, performance.now() / 1000);
+    drawEsquadrilha(sx, sy, S, performance.now() / 1000);
     drawUno(sx, sy, S, performance.now() / 1000);
 
     // bandeira do recorde (na sala é o melhor grau teu na sala)
@@ -2659,156 +2699,209 @@ html.kid #grow-dog { display: none !important; }
     C.restore();
   }
 
-  // giroflex: brilho vermelho e azul alternando, em coordenadas de tela
+  // pisca da D.U.R.O.: âmbar e verde-limão alternando, em coordenadas de tela
   function drawLights(x, y, rad, t, phase) {
     const on = Math.floor(t * 6 + phase) % 2;
-    const col = on ? '255, 40, 40' : '40, 90, 255';
+    const col = on ? '255, 176, 40' : '182, 222, 58';
     C.save(); C.globalCompositeOperation = 'lighter';
     const g = C.createRadialGradient(x, y, 0, x, y, 1.6 * rad);
-    g.addColorStop(0, `rgba(${col}, .55)`); g.addColorStop(1, `rgba(${col}, 0)`);
+    g.addColorStop(0, `rgba(${col}, .5)`); g.addColorStop(1, `rgba(${col}, 0)`);
     C.fillStyle = g; C.fillRect(x - 1.6 * rad, y - 1.6 * rad, 3.2 * rad, 3.2 * rad);
     C.restore();
   }
-  // viatura: c.x é o para-choque dianteiro; com o pneu furado a frente afunda
+  // D.U.R.O. · Divisão Urbana de Requerimentos e Ofícios: repartição fictícia do jogo que se acha tropa de elite.
+  // Paleta própria (berinjela, mostarda, creme e verde-limão) e símbolo próprio (carimbo sorridente "INDEFERIDO").
+  const DURO = { ber: '#5e3474', berD: '#3a1e4a', berL: '#8a56a6', mus: '#e8ac2a', musD: '#a87512', cre: '#f3e6c8', lim: '#b6d43a',
+    cro: '#d5d9dc', bk: '#17181c', gl: '#1d2a36', pele: '#c98d62' };
+  // texto pintado no mundo (unidades em metros, y pra cima)
+  function duroTxt(str, tx, ty, px, col, rot = 0) {
+    C.save(); C.translate(tx, ty); if (rot) C.rotate(rot); C.scale(0.01, -0.01);
+    C.fillStyle = col; C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(str, 0, 0);
+    C.restore();
+  }
+  // o símbolo: carimbo de borracha sorridente com "INDEFERIDO" na sola (cx, cy = meio da sola; r = meia largura)
+  function duroStamp(cx, cy, r, word) {
+    const D = DURO;
+    C.fillStyle = D.lim; C.beginPath(); C.roundRect(cx - r, cy - 0.2 * r, 2 * r, 0.42 * r, 0.06 * r); C.fill();
+    if (word) duroTxt('INDEFERIDO', cx, cy + 0.01 * r, 28 * r, D.berD);
+    C.fillStyle = D.ber; C.beginPath(); C.roundRect(cx - 0.8 * r, cy + 0.22 * r, 1.6 * r, 0.78 * r, 0.12 * r); C.fill();
+    C.fillStyle = D.cre;
+    C.beginPath(); C.arc(cx - 0.3 * r, cy + 0.7 * r, 0.08 * r, 0, Math.PI * 2); C.arc(cx + 0.3 * r, cy + 0.7 * r, 0.08 * r, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = D.cre; C.lineWidth = 0.07 * r; C.lineCap = 'round';
+    C.beginPath(); C.arc(cx, cy + 0.66 * r, 0.3 * r, Math.PI + 0.55, 2 * Math.PI - 0.55); C.stroke();
+    C.fillStyle = D.berD; C.fillRect(cx - 0.16 * r, cy + r, 0.32 * r, 0.42 * r);
+    C.fillStyle = D.mus; C.beginPath(); C.arc(cx, cy + 1.62 * r, 0.32 * r, 0, Math.PI * 2); C.fill();
+    C.fillStyle = 'rgba(255, 255, 255, .35)'; C.beginPath(); C.arc(cx - 0.1 * r, cy + 1.72 * r, 0.1 * r, 0, Math.PI * 2); C.fill();
+  }
+  // falas da Caravana durante a perseguição (traduzidas; mudam a cada 2,6 s)
+  const DURO_FALAS = ['Compareça ao guichê 80!', 'Faltou a terceira via!', 'Recurso negado!', 'Sua roda dianteira está irregular!', 'Pegue uma senha!'];
+  function duroBalloon(x, y, S, msg) {
+    const px = Math.round(Math.max(12, Math.min(20, 0.15 * S)));
+    C.save(); C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+    const tw = C.measureText(msg).width, w = tw + px * 1.1, h = px * 1.6;
+    const bx = Math.max(8, Math.min(W - w - 8, x - w / 2)), by = y - h;
+    C.fillStyle = DURO.cre; C.strokeStyle = DURO.berD; C.lineWidth = 2;
+    C.beginPath(); C.roundRect(bx, by, w, h, 6); C.fill(); C.stroke();
+    C.beginPath(); C.moveTo(x - 6, by + h - 1); C.lineTo(x, by + h + 9); C.lineTo(x + 6, by + h - 1); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(x - 6, by + h); C.lineTo(x, by + h + 9); C.lineTo(x + 6, by + h); C.stroke();
+    C.fillStyle = DURO.berD; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(msg, bx + w / 2, by + h / 2 + 1);
+    C.restore();
+  }
+  // Caravana 3 Vias: sedã-caixote anos 80 da D.U.R.O. c.x é o para-choque dianteiro; com o pneu furado a frente afunda.
+  // Mesmo comprimento e mesmas rodas (-0,95 e -4,05) da versão anterior: só o desenho mudou.
   function drawCar(sx, sy, S, t) {
     const c = s.law.car;
     if (!c) return;
     const x = sx(c.x);
     if (x < -0.5 * S || x - 5.4 * S > W) return;
-    const WH = '#f1f2f0', TAN = '#a8937b', TANd = '#7d6b58', BK = '#1b1d20', GL = '#1a2733';
+    const D = DURO, chase = c.state === 'chase';
+    if (chase) drawLights(sx(c.x - 2.9), sy(1.85), S, t, 0); // o brilho fica atrás da carroceria
     C.save(); C.translate(x, sy(0)); C.scale(S, -S);
     C.translate(-4.05, 0); C.rotate(-0.035 * c.flat); C.translate(4.05, 0);
-    // picape cabine dupla: capô alto, cabine e caçamba
-    C.fillStyle = WH;
-    C.beginPath(); C.moveTo(0.02, 0.38); C.lineTo(0.06, 0.82); C.lineTo(-0.05, 0.98); C.lineTo(-1.3, 1.1); C.lineTo(-1.95, 1.68);
-    C.lineTo(-3.35, 1.7); C.lineTo(-3.45, 1.12); C.lineTo(-5.15, 1.12); C.lineTo(-5.2, 0.38); C.closePath(); C.fill();
-    // faixa bege por baixo, subindo pelo capô na frente (padrão PMSC)
-    C.fillStyle = TAN;
-    C.beginPath(); C.moveTo(0.04, 0.6); C.lineTo(0.05, 0.86); C.lineTo(-0.45, 0.9); C.lineTo(-1.0, 0.72); C.lineTo(-1.6, 0.6);
-    C.lineTo(-5.18, 0.6); C.lineTo(-5.18, 0.45); C.lineTo(0.03, 0.45); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-3.45, 1.12); C.lineTo(-5.15, 1.12); C.lineTo(-5.15, 0.96); C.lineTo(-3.5, 0.96); C.closePath(); C.fill();
-    C.fillStyle = TANd; C.fillRect(-5.18, 0.45, 5.21, 0.035);
-    // para-choque, estribo e para-lamas pretos
-    C.fillStyle = BK; C.fillRect(-5.25, 0.3, 5.3, 0.15);
-    C.fillRect(-3.45, 0.36, 2.0, 0.07);
+    // papelada voando pela janela de trás
+    if (chase) for (let i = 0; i < 3; i++) {
+      const k = (t * 0.9 + i / 3) % 1, px = -4.25 - k * 1.7, py = 1.2 + k * 0.5 + Math.sin(t * 7 + i * 2) * 0.12;
+      C.save(); C.translate(px, py); C.rotate(Math.sin(t * 5 + i) * 0.9);
+      C.fillStyle = D.cre; C.fillRect(-0.08, -0.1, 0.16, 0.2);
+      C.fillStyle = 'rgba(58, 30, 74, .5)'; C.fillRect(-0.05, 0.03, 0.1, 0.015); C.fillRect(-0.05, -0.01, 0.1, 0.015); C.fillRect(-0.05, -0.05, 0.07, 0.015);
+      C.restore();
+    }
+    // carroceria quadradona: capô comprido, cabine reta e porta-malas comprido
+    C.fillStyle = D.ber;
+    C.beginPath(); C.moveTo(0.05, 0.36); C.lineTo(0.07, 0.86); C.lineTo(-1.5, 0.94); C.lineTo(-2.05, 1.58); C.lineTo(-3.8, 1.6);
+    C.lineTo(-4.3, 0.98); C.lineTo(-5.16, 0.96); C.lineTo(-5.2, 0.36); C.closePath(); C.fill();
+    // cabine creme (teto e colunas) e vidros
+    C.fillStyle = D.cre;
+    C.beginPath(); C.moveTo(-1.5, 0.94); C.lineTo(-2.05, 1.58); C.lineTo(-3.8, 1.6); C.lineTo(-4.3, 0.98); C.closePath(); C.fill();
+    C.fillStyle = D.gl;
+    C.beginPath(); C.moveTo(-1.64, 0.99); C.lineTo(-2.1, 1.5); C.lineTo(-2.86, 1.5); C.lineTo(-2.86, 0.99); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.98, 0.99); C.lineTo(-2.98, 1.5); C.lineTo(-3.74, 1.51); C.lineTo(-4.12, 0.99); C.closePath(); C.fill();
+    // o Carimbado no volante: topete penteado de lado, óculos fundo de garrafa, bigode e gravata limão
+    const hx = -2.48, hy = 1.2;
+    C.fillStyle = D.cre; C.fillRect(hx - 0.13, 0.99, 0.24, 0.1);
+    C.fillStyle = D.lim; C.beginPath(); C.moveTo(hx - 0.02, 1.08); C.lineTo(hx + 0.03, 0.99); C.lineTo(hx - 0.07, 0.99); C.closePath(); C.fill();
+    C.fillStyle = D.pele; C.beginPath(); C.arc(hx, hy, 0.13, 0, Math.PI * 2); C.fill();
+    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx - 0.03, hy + 0.11, 0.13, 0.05, 0.25, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = D.bk; C.lineWidth = 0.022; C.beginPath(); C.arc(hx + 0.08, hy + 0.01, 0.055, 0, Math.PI * 2); C.stroke();
+    C.fillStyle = 'rgba(255, 255, 255, .5)'; C.beginPath(); C.arc(hx + 0.09, hy + 0.02, 0.025, 0, Math.PI * 2); C.fill();
+    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx + 0.1, hy - 0.07, 0.06, 0.022, 0, 0, Math.PI * 2); C.fill();
+    // pilha de processos no vidro de trás
+    for (let i = 0; i < 4; i++) { C.fillStyle = i % 2 ? '#e6d6b0' : D.cre; C.fillRect(-3.75 + i * 0.03, 0.99 + i * 0.05, 0.42, 0.05); }
+    C.fillStyle = D.lim; C.fillRect(-3.5, 1.19, 0.08, 0.05);
+    // faixa mostarda com franja de carimbo batido
+    C.fillStyle = D.mus; C.fillRect(-5.18, 0.58, 5.24, 0.22);
+    C.beginPath();
+    for (let fx = 0.04; fx > -5.15; fx -= 0.16) { C.moveTo(fx, 0.58); C.lineTo(fx - 0.08, 0.52); C.lineTo(fx - 0.16, 0.58); }
+    C.fill();
+    duroTxt('D.U.R.O.', -2.95, 0.69, 21, D.berD);
+    duroTxt('GUICHÊ 80', -4.72, 0.69, 12, D.berD);
+    duroStamp(-1.78, 0.62, 0.13, false);
+    duroTxt(T('Atendimento das 9h às 9h05').toUpperCase(), -2.95, 0.46, 8.5, D.cre);
+    C.fillStyle = D.berD; C.fillRect(-5.18, 0.36, 5.23, 0.035);
+    // portas
+    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
+    C.moveTo(-1.6, 0.95); C.lineTo(-1.66, 0.4); C.moveTo(-2.92, 0.99); C.lineTo(-2.92, 0.4); C.moveTo(-4.1, 0.98); C.lineTo(-4.1, 0.4);
+    C.stroke();
+    // caixas de roda, para-choques cromados enormes, farol quadrado e lanterna
+    C.fillStyle = D.bk;
     C.beginPath(); C.arc(-0.95, 0.4, 0.5, 0, Math.PI); C.fill();
     C.beginPath(); C.arc(-4.05, 0.4, 0.5, 0, Math.PI); C.fill();
-    C.fillStyle = '#2a2d31'; C.fillRect(-0.02, 0.62, 0.08, 0.26);
-    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(0.04, 0.82); C.lineTo(-0.22, 0.86); C.lineTo(-0.2, 0.78); C.lineTo(0.04, 0.74); C.closePath(); C.fill();
-    C.fillStyle = '#c0161a'; C.fillRect(-5.2, 0.8, 0.07, 0.22);
-    // vidros e a coluna entre as portas
-    C.fillStyle = GL;
-    C.beginPath(); C.moveTo(-1.98, 1.6); C.lineTo(-2.6, 1.6); C.lineTo(-2.6, 1.16); C.lineTo(-1.48, 1.14); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-2.7, 1.6); C.lineTo(-3.28, 1.6); C.lineTo(-3.35, 1.16); C.lineTo(-2.7, 1.16); C.closePath(); C.fill();
-    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
-    C.moveTo(-1.48, 1.12); C.lineTo(-1.6, 0.42); C.moveTo(-2.65, 1.14); C.lineTo(-2.65, 0.45); C.moveTo(-3.42, 1.1); C.lineTo(-3.42, 0.45);
-    C.stroke();
-    // grafismo verde e vermelho com o brasão
-    C.lineCap = 'round';
-    C.strokeStyle = '#1f9a4a'; C.lineWidth = 0.07; C.beginPath(); C.moveTo(-3.3, 1.12); C.quadraticCurveTo(-2.6, 1.08, -2.25, 0.7); C.stroke();
-    C.strokeStyle = '#d0202a'; C.lineWidth = 0.06; C.beginPath(); C.moveTo(-3.3, 1.02); C.quadraticCurveTo(-2.75, 0.98, -2.5, 0.72); C.stroke();
-    C.fillStyle = '#f7f7f5'; C.beginPath(); C.arc(-2.38, 0.86, 0.13, 0, Math.PI * 2); C.fill();
-    C.strokeStyle = '#1f9a4a'; C.lineWidth = 0.03; C.beginPath(); C.arc(-2.38, 0.86, 0.12, -0.6, 2.2); C.stroke();
-    C.strokeStyle = '#d0202a'; C.beginPath(); C.arc(-2.38, 0.86, 0.12, 2.2, 5.68); C.stroke();
-    C.fillStyle = '#1d47b8'; C.beginPath();
-    for (let i = 0; i < 10; i++) { const a = Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? 0.035 : 0.08; C.lineTo(-2.38 + Math.cos(a) * r, 0.86 + Math.sin(a) * r); }
-    C.closePath(); C.fill();
-    const txt = (s1, tx, ty, px, col) => {
-      C.save(); C.translate(tx, ty); C.scale(0.01, -0.01);
-      C.fillStyle = col; C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(s1, 0, 0);
-      C.restore();
-    };
-    txt('POLÍCIA MILITAR', -2.95, 0.72, 22, BK);
-    txt('EMERGÊNCIA 190', -0.85, 0.98, 13, BK);
-    // giroflex vermelho no teto
-    const on = Math.floor(t * 6) % 2;
-    C.fillStyle = '#2a2d31'; C.fillRect(-3.05, 1.7, 0.9, 0.05);
-    C.fillStyle = on ? '#ff2a2a' : '#7a1414'; C.fillRect(-3.0, 1.75, 0.4, 0.09);
-    C.fillStyle = on ? '#7a1414' : '#ff2a2a'; C.fillRect(-2.6, 1.75, 0.4, 0.09);
-    // rodas maiores de picape
+    C.fillStyle = D.cro; C.beginPath(); C.roundRect(-0.42, 0.25, 0.5, 0.18, 0.05); C.fill(); C.beginPath(); C.roundRect(-5.32, 0.25, 0.52, 0.18, 0.05); C.fill();
+    C.fillStyle = 'rgba(0, 0, 0, .18)'; C.fillRect(-0.42, 0.32, 0.5, 0.02); C.fillRect(-5.32, 0.32, 0.52, 0.02);
+    C.fillStyle = '#fff3c4'; C.fillRect(-0.05, 0.66, 0.11, 0.13);
+    C.fillStyle = '#c0161a'; C.fillRect(-5.2, 0.78, 0.07, 0.16);
+    // no teto, o carimbo gigante: martela enquanto persegue, com um pisca âmbar e um limão nas pontas
+    const on = Math.floor(t * 6) % 2, bob = chase ? 0.16 * Math.abs(Math.sin(t * 3.4)) : 0;
+    line([[-2.55, 1.59], [-2.65, 1.72]], 0.04, D.cro); line([[-3.25, 1.6], [-3.15, 1.72]], 0.04, D.cro);
+    C.fillStyle = D.bk; C.fillRect(-3.35, 1.7, 0.9, 0.05);
+    C.fillStyle = chase && on ? '#ffb028' : '#7a5414'; C.beginPath(); C.arc(-3.3, 1.78, 0.06, 0, Math.PI); C.fill();
+    C.fillStyle = chase && !on ? '#c6ec4a' : '#4d5a1c'; C.beginPath(); C.arc(-2.5, 1.78, 0.06, 0, Math.PI); C.fill();
+    duroStamp(-2.9, 1.8 + bob, 0.32, true);
+    // rodas de banda branca
     for (const [wx, sq] of [[-0.95, 1 - 0.35 * c.flat], [-4.05, 1]]) {
       C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.38, 0.38 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#6f767c'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.2, 0.2 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#3a3f44'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.06, 0.06 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = D.cre; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.27, 0.27 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.22, 0.22 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = D.cro; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.16, 0.16 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = D.musD; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.05, 0.05 * sq, 0, 0, Math.PI * 2); C.fill();
     }
     C.restore();
-    if (c.state === 'chase') drawLights(sx(c.x - 2.6), sy(1.8), S, t, 0);
+    if (chase) {
+      duroBalloon(sx(c.x - 2.9), sy(2.85), S, T(DURO_FALAS[Math.floor(t / 2.6) % DURO_FALAS.length]));
+    }
   }
-  function drawRocams(sx, sy, S, t) {
+  // Esquadrilha do Protocolo: as 3 motos da D.U.R.O. (mesmas posições, faixas e estados de antes)
+  function drawEsquadrilha(sx, sy, S, t) {
     [...s.law.bikes].sort((a, b) => b.lane - a.lane).forEach(b => {
       const k = 1 - b.lane * 0.6, x = sx(b.x), y = sy(0) - b.lane * S;
       if (x < -2 * S || x - 2 * S > W) return;
-      drawXre(x, y, S * k, t, b.phase, -b.x / 0.32);
-      if (b.state === 'chase') drawLights(x - 1.55 * S * k, y - 1.55 * S * k, S * 0.5, t, b.phase * 2);
+      if (b.state === 'chase') drawLights(x - 1.55 * S * k, y - 1.62 * S * k, S * 0.5, t, b.phase * 2);
+      drawScooter(x, y, S * k, t, b.phase, -b.x / 0.25);
     });
   }
-  // XRE 300 da Rocam: branca com xadrez vermelho, bico, para-brisa, baú e piloto de capacete branco
-  function drawXre(x, y, S, t, phase, rot) {
-    const WH = '#eef0f2', RD = '#d0202a', BK = '#16181b', SV = '#b9bec4', SU = '#2a2e35';
+  // scooter berinjela com sidecar de pastas, placa de senha na antena e um Carimbado de capacete-caixote e gravata ao vento
+  function drawScooter(x, y, S, t, phase, rot) {
+    const D = DURO;
     C.save(); C.translate(x, y); C.scale(S, -S);
-    const checker = (x0, y0, w, h, n) => {
-      const q = w / n;
-      for (let i = 0; i < n; i++) for (let j = 0; j * q < h - 0.001; j++) {
-        C.fillStyle = (i + j) % 2 ? WH : RD; C.fillRect(x0 + i * q, y0 + j * q, q, Math.min(q, h - j * q));
-      }
+    const wheel = (cx, cy, r) => {
+      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill();
+      C.fillStyle = D.cro; C.beginPath(); C.arc(cx, cy, r * 0.58, 0, Math.PI * 2); C.fill();
+      C.fillStyle = D.musD; C.beginPath(); C.arc(cx + Math.cos(rot) * r * 0.3, cy + Math.sin(rot) * r * 0.3, r * 0.1, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, cy, r * 0.14, 0, Math.PI * 2); C.fill();
     };
-    const wheel = (cx, r) => {
-      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, r, r, 0, Math.PI * 2); C.fill();
-      C.strokeStyle = SV; C.lineWidth = 0.02; C.beginPath(); C.arc(cx, r, r - 0.07, 0, Math.PI * 2); C.stroke();
-      C.lineWidth = 0.008; C.beginPath();
-      for (let i = 0; i < 18; i++) { const a = rot + i * Math.PI / 9; C.moveTo(cx, r); C.lineTo(cx + Math.cos(a) * (r - 0.07), r + Math.sin(a) * (r - 0.07)); }
-      C.stroke();
-      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, r, 0.04, 0, Math.PI * 2); C.fill();
-    };
-    wheel(-1.45, 0.31); wheel(0, 0.33);
-    // balança, motor com protetor e escape
-    line([[-1.45, 0.31], [-0.92, 0.48]], 0.06, BK);
-    line([[-1.2, 0.4], [-1.05, 0.9]], 0.045, '#c0161a');
-    C.fillStyle = '#2c2f34'; C.beginPath(); C.ellipse(-0.72, 0.45, 0.22, 0.15, 0, 0, Math.PI * 2); C.fill();
-    C.fillStyle = '#4a4f56'; C.fillRect(-0.7, 0.5, 0.2, 0.26);
-    line([[-0.42, 0.85], [-0.38, 0.5], [-0.55, 0.32], [-0.9, 0.34]], 0.035, BK);
-    line([[-0.55, 0.5], [-0.75, 0.3], [-1.0, 0.42], [-1.3, 0.72]], 0.05, '#3a3e44');
-    C.fillStyle = SV; C.beginPath(); C.moveTo(-1.15, 0.6); C.lineTo(-1.5, 0.8); C.lineTo(-1.5, 0.92); C.lineTo(-1.15, 0.74); C.closePath(); C.fill();
-    // garfo comprido, para-lama baixo e bico
-    line([[0, 0.33], [-0.2, 1.08]], 0.055, SV);
-    line([[-0.16, 0.92], [-0.24, 1.18]], 0.075, BK);
-    C.fillStyle = BK; C.beginPath(); C.arc(0, 0.33, 0.39, 0.4, 1.6); C.arc(0, 0.33, 0.35, 1.6, 0.4, true); C.closePath(); C.fill();
-    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.12, 0.98); C.lineTo(0.22, 0.88); C.lineTo(0.12, 0.98); C.lineTo(-0.08, 1.06); C.closePath(); C.fill();
-    // carenagem do farol, para-brisa e guidão
-    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.08, 1.06); C.lineTo(0.0, 1.22); C.lineTo(-0.18, 1.4); C.lineTo(-0.36, 1.22); C.lineTo(-0.3, 1.0); C.closePath(); C.fill();
-    C.save(); C.beginPath(); C.moveTo(-0.06, 1.1); C.lineTo(-0.02, 1.2); C.lineTo(-0.2, 1.36); C.lineTo(-0.3, 1.16); C.closePath(); C.clip();
-    checker(-0.32, 1.1, 0.32, 0.28, 6); C.restore();
-    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(-0.02, 1.06); C.lineTo(0.03, 1.15); C.lineTo(-0.03, 1.15); C.closePath(); C.fill();
-    C.fillStyle = 'rgba(40, 52, 66, .85)'; C.beginPath(); C.moveTo(-0.18, 1.4); C.lineTo(-0.32, 1.62); C.lineTo(-0.38, 1.58); C.lineTo(-0.3, 1.3); C.closePath(); C.fill();
-    line([[-0.3, 1.36], [-0.4, 1.46], [-0.5, 1.46]], 0.035, BK);
-    // tanque com a aba branca e "POLÍCIA", banco preto e rabeta xadrez
-    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.3, 1.18); C.quadraticCurveTo(-0.55, 1.26, -0.85, 1.12); C.lineTo(-0.85, 0.95); C.lineTo(-0.35, 0.95); C.closePath(); C.fill();
-    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.28, 1.12); C.lineTo(-0.72, 1.06); C.lineTo(-0.8, 0.8); C.lineTo(-0.5, 0.74); C.lineTo(-0.3, 0.88); C.closePath(); C.fill();
-    C.save(); C.translate(-0.53, 0.93); C.rotate(0.12); C.scale(0.0055, -0.0055);
-    C.fillStyle = BK; C.font = '700 16px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('POLÍCIA', 0, 0);
+    // sidecar do lado de lá (um pouco mais alto = mais longe), com pastas e processos saindo
+    C.save(); C.translate(0.02, 0.12);
+    wheel(-0.62, 0.2, 0.2);
+    C.fillStyle = D.berD;
+    C.beginPath(); C.moveTo(-1.3, 0.36); C.lineTo(-1.3, 0.74); C.lineTo(-0.35, 0.8); C.quadraticCurveTo(0.14, 0.74, 0.1, 0.52);
+    C.quadraticCurveTo(0.04, 0.34, -0.3, 0.33); C.closePath(); C.fill();
+    line([[-1.25, 0.6], [-0.05, 0.63]], 0.04, D.musD);
+    const pastas = [[-1.15, 0.12, D.lim], [-0.95, -0.1, D.cre], [-0.78, 0.2, D.mus], [-0.6, -0.05, D.cre]];
+    for (const [px, a, col] of pastas) {
+      C.save(); C.translate(px, 0.74); C.rotate(a + Math.sin(t * 6 + px * 9) * 0.05);
+      C.fillStyle = col; C.fillRect(-0.09, 0, 0.18, 0.24); C.restore();
+    }
     C.restore();
-    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.8, 1.1); C.lineTo(-1.25, 1.1); C.lineTo(-1.62, 1.14); C.lineTo(-1.6, 1.04); C.lineTo(-1.2, 0.96); C.lineTo(-0.82, 0.96); C.closePath(); C.fill();
-    C.save(); C.beginPath(); C.moveTo(-1.2, 1.02); C.lineTo(-1.6, 1.08); C.lineTo(-1.56, 0.92); C.lineTo(-1.2, 0.86); C.closePath(); C.clip();
-    checker(-1.6, 0.86, 0.42, 0.24, 7); C.restore();
-    // baú preto e o giroflex
-    C.fillStyle = BK; C.beginPath(); C.roundRect(-1.85, 1.12, 0.45, 0.32, 0.05); C.fill();
-    C.fillStyle = WH; C.fillRect(-1.8, 1.32, 0.35, 0.035);
+    wheel(-1.45, 0.25, 0.25); wheel(0, 0.25, 0.25);
+    // carenagem traseira gorducha, assoalho, escudo e para-lama da frente
+    C.fillStyle = D.ber;
+    C.beginPath(); C.moveTo(-1.82, 0.48); C.quadraticCurveTo(-1.88, 0.98, -1.35, 1.02); C.lineTo(-0.86, 1.0);
+    C.quadraticCurveTo(-0.7, 0.72, -0.8, 0.44); C.lineTo(-1.76, 0.4); C.closePath(); C.fill();
+    line([[-1.78, 0.72], [-0.84, 0.74]], 0.06, D.mus);
+    C.fillStyle = '#2a2c31'; C.fillRect(-0.9, 0.36, 0.72, 0.07);
+    C.fillStyle = D.ber;
+    C.beginPath(); C.moveTo(-0.34, 0.4); C.quadraticCurveTo(0.12, 0.55, -0.05, 1.22); C.lineTo(-0.21, 1.24); C.quadraticCurveTo(-0.08, 0.62, -0.44, 0.42); C.closePath(); C.fill();
+    line([[-0.2, 0.55], [-0.12, 1.12]], 0.04, D.mus);
+    C.fillStyle = D.mus; C.beginPath(); C.arc(0, 0.25, 0.31, 0.15, Math.PI - 0.15); C.arc(0, 0.25, 0.26, Math.PI - 0.15, 0.15, true); C.closePath(); C.fill();
+    // guidão, farol redondo e banco
+    C.fillStyle = D.mus; C.beginPath(); C.roundRect(-0.24, 1.2, 0.26, 0.14, 0.06); C.fill();
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(0.01, 1.27, 0.055, 0, Math.PI * 2); C.fill();
+    line([[-0.14, 1.33], [-0.34, 1.4]], 0.035, D.bk);
+    C.fillStyle = D.bk; C.beginPath(); C.roundRect(-1.5, 1.0, 0.62, 0.1, 0.05); C.fill();
+    // antena com a placa de senha e o pisca
+    line([[-1.62, 1.0], [-1.55, 1.64]], 0.022, D.cro);
+    C.fillStyle = D.cre; C.beginPath(); C.roundRect(-1.98, 1.28, 0.44, 0.19, 0.03); C.fill();
+    duroTxt(T('SENHA') + ' 00' + (4 + Math.round(phase * 2)), -1.76, 1.375, 8.5, D.berD);
     const on = Math.floor(t * 8 + phase * 2) % 2;
-    line([[-1.5, 1.44], [-1.5, 1.6]], 0.02, '#8d9499');
-    C.fillStyle = on ? '#2f5bff' : '#ff2a2a'; C.beginPath(); C.arc(-1.5, 1.64, 0.05, 0, Math.PI * 2); C.fill();
-    // policial sentado reto: farda escura, bota preta, capacete branco com faixa vermelha
-    const hip = [-0.95, 1.14], sh = [-0.82, 1.68], hand = [-0.45, 1.44], knee = [-0.58, 0.98], foot = [-0.74, 0.58];
-    line([hip, knee, foot], 0.13, SU);
-    line([[knee[0] - 0.02, knee[1] - 0.06], foot], 0.11, BK);
-    line([hip, sh], 0.22, SU);
-    line([sh, [-0.66, 1.45], hand], 0.09, SU);
-    C.fillStyle = BK; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
+    C.fillStyle = on ? '#ffb028' : '#c6ec4a'; C.beginPath(); C.arc(-1.55, 1.67, 0.05, 0, Math.PI * 2); C.fill();
+    // o Carimbado sentado reto: paletó berinjela, crachá, gravata limão ao vento, capacete-caixote mostarda
+    const hip = [-1.05, 1.12], sh = [-0.94, 1.66], hand = [-0.34, 1.4], knee = [-0.6, 1.04], foot = [-0.56, 0.46];
+    line([hip, knee, foot], 0.13, D.berD);
+    C.fillStyle = D.bk; C.beginPath(); C.ellipse(foot[0] + 0.05, foot[1], 0.1, 0.045, 0, 0, Math.PI * 2); C.fill();
+    line([hip, sh], 0.24, D.berL);
+    const wv = Math.sin(t * 14 + phase * 3) * 0.05;
+    line([[sh[0] + 0.06, sh[1] - 0.04], [sh[0] - 0.12, sh[1] - 0.08 + wv], [sh[0] - 0.3, sh[1] - 0.06 - wv]], 0.06, D.lim);
+    C.fillStyle = D.cre; C.fillRect(-0.94, 1.36, 0.1, 0.12);
+    C.fillStyle = D.lim; C.fillRect(-0.91, 1.47, 0.04, 0.03);
+    line([sh, [-0.68, 1.44], hand], 0.09, D.berL);
+    C.fillStyle = D.pele; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
     const hx = sh[0] + 0.07, hy = sh[1] + 0.21;
-    C.fillStyle = '#f4f5f6'; C.beginPath(); C.arc(hx, hy, 0.15, 0, Math.PI * 2); C.fill();
-    C.strokeStyle = RD; C.lineWidth = 0.035; C.beginPath(); C.arc(hx, hy, 0.13, 1.2, 2.9); C.stroke();
-    C.fillStyle = '#1a2733'; C.beginPath(); C.ellipse(hx + 0.09, hy - 0.01, 0.065, 0.05, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = D.pele; C.beginPath(); C.arc(hx, hy, 0.14, 0, Math.PI * 2); C.fill();
+    C.fillStyle = D.mus; C.beginPath(); C.roundRect(hx - 0.18, hy - 0.01, 0.34, 0.25, 0.05); C.fill();
+    C.fillStyle = D.lim; C.fillRect(hx - 0.18, hy + 0.06, 0.34, 0.04);
+    C.strokeStyle = D.bk; C.lineWidth = 0.022; C.beginPath(); C.arc(hx + 0.09, hy - 0.04, 0.05, 0, Math.PI * 2); C.stroke();
+    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx + 0.1, hy - 0.11, 0.055, 0.02, 0, 0, Math.PI * 2); C.fill();
     C.restore();
   }
   // CG 160 passando voando na faixa da frente
@@ -3235,7 +3328,7 @@ html.kid #grow-dog { display: none !important; }
       calcinha: { name: 'Azul calcinha', c: '#8ec9e8' },
       creme: { name: 'Creme', c: '#efe0b5' },
       agua: { name: 'Verde água', c: '#3fc1a8' },
-      militar: { name: 'Verde militar', c: '#6f7f78' },
+      militar: { name: 'Verde oliva', c: '#6f7f78' },
       preta: { name: 'Preta fosca', c: '#232528' },
       branca: { name: 'Branca', c: '#f0f0ec' },
       amarela: { name: 'Amarela', c: '#ffcc00' },

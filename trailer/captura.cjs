@@ -126,7 +126,7 @@ const HIDE = `.pad, .hud-btns, #toast, #ach, #chatBtn, #micBtn, #quickPlay, #ios
     const c = await session({ model: 'caicara', frame: 'agua' });
     await c.ev(() => __t.begin('motoca'));
     await c.tick(5); await c.p.keyboard.type('agenor'); await c.tick(100); await c.ev(stripTest);
-    await c.ev(() => { __t.s.wStart -= 252; }); // começa perto dos 290 m: a viatura chega nos 300
+    await c.ev(() => { __t.s.wStart -= 252; }); // começa perto dos 290 m: a Caravana da D.U.R.O. chega nos 300
     await shootSeg('B', c, 180);
     await c.p.close();
   }

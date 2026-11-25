@@ -21,7 +21,7 @@ const plan = [];
 const push = (seg, from, to, tag) => { for (let i = from; i <= to; i++) plan.push({ seg, i, tag, m: M[seg][i] }); };
 push('A', 0, 71, 'A');                      // 0–2,4 s  galera no grau
 push('D', SWAP - 6, SWAP + 11, 'G');        // 2,4–3 s  vislumbre da transformação (câmera lenta real)
-push('B', 0, 149, 'B');                     // 3–8 s    grau + viatura
+push('B', 0, 149, 'B');                     // 3–8 s    grau + Caravana da D.U.R.O.
 push('C', 0, 149, 'C');                     // 8–13 s   multiplayer
 push('D', 14, SWAP, 'D');                   // 13 s…    a transformação
 for (let k = 0; k < 9; k++) plan.push({ seg: 'D', i: SWAP, tag: 'D', hold: true, m: M.D[SWAP] }); // congela 0,3 s no "peraí"
@@ -38,7 +38,7 @@ const N = plan.length;
 // ---------------- legendas (em quadros de saída) ----------------
 const LEG = [
   { f0: 3, f1: tB - 1, hook: ['EMPINA A BIKE.', 'DESAFIA A GALERA.', 'VIRA CARAMELO.'], at: [3, 30, tG] },
-  { f0: tB + 6, f1: tC - 4, k: 'Modo Motoca', t: 'SEGURA O GRAU', s: 'cada metro conta · foge da viatura' },
+  { f0: tB + 6, f1: tC - 4, k: 'Modo Motoca', t: 'SEGURA O GRAU', s: 'cada metro conta · foge do D.U.R.O.' },
   { f0: tC + 6, f1: tD - 4, k: 'Multiplayer', t: 'JOGA COM A GALERA', s: 'até 7 na mesma rua' },
   { f0: tSwap, f1: tSwap + 62, k: 'Caiu no multiplayer?', t: 'PERAÍ… VIROU CARAMELO?!', big: true },
   { f0: tSwap + 66, f1: tCut - 2, k: 'Agora tu é o caramelo', t: 'CORRE ATRÁS DA GALERA' },
