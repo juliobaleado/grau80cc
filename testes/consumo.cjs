@@ -5,6 +5,7 @@
 // Uso: N=7 FALLBACK=0,1,3,7 node testes/consumo.cjs
 const puppeteer = require(process.env.PUPPETEER || 'C:/web/figma-site/node_modules/puppeteer');
 const fs = require('fs'), http = require('http'), path = require('path');
+const isolar = require('./isolar-saguao.cjs'), RUN = Math.random().toString(36).slice(2, 8); // saguão exclusivo desta execução
 const N = +(process.env.N || 4), CASES = (process.env.FALLBACK || '0,1').split(',').map(Number), WIN = +(process.env.WIN || 15);
 let html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
@@ -21,6 +22,7 @@ async function until(p, fn, arg, ms = 20000) { const t0 = Date.now(); while (Dat
     for (let i = 0; i < N; i++) {
       const p = await (await b.createBrowserContext()).newPage();
       await p.setViewport({ width: 480, height: 270 });
+      await isolar(p, RUN);
       await p.evaluateOnNewDocument((noRtc, i) => {
         try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', 'Medidor' + i); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-musica', 'off'); } catch (e) {}
         if (noRtc) { delete window.RTCPeerConnection; window.RTCPeerConnection = undefined; }

@@ -2,6 +2,7 @@
 // Uso: node testes/multiplayer.cjs
 const puppeteer = require(process.env.PUPPETEER || 'C:/web/figma-site/node_modules/puppeteer');
 const fs = require('fs'), http = require('http'), path = require('path');
+const isolar = require('./isolar-saguao.cjs'), RUN = Math.random().toString(36).slice(2, 8); // saguão exclusivo desta execução
 let html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
 html = html.slice(0, j) + `window.__t = { room, remotes, rt, rtCast, enterRoom, leaveRoom, chatOut, myId, begin, get s() { return s; } };\n` + html.slice(j);
@@ -17,6 +18,7 @@ async function until(p, fn, arg, ms = 15000) { const t0 = Date.now(); while (Dat
   for (const nome of ['TesteA', 'TesteB', 'TesteC']) {
     const p = await (await b.createBrowserContext()).newPage();
     const errs = []; p.on('pageerror', e => errs.push(e.message));
+    await isolar(p, RUN);
     await p.evaluateOnNewDocument(n => { try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', n); localStorage.setItem('grau80-instrucoes', 'fechado'); } catch (e) {} }, nome);
     await p.goto('http://127.0.0.1:8818/', { waitUntil: 'load' });
     P.push({ p, errs, nome });
@@ -60,6 +62,7 @@ async function until(p, fn, arg, ms = 15000) { const t0 = Date.now(); while (Dat
   ok(await until(A.p, () => Object.keys(__t.room.members).length === 2), 'saída de B aparece pra A');
 
   for (const X of P) ok(!X.errs.length, 'sem erro de página em ' + X.nome, X.errs.slice(0, 3));
+  for (const X of P) { const g = await isolar.conferir(X.p); ok(g.vazou === 0 && g.trocadas > 0, 'não entrou no saguão público (' + X.nome + ')', g); }
   for (const X of P) await X.p.evaluate(() => __t.leaveRoom()).catch(() => {});
   console.log(`\n${pass} ok, ${fail} falha(s)`);
   await b.close(); srv.close(); process.exit(fail ? 1 : 0);

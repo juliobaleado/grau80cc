@@ -41,8 +41,8 @@ const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  
   const snap = () => {
     const s = __t.s, L = s.law, r = v => v == null ? null : Math.round(v * 1000) / 1000;
     const o = q => q ? { x: r(q.x), v: r(q.v), st: q.state, f: r(q.flat) } : null;
-    return { x: r(s.x), v: r(s.v), w: r(s.wDist), m: s.mode, car: o(L.car), bikes: L.bikes.map(o), cg: o(L.cg), th: o(L.thief), uno: o(L.uno),
-      flags: [L.carDone, L.carEscaped, L.rocamDone ?? L.esqDone, L.rocamEscaped ?? L.esqEscaped, L.thiefDone, L.thiefEscaped, L.unoBeaten].join(','), reason: s.reason || '' };
+    return { x: r(s.x), v: r(s.v), w: r(s.wDist), m: s.mode, car: o(L.car), bikes: L.bikes.map(o), cg: o(L.cg ?? L.fuga), th: o(L.thief), uno: o(L.uno ?? L.quad),
+      flags: [L.carDone, L.carEscaped, L.rocamDone ?? L.esqDone, L.rocamEscaped ?? L.esqEscaped, L.thiefDone, L.thiefEscaped, L.unoBeaten ?? L.quadBeaten].join(','), reason: s.reason || '' };
   };
   // mesma partida nas duas versões: Motoca, modo teste (piloto automático) e pulo pra perto dos 280 m
   async function run(which) {
