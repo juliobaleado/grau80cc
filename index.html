@@ -3248,6 +3248,27 @@ html.kid #grow-dog { display: none !important; }
     });
   }
 
+  // mochila 69 Rango (coordenadas da mochila: x -0,4…-0,1, y 0,1…0,6): tampa preta com vapor, selo redondo
+  // com o 69 e RANGO em preto na vertical. Contorno preto pra ler bem à noite.
+  function drawRango() {
+    const K = BAG.ink, Y = BAG.c;
+    C.fillStyle = K; C.fillRect(-0.4, 0.52, 0.3, 0.08);
+    C.strokeStyle = Y; C.lineWidth = 0.012; C.lineCap = 'round'; C.beginPath();
+    for (const vx of [-0.32, -0.25, -0.18]) { C.moveTo(vx, 0.535); C.quadraticCurveTo(vx + 0.02, 0.555, vx, 0.57); C.quadraticCurveTo(vx - 0.02, 0.585, vx, 0.595); }
+    C.stroke();
+    C.fillStyle = K; C.beginPath(); C.arc(-0.25, 0.44, 0.092, 0, Math.PI * 2); C.fill();
+    C.save(); C.translate(-0.25, 0.438); C.scale(0.01, -0.01);
+    C.fillStyle = Y; C.font = '400 10.5px "Bowlby One", "Arial Black", sans-serif'; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('69', 0, 0.5);
+    C.restore();
+    // RANGO na vertical entre o pé e o selo, no maior tamanho que couber (0,21 m)
+    C.save(); C.translate(-0.25, 0.228); C.scale(0.01, -0.01); C.rotate(-Math.PI / 2);
+    C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+    const fit = Math.min(1, 21 / C.measureText(BAG.text).width);
+    C.font = `700 ${(14 * fit).toFixed(2)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
+    C.fillStyle = K; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(BAG.text, 0, 0);
+    C.restore();
+    C.strokeStyle = K; C.lineWidth = 0.014; rrect(-0.4, 0.1, 0.3, 0.5, 0.04); C.stroke();
+  }
   function line(pts, w, col) {
     C.strokeStyle = col; C.lineWidth = w; C.beginPath();
     C.moveTo(pts[0][0], pts[0][1]);
@@ -3315,7 +3336,9 @@ html.kid #grow-dog { display: none !important; }
       amarela: { name: 'Amarela', c: '#ffd400' } } },
     bag: { label: 'Mochila', opts: {
       keetute: { name: 'keetute', c: '#ffd21f', ink: '#16181b', text: 'keetute', italic: false },
-      aifode: { name: 'aiFudi', c: '#ea1d2c', ink: '#ffffff', text: 'aiFudi', italic: true } } },
+      aifode: { name: 'aiFudi', c: '#ea1d2c', ink: '#ffffff', text: 'aiFudi', italic: true },
+      // 69 Rango: delivery fictício do jogo, com chave própria (versão antiga que receber 'rango69' na sala mostra a primeira mochila)
+      rango69: { name: '69 Rango', c: '#ffec6e', ink: '#141414', text: 'RANGO', italic: false, rango: true } } },
     model: { label: 'Bike', opts: {
       caicara: { name: 'Caiçara de cestinha', c: '#3fc1a8', def: 'agua' },
       monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari', lock: 'grau30' },
@@ -3780,12 +3803,15 @@ html.kid #grow-dog { display: none !important; }
     C.save(); C.translate(hip[0], hip[1]); C.rotate(ta);
     // mochila térmica de entrega
     C.fillStyle = BAG.c; rrect(-0.4, 0.1, 0.3, 0.5, 0.04); C.fill();
-    C.fillStyle = 'rgba(0, 0, 0, .16)'; C.fillRect(-0.4, 0.53, 0.3, 0.07);
-    C.fillStyle = '#d9dde0'; C.fillRect(-0.4, 0.17, 0.3, 0.022);
-    C.save(); C.translate(-0.25, 0.36); C.scale(0.01, -0.01); C.rotate(-Math.PI / 2);
-    C.fillStyle = BAG.ink; C.font = `${BAG.italic ? 'italic ' : ''}700 12px "Barlow Condensed", "Arial Narrow", sans-serif`;
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(BAG.text, 0, 0);
-    C.restore();
+    if (BAG.rango) drawRango();
+    else {
+      C.fillStyle = 'rgba(0, 0, 0, .16)'; C.fillRect(-0.4, 0.53, 0.3, 0.07);
+      C.fillStyle = '#d9dde0'; C.fillRect(-0.4, 0.17, 0.3, 0.022);
+      C.save(); C.translate(-0.25, 0.36); C.scale(0.01, -0.01); C.rotate(-Math.PI / 2);
+      C.fillStyle = BAG.ink; C.font = `${BAG.italic ? 'italic ' : ''}700 12px "Barlow Condensed", "Arial Narrow", sans-serif`;
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(BAG.text, 0, 0);
+      C.restore();
+    }
     // camisa de time listrada
     rrect(-0.095, -0.02, 0.19, 0.53, 0.06); C.fillStyle = JERSEY.base; C.fill();
     C.save(); rrect(-0.095, -0.02, 0.19, 0.53, 0.06); C.clip();
