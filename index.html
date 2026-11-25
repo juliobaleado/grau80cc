@@ -918,7 +918,12 @@ html.kid #grow-dog { display: none !important; }
   const power = rpm => 0.15 + 0.85 * Math.exp(-(((rpm - 7800) / 1900) ** 2));
   // 160 4 tempos: força mais cheia e larga, do meio do giro até o corte
   const power4 = rpm => 0.3 + 0.7 * Math.exp(-(((rpm - 8200) / 3000) ** 2));
-  const powerNow = rpm => (MODEL === 'bruno' ? power4 : power)(rpm);
+  const MOTO = {
+    bruno: { push: 6.9, g2: 188, snd: 1 },  // Titânica 99: 160 4 tempos
+    pop2: { push: 8.9, g2: 170, snd: 2 },   // Pó-pop Bicilíndrica: dois cilindros, mais rápida que a 99
+    gs: { push: 11.2, g2: 150, snd: 3 }     // Robozão: boxer grande, a mais rápida do jogo
+  };
+  const powerNow = rpm => (MOTO[MODEL] ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português (exceto as falas da D.U.R.O.)
@@ -1476,21 +1481,22 @@ html.kid #grow-dog { display: none !important; }
   function updateAudio() {
     updateMusic();
     if (!nodes || muted) return;
-    const t = ac.currentTime, f = s.rpm / 60, four = MODEL === 'bruno';
+    const t = ac.currentTime, f = s.rpm / 60, M4 = MOTO[MODEL], four = !!M4, snd = M4 ? M4.snd : 0;
     nodes.o1.frequency.setTargetAtTime(f, t, 0.03);
     nodes.o2.frequency.setTargetAtTime(f * 2.02, t, 0.03);
     nodes.filt.frequency.setTargetAtTime(350 + s.rpm * 0.22 + s.thr * 600, t, 0.04);
-    // 4 tempos: explosão a cada 2 voltas (rpm / 120), um pouco de irregularidade na lenta
-    const ff = s.rpm / 120 * (1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0));
+    // 4 tempos: monocilíndrica explode a cada 2 voltas (rpm / 120); bicilíndrica e boxer, uma vez por volta (rpm / 60).
+    // O boxer grande gira mais baixo e soa mais grave (filtro fechado e ronco de admissão mais embaixo).
+    const ff = s.rpm / (snd >= 2 ? 60 : 120) * (snd === 3 ? 0.62 : 1) * (1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0));
     nodes.p4.frequency.setTargetAtTime(ff, t, 0.03);
-    nodes.sub4.frequency.setTargetAtTime(ff, t, 0.03);
-    nodes.lp4.frequency.setTargetAtTime(260 + s.rpm * 0.11 + s.thr * 500, t, 0.04);
-    nodes.honk.frequency.setTargetAtTime(330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
+    nodes.sub4.frequency.setTargetAtTime(snd === 3 ? ff / 2 : ff, t, 0.03);
+    nodes.lp4.frequency.setTargetAtTime(snd === 3 ? 170 + s.rpm * 0.06 + s.thr * 320 : snd === 2 ? 320 + s.rpm * 0.12 + s.thr * 520 : 260 + s.rpm * 0.11 + s.thr * 500, t, 0.04);
+    nodes.honk.frequency.setTargetAtTime(snd === 3 ? 190 + s.rpm * 0.02 + s.thr * 110 : 330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
     nodes.honkG.gain.setTargetAtTime(0.25 + s.thr * 1.6, t, 0.06);
     const vol = paused || s.mode === 'dog' ? 0 : s.mode === 'over' && s.rpm < 1800 ? 0.02 : 0.05 + s.thr * 0.09;
     if (s.cut <= 0 || paused) {
       nodes.out.gain.setTargetAtTime(four ? 0 : vol, t, 0.05);
-      nodes.out4.gain.setTargetAtTime(four ? vol * 1.5 : 0, t, 0.05);
+      nodes.out4.gain.setTargetAtTime(four ? vol * (snd === 3 ? 1.9 : 1.5) : 0, t, 0.05);
     }
     nodes.ng.gain.setTargetAtTime(paused || s.mode === 'dog' ? 0 : (0.02 + s.thr * 0.06) * (four ? 0.6 : 1), t, 0.05);
     // sem filtro e com escape aberto, o 4 tempos estala quando solta o acelerador em giro alto
@@ -1511,16 +1517,16 @@ html.kid #grow-dog { display: none !important; }
   // corte de giro: o som some por um instante e às vezes o escape dá um tiro
   function onCut() {
     s.chapa = 1.1; // o motoca grita no corte de giro
-    const four = MODEL === 'bruno';
-    // a Bravona engata a 2ª no corte da 1ª
+    const four = !!MOTO[MODEL];
+    // as 4 tempos engatam a 2ª no corte da 1ª
     if (four && s.mode === 'ride' && s.gearN === 1 && s.v > 10.5) s.gearN = 2;
     const bang = Math.random() < (four ? 0.8 : 0.5);
     if (bang) s.flame = 0.07;
     if (!nodes || muted || paused) return;
-    const t = ac.currentTime, g = (MODEL === 'bruno' ? nodes.out4 : nodes.out).gain;
+    const t = ac.currentTime, g = (four ? nodes.out4 : nodes.out).gain;
     g.cancelScheduledValues(t);
     g.setTargetAtTime(0.004, t, 0.004);
-    g.setTargetAtTime((0.05 + s.thr * 0.09) * (MODEL === 'bruno' ? 1.5 : 1), t + 0.045, 0.006);
+    g.setTargetAtTime((0.05 + s.thr * 0.09) * (four ? (MOTO[MODEL].snd === 3 ? 1.9 : 1.5) : 1), t + 0.045, 0.006);
     if (bang) backfire(t + 0.01 + Math.random() * 0.02, 0.75 + Math.random() * 0.35);
   }
   function backfire(t, k) {
@@ -1554,7 +1560,9 @@ html.kid #grow-dog { display: none !important; }
     { id: 'grau300', why: '600 m de grau com a tropa de moto na cola', name: 'Motoka 244', test: () => s.law.esqEscaped },
     { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
     { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
-    { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
+    { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 },
+    { id: 'grau3000', why: '3.000 m de grau', name: 'Ronco em dobro', test: () => s.active && s.wDist >= 3000 },
+    { id: 'grau5000', why: '5.000 m de grau', name: 'Chegou o Robozão', test: () => s.active && s.wDist >= 5000 }
   ];
   let unlocked = {};
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
@@ -1934,10 +1942,11 @@ html.kid #grow-dog { display: none !important; }
     if (s.mode === 'ready') {
       revTo(IDLE + s.thr * 8600, 5, h);
     } else if (riding) {
-      // relação: quantos rpm por m/s. A Bravona tem 2 marchas: a 1ª igual às bikes (corta perto de 46 km/h e aí engata),
-      // a 2ª longa até ~80 km/h; abaixo de ~34 km/h reduz pra 1ª
-      if (MODEL === 'bruno' && s.gearN === 2 && s.v < 9.5) s.gearN = 1;
-      const gear = MODEL === 'bruno' && s.gearN === 2 ? 188 : 330;
+      // relação: quantos rpm por m/s. As 4 tempos têm 2 marchas: a 1ª igual às bikes (corta perto de 46 km/h e aí engata),
+      // a 2ª longa (cada moto tem a sua); abaixo de ~34 km/h reduz pra 1ª
+      const M4 = MOTO[MODEL];
+      if (M4 && s.gearN === 2 && s.v < 9.5) s.gearN = 1;
+      const gear = M4 && s.gearN === 2 ? M4.g2 : 330;
       const on = Math.min(RPM_MAX, 5200 + s.v * gear);
       const off = Math.min(9000, IDLE + s.v * gear * 0.76);
       // soltou o acelerador: o 2 tempos perde giro devagar; voltou a acelerar, retoma de onde estava
@@ -1945,8 +1954,8 @@ html.kid #grow-dog { display: none !important; }
       revTo(target, target > s.rpm ? 6 : 0.9, h);
       const drive = s.cut > 0 ? 0 : s.thr * powerNow(s.rpm);
 
-      // a Bravona (160 4 tempos) tem mais força pra frente: máxima perto de 80 km/h em vez de ~70
-      const push = MODEL === 'bruno' ? 6.9 : 4.6;
+      // as 4 tempos têm mais força pra frente (Titânica ~82, Pó-pop ~92, Robozão ~105 km/h); as 2 tempos, ~70
+      const push = M4 ? M4.push : 4.6;
       s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6) * h;
       if (s.v < 0) s.v = 0;
       const dx = s.v * h;
@@ -2825,14 +2834,10 @@ html.kid #grow-dog { display: none !important; }
       drawTrail(x, y, S * k, t, b.phase, -b.x / 0.32);
     });
   }
-  // visual de cada piloto da tropa: camisa de time, bermuda, chinelo e uma cabeça diferente
-  const TROPA = [
-    { shirt: '#c8e021', trim: '#1b5e20', shorts: '#2c4a7a', skin: '#c68a5e', head: 'capacete' },
-    { shirt: '#ff7a12', trim: '#1b1d20', shorts: '#1b1d20', skin: '#8d5a3b', head: 'bone' },
-    { shirt: '#2f6fd6', trim: '#f3efe6', shorts: '#5b6b45', skin: '#e0b088', head: 'bandana' }
-  ];
+  // pilotos da tropa de moto: todos de uniforme do D.U.R.O.; muda só o tom de pele
+  const TROPA = [{ skin: '#c68a5e' }, { skin: '#8d5a3b' }, { skin: '#e0b088' }];
   // trail estilo 300 cc: branca com faixas marinho e âmbar, bico, para-brisa curto e um pisca na antena traseira.
-  // O piloto vai de camisa de time, bermuda e chinelo, com a mochila "PERDEU PLAYBOY" nas costas.
+  // O piloto vai de uniforme: farda marinho com faixa âmbar, luva e bota pretas e capacete branco com faixa marinho.
   function drawTrail(x, y, S, t, phase, rot) {
     const D = DURO, WH = '#eef0f2', BK = '#16181b', SV = '#b9bec4', who = TROPA[Math.round(phase * 2) % TROPA.length];
     C.save(); C.translate(x, y); C.scale(S, -S);
@@ -2879,42 +2884,22 @@ html.kid #grow-dog { display: none !important; }
     const on = Math.floor(t * 8 + phase * 2) % 2;
     line([[-1.5, 1.08], [-1.5, 1.6]], 0.02, '#8d9499');
     C.fillStyle = on ? '#2f5bff' : '#ff2a2a'; C.beginPath(); C.arc(-1.5, 1.64, 0.05, 0, Math.PI * 2); C.fill();
-    // piloto da tropa: bermuda, perna de fora, chinelo, camisa de time e a mochila "PERDEU PLAYBOY"
+    // piloto da tropa: farda marinho, faixa âmbar refletiva, luva e bota pretas, capacete branco com faixa marinho e viseira
     const hip = [-0.95, 1.14], sh = [-0.82, 1.68], hand = [-0.45, 1.44], knee = [-0.58, 0.98], foot = [-0.74, 0.58];
-    const hem = [hip[0] + (knee[0] - hip[0]) * 0.7, hip[1] + (knee[1] - hip[1]) * 0.7];
-    line([knee, foot], 0.09, who.skin);
-    line([hip, hem], 0.15, who.shorts);
-    line([hem, knee], 0.1, who.skin);
-    C.fillStyle = '#2b2e33'; C.fillRect(foot[0] - 0.08, foot[1] - 0.035, 0.2, 0.03); // chinelo
-    line([[foot[0] - 0.02, foot[1] - 0.005], [foot[0] + 0.04, foot[1] + 0.03]], 0.014, '#2f6fd6');
-    line([hip, sh], 0.22, who.shirt);
-    line([[sh[0] + 0.02, sh[1] - 0.02], [sh[0] + 0.1, sh[1] - 0.1]], 0.05, who.trim);
-    line([sh, [-0.66, 1.45], hand], 0.09, who.shirt);
-    line([[-0.62, 1.45], hand], 0.08, who.skin);
-    C.fillStyle = who.skin; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
-    line([[sh[0] - 0.1, sh[1] - 0.02], [-1.0, 1.55]], 0.03, '#2a2a2a'); // alça da mochila
-    // mochila nas costas (por cima do tronco, pra frase ficar legível)
-    C.save(); C.translate(-1.2, 1.42); C.rotate(-0.08);
-    C.fillStyle = '#151515'; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.fill();
-    C.strokeStyle = '#3a3a3a'; C.lineWidth = 0.012; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.stroke();
-    C.fillStyle = '#262626'; C.fillRect(-0.19, 0.14, 0.38, 0.12);
-    duroTxt('PERDEU', 0, 0.02, 11, '#f3efe6', 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
-    duroTxt('PLAYBOY', 0, -0.12, 11, D.amb, 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
-    C.restore();
+    line([hip, knee, foot], 0.13, D.nvD);
+    line([[knee[0] - 0.02, knee[1] - 0.06], foot], 0.11, BK); // bota
+    line([hip, sh], 0.22, D.nv);
+    line([[hip[0] + 0.03, hip[1] + 0.02], [hip[0] - 0.01, hip[1] + 0.02]], 0.24, BK); // cinto
+    line([[hip[0] - 0.02, hip[1] + 0.2], [sh[0] - 0.02, sh[1] - 0.12]], 0.03, D.amb); // faixa refletiva
+    line([sh, [-0.66, 1.45], hand], 0.09, D.nv);
+    line([[-0.7, 1.5], [-0.62, 1.45]], 0.095, D.amb);
+    C.fillStyle = BK; C.beginPath(); C.arc(hand[0], hand[1], 0.05, 0, Math.PI * 2); C.fill(); // luva
+    C.fillStyle = '#2b2e33'; C.fillRect(sh[0] + 0.02, sh[1] - 0.12, 0.05, 0.08); // rádio no ombro
     const hx = sh[0] + 0.07, hy = sh[1] + 0.21;
-    C.fillStyle = who.skin; C.beginPath(); C.arc(hx, hy, 0.14, 0, Math.PI * 2); C.fill();
-    if (who.head === 'capacete') { // capacete aberto branco, viseira levantada
-      C.fillStyle = '#f4f5f6'; C.beginPath(); C.arc(hx - 0.01, hy + 0.02, 0.155, 0.35, Math.PI * 1.15); C.closePath(); C.fill();
-      C.fillStyle = 'rgba(40, 52, 66, .8)'; C.fillRect(hx - 0.02, hy + 0.12, 0.17, 0.04);
-    } else if (who.head === 'bone') { // sem capacete, boné de aba reta virado pra trás
-      C.fillStyle = '#1b1d20'; C.beginPath(); C.arc(hx, hy + 0.03, 0.14, 0, Math.PI); C.fill(); C.fillRect(hx - 0.27, hy + 0.04, 0.15, 0.035);
-      C.fillStyle = '#ffd21f'; C.fillRect(hx - 0.02, hy + 0.13, 0.05, 0.03);
-    } else { // bandana e óculos escuros
-      C.fillStyle = '#c0161a'; C.beginPath(); C.arc(hx, hy + 0.03, 0.145, 0, Math.PI); C.fill();
-      line([[hx - 0.14, hy + 0.05], [hx - 0.27, hy - 0.02]], 0.035, '#c0161a');
-      C.fillStyle = '#111'; C.fillRect(hx + 0.02, hy - 0.01, 0.13, 0.045);
-    }
-    C.fillStyle = '#1a1a1a'; C.beginPath(); C.arc(hx + 0.1, hy + (who.head === 'bandana' ? -0.06 : 0.0), 0.022, 0, Math.PI * 2); C.fill();
+    C.fillStyle = who.skin; C.beginPath(); C.arc(hx + 0.06, hy - 0.08, 0.07, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#f4f5f6'; C.beginPath(); C.arc(hx, hy, 0.155, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = D.nv; C.lineWidth = 0.04; C.beginPath(); C.arc(hx, hy, 0.13, 1.25, 2.85); C.stroke();
+    C.fillStyle = 'rgba(30, 40, 52, .9)'; C.beginPath(); C.ellipse(hx + 0.09, hy - 0.01, 0.07, 0.055, 0, 0, Math.PI * 2); C.fill();
     C.restore();
   }
   // Bravona passando voando na faixa da frente
@@ -2957,7 +2942,7 @@ html.kid #grow-dog { display: none !important; }
     }
     C.restore();
   }
-  // Bravona dos ladrões: laranja-ferrugem (tanque e farol), banco e rabeta pretos, caveirinha sorridente; piloto e garupa de preto
+  // moto dos ladrões: laranja-ferrugem (tanque e farol), banco e rabeta pretos, caveirinha sorridente; os dois bandidos zoados
   function drawBravona(x, y, S, rot) {
     const OR = '#e0612a', ORd = '#a8431a', BK = '#141518', SU = '#1b1d21', SUh = '#3b4048', SV = '#c3c8cd';
     C.save(); C.translate(x, y); C.scale(S, -S);
@@ -3011,17 +2996,45 @@ html.kid #grow-dog { display: none !important; }
     C.fillStyle = '#e8eaec'; C.beginPath(); C.arc(-0.66, 0.72, 0.045, 0, Math.PI * 2); C.fill(); C.fillRect(-0.685, 0.665, 0.05, 0.03);
     C.fillStyle = BK; C.beginPath(); C.arc(-0.68, 0.73, 0.012, 0, Math.PI * 2); C.arc(-0.64, 0.73, 0.012, 0, Math.PI * 2); C.fill();
     C.strokeStyle = BK; C.lineWidth = 0.007; C.beginPath(); C.arc(-0.66, 0.705, 0.016, Math.PI + 0.5, 2 * Math.PI - 0.5); C.stroke();
-    // piloto e garupa de preto, capacete preto fechado
+    // os dois bandidos zoados: camisa de time, bermuda e chinelo; o piloto de boné, o garupa de cabelo nevado,
+    // óculos espelhado e a mochila "PERDEU PLAYBOY" nas costas
     const rider = (hip, sh, hand, knee, foot, back) => {
-      line([hip, knee, foot], 0.13, back ? '#16181b' : SU);
-      line([hip, sh], 0.22, back ? '#16181b' : SU);
-      line([[hip[0] - 0.02, hip[1] + 0.06], [sh[0] - 0.04, sh[1] - 0.02]], 0.03, SUh);
-      line([sh, [(sh[0] + hand[0]) / 2, (sh[1] + hand[1]) / 2 - 0.07], hand], 0.09, back ? '#16181b' : SU);
-      C.fillStyle = '#e9e9e9'; C.beginPath(); C.ellipse(foot[0] + 0.04, foot[1] - 0.02, 0.09, 0.04, 0, 0, Math.PI * 2); C.fill();
+      const shirt = back ? '#d4161f' : '#2f6fd6', trim = back ? '#16181b' : '#f3efe6', shorts = back ? '#16181b' : '#3d6aa8';
+      const skin = back ? '#c68a5e' : '#8d5a3b';
+      const hem = [hip[0] + (knee[0] - hip[0]) * 0.75, hip[1] + (knee[1] - hip[1]) * 0.75];
+      line([knee, foot], 0.085, skin);
+      line([hip, hem], 0.15, shorts);
+      line([hem, knee], 0.095, skin);
+      C.fillStyle = '#2b2e33'; C.fillRect(foot[0] - 0.08, foot[1] - 0.035, 0.2, 0.03); // chinelo
+      line([[foot[0] - 0.02, foot[1] - 0.005], [foot[0] + 0.04, foot[1] + 0.03]], 0.014, back ? '#1f9a46' : '#ffd21f');
+      line([hip, sh], 0.22, shirt);
+      line([[sh[0] + 0.02, sh[1] - 0.02], [sh[0] + 0.1, sh[1] - 0.1]], 0.05, trim);
+      if (!back) { line([[hip[0] + 0.02, hip[1] + 0.16], [sh[0] + 0.04, sh[1] - 0.14]], 0.04, '#f3efe6'); } // listra da camisa
+      line([sh, [(sh[0] + hand[0]) / 2, (sh[1] + hand[1]) / 2 - 0.07], hand], 0.09, shirt);
+      line([[(sh[0] + hand[0]) / 2 + 0.04, (sh[1] + hand[1]) / 2 - 0.07], hand], 0.08, skin);
+      C.fillStyle = skin; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
       const hx = sh[0] + 0.1, hy = sh[1] + 0.21;
-      C.fillStyle = '#0d0e10'; C.beginPath(); C.arc(hx, hy, 0.15, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#2a3442'; C.beginPath(); C.ellipse(hx + 0.08, hy + 0.0, 0.07, 0.05, 0, 0, Math.PI * 2); C.fill();
-      C.strokeStyle = 'rgba(255, 255, 255, .28)'; C.lineWidth = 0.025; C.beginPath(); C.arc(hx, hy, 0.11, 1.7, 2.6); C.stroke();
+      C.fillStyle = skin; C.beginPath(); C.arc(hx, hy, 0.14, 0, Math.PI * 2); C.fill();
+      if (back) {
+        C.fillStyle = '#f2ead0'; C.beginPath(); C.arc(hx - 0.01, hy + 0.04, 0.14, 0.15, Math.PI - 0.1); C.fill(); // cabelo nevado
+        C.fillStyle = '#c0c8d0'; C.fillRect(hx + 0.02, hy - 0.01, 0.14, 0.05); // óculos espelhado
+        C.fillStyle = '#7fd3ff'; C.fillRect(hx + 0.05, hy + 0.0, 0.06, 0.02);
+        C.strokeStyle = '#e8c547'; C.lineWidth = 0.014; C.beginPath(); C.arc(hx, hy - 0.06, 0.12, 0.5, 1.6); C.stroke(); // cordão
+      } else {
+        C.fillStyle = '#16181b'; C.beginPath(); C.arc(hx, hy + 0.03, 0.142, 0, Math.PI); C.fill(); C.fillRect(hx + 0.04, hy + 0.04, 0.2, 0.035); // boné aba reta
+        C.fillStyle = '#ffd21f'; C.fillRect(hx - 0.02, hy + 0.12, 0.05, 0.03);
+        C.fillStyle = '#1a1a1a'; C.beginPath(); C.arc(hx + 0.1, hy - 0.01, 0.022, 0, Math.PI * 2); C.fill();
+      }
+      if (back) { // mochila "PERDEU PLAYBOY" nas costas do garupa
+        line([[sh[0] - 0.08, sh[1] - 0.02], [hip[0] - 0.06, hip[1] + 0.12]], 0.03, '#2a2a2a');
+        C.save(); C.translate(sh[0] - 0.29, (sh[1] + hip[1]) / 2 + 0.02); C.rotate(-0.12);
+        C.fillStyle = '#151515'; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.fill();
+        C.strokeStyle = '#3a3a3a'; C.lineWidth = 0.012; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.stroke();
+        C.fillStyle = '#262626'; C.fillRect(-0.19, 0.14, 0.38, 0.12);
+        duroTxt('PERDEU', 0, 0.02, 11, '#f3efe6', 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
+        duroTxt('PLAYBOY', 0, -0.12, 11, '#f2a516', 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
+        C.restore();
+      }
     };
     rider([-1.25, 1.06], [-1.14, 1.58], [-0.86, 1.3], [-1.02, 0.8], [-1.16, 0.5], true);
     rider([-0.88, 1.03], [-0.6, 1.45], [-0.3, 1.23], [-0.5, 0.78], [-0.72, 0.48], false);
@@ -3319,10 +3332,12 @@ html.kid #grow-dog { display: none !important; }
       rango69: { name: '69 Rango', c: '#ffec6e', ink: '#171717', lid: '#222222', text: 'RANGO', italic: false, rango: true } } },
     model: { label: 'Bike', opts: {
       caicara: { name: 'Litorânea de cestinha', c: '#3fc1a8', def: 'agua' },
-      monark: { name: 'Pedalona 80', c: '#d40000', def: 'ferrari', lock: 'grau30' },
-      xr: { name: 'Trilha Bruta', c: '#efe0b5', def: 'creme', lock: 'grau200' },
-      bikelete: { name: 'Fumacinha 4T', c: '#6f7f78', def: 'militar', lock: 'grau500' },
-      bruno: { name: 'Bravona Turbinada', c: '#8a1020', def: 'vinho', lock: 'grau2000' } } },
+      monark: { name: 'Circuleira', c: '#d40000', def: 'ferrari', lock: 'grau30' },
+      xr: { name: 'XRrôna', c: '#efe0b5', def: 'creme', lock: 'grau200' },
+      bikelete: { name: 'Pit Bike', c: '#6f7f78', def: 'militar', lock: 'grau500' },
+      bruno: { name: 'Titânica 99', c: '#8a1020', def: 'vinho', lock: 'grau2000' },
+      pop2: { name: 'Pó-pop Bicilíndrica', c: '#f0f0ec', def: 'branca', lock: 'grau3000' },
+      gs: { name: 'Robozão', c: '#232528', def: 'preta', lock: 'grau5000' } } },
     frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelho Foguete', c: '#d40000' },
       azul: { name: 'Azul royal', c: '#1f5fd6' },
@@ -3468,7 +3483,9 @@ html.kid #grow-dog { display: none !important; }
     xr: { hip: [0.2, 0.7], hand: [0.66, 0.68], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
     bikelete: { hip: [0.22, 0.64], hand: [0.68, 0.74], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross' },
-    bruno: { hip: [0.3, 0.76], hand: [0.78, 0.8], knee: [0.66, 0.52], ankle: [0.47, 0.1], wheel: 'moto' }
+    bruno: { hip: [0.3, 0.76], hand: [0.78, 0.8], knee: [0.66, 0.52], ankle: [0.47, 0.1], wheel: 'moto' },
+    pop2: { hip: [0.24, 0.68], hand: [0.74, 0.78], knee: [0.62, 0.44], ankle: [0.5, 0.08], wheel: 'moto' },
+    gs: { hip: [0.3, 0.84], hand: [0.8, 0.92], knee: [0.68, 0.58], ankle: [0.5, 0.14], wheel: 'cross' }
   };
   // motor 2 tempos de bicicleta motorizada (cilindro inclinado, escape com câmara de expansão)
   function motor2T() {
@@ -3510,7 +3527,7 @@ html.kid #grow-dog { display: none !important; }
   }
 
   const FRAMES = {
-    // Pedalona 80: quadro de barra dupla reta (estilo bicicleta de carga antiga) e losango "P80"
+    // Circuleira: quadro de barra dupla reta (estilo bicicleta de carga antiga) e losango "P80"
     monark(F) {
       C.strokeStyle = F; C.lineWidth = 0.035;
       C.beginPath(); C.arc(0, 0, R + 0.035, 0.35, Math.PI - 0.35); C.stroke();
@@ -3541,7 +3558,7 @@ html.kid #grow-dog { display: none !important; }
       line([[0.17, 0.6], [0.2, 0.575], [0.16, 0.555], [0.2, 0.535], [0.17, 0.51]], 0.01, '#b9c3c8');
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.24, 0.615, 0.115, 0.04, 0.05, 0, Math.PI * 2); C.fill();
     },
-    // Trilha Bruta: estilo MTB, quadro creme, tanque preto no tubo de cima, banco comprido "TB" com rastro de pneu, suspensão
+    // XRrôna: estilo MTB, quadro creme, tanque preto no tubo de cima, banco comprido "XRR" com rastro de pneu, suspensão
     xr(F) {
       motor2T(); flameFx(-0.14, 0.125);
       pedal();
@@ -3561,7 +3578,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#16181b'; rrect(-0.24, 0.55, 0.62, 0.075, 0.03); C.fill();
       C.save(); C.translate(0.08, 0.588); C.scale(0.004, -0.004);
       C.fillStyle = '#f3efe6'; C.font = 'italic 700 15px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('TB', -9, 0);
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('XRR', -9, 0);
       C.fillStyle = '#f3efe6'; for (let i = 0; i < 4; i++) C.fillRect(4 + i * 7, -5 + (i % 2) * 4, 4, 3);
       C.restore();
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.66, 0.6, 0.15, 0.055, 0.08, 0, Math.PI * 2); C.fill();
@@ -3619,7 +3636,7 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       line([[0.92, 0.5], [0.94, 0.55]], 0.02, '#c3c9cd');
     },
-    // Fumacinha 4T: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
+    // Pit Bike: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
     bikelete(F) {
       line([[0.62, 0.1], [0.66, -0.02], [0.4, -0.06], [-0.12, 0.02]], 0.05, '#c9d0d5');
       line([[0.2, -0.03], [-0.14, 0.03]], 0.075, '#dfe4e7');
@@ -3636,7 +3653,7 @@ html.kid #grow-dog { display: none !important; }
       line([[0.18, 0.44], [0.3, 0.06]], 0.045, F);
       line([[0.86, 0.46], [0.62, 0.12], [0.4, 0.05]], 0.045, F);
       line([[0.86, 0.62], [0.9, 0.42]], 0.06, F);
-      // a nuvenzinha da Fumacinha, pintada entre os dois tubos de cima
+      // a nuvenzinha da Pit Bike, pintada entre os dois tubos de cima
       C.save(); C.translate(0.55, 0.45); C.rotate(0.2);
       C.fillStyle = '#f3efe6';
       for (const [cx, cy, r] of [[-0.045, -0.005, 0.03], [-0.012, 0.012, 0.036], [0.025, 0.0, 0.03], [0.05, -0.01, 0.022]]) { C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill(); }
@@ -3663,7 +3680,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
       bars([0.86, 0.62], 0.8, [0.7, 0.75], '#1b1d20', '#16181b');
     },
-    // Bravona Turbinada: vinho, adesivo de raio no tanque, motor prata, baú de alumínio. Lenda, não tem cor
+    // Titânica 99: vinho, adesivo de raio no tanque, motor prata, baú de alumínio. Lenda, não tem cor
     bruno() {
       const V = FRAME, Vd = shadeHex(FRAME, -0.32), Vl = shadeHex(FRAME, 0.22), CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20', AMB = '#ffab2e';
       // paralama dianteiro vinho com filete claro e haste cromada
@@ -3720,7 +3737,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = V; C.beginPath(); C.moveTo(0.18, 0.5); C.lineTo(0.42, 0.5); C.lineTo(0.38, 0.32); C.lineTo(0.2, 0.36); C.closePath(); C.fill();
       C.save(); C.translate(0.3, 0.42); C.rotate(0.1); C.scale(0.0032, -0.0032);
       C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('BRAVONA', 0, 0);
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('TITÂNICA', 0, 0);
       C.restore();
       C.fillStyle = V; C.beginPath(); C.moveTo(-0.22, 0.58); C.lineTo(0.2, 0.56); C.lineTo(0.2, 0.47); C.lineTo(-0.12, 0.48); C.closePath(); C.fill();
       C.strokeStyle = Vl; C.lineWidth = 0.008; C.beginPath(); C.moveTo(-0.2, 0.55); C.lineTo(0.18, 0.535); C.stroke();
@@ -3743,7 +3760,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = CR; C.beginPath(); C.ellipse(0.66, 0.735, 0.035, 0.014, 0, 0, Math.PI * 2); C.fill();
       C.save(); C.translate(0.71, 0.62); C.rotate(0.1);
       C.fillStyle = '#16181b'; rrect(-0.1, -0.035, 0.2, 0.07, 0.02); C.fill();
-      C.fillStyle = '#ffd21f'; C.beginPath(); // raio da Bravona
+      C.fillStyle = '#ffd21f'; C.beginPath(); // raio da Titânica
       C.moveTo(-0.07, -0.005); C.lineTo(-0.01, 0.022); C.lineTo(-0.005, 0.004); C.lineTo(0.075, 0.008); C.lineTo(0.01, -0.024); C.lineTo(0.006, -0.006); C.closePath(); C.fill();
       C.restore();
       // frente moderna em seta: carenagem pontuda na cor do quadro, farol em V, viseira fumê e painel digital
@@ -3768,6 +3785,107 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#7f868c'; for (const [rx, ry] of [[-0.32, 0.66], [-0.02, 0.66], [-0.32, 0.85], [-0.02, 0.85]]) { C.beginPath(); C.arc(rx, ry, 0.008, 0, Math.PI * 2); C.fill(); }
       C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.7, 0.04, 0.03);
       C.fillStyle = '#d61f1f'; C.fillRect(-0.3, 0.68, 0.06, 0.02);
+    },
+    // Pó-pop Bicilíndrica: cub de entrega com escudo de pernas e carenagem na cor da bike, mas com dois cilindros e dois escapes
+    pop2(F) {
+      const V = F, Vd = shadeHex(F, -0.3), Vl = shadeHex(F, 0.25), CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20';
+      C.fillStyle = V; C.beginPath(); C.arc(L, 0, R + 0.1, 0.95, 2.05); C.arc(L, 0, R + 0.06, 2.05, 0.95, true); C.closePath(); C.fill();
+      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.07, 0, Math.PI * 2); C.fill();
+      // balança, capa da corrente e amortecedor
+      line([[0, 0], [0.42, 0.08]], 0.05, BK);
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.moveTo(-0.02, 0.06); C.lineTo(0.42, 0.14); C.lineTo(0.42, 0.04); C.lineTo(-0.02, -0.05); C.closePath(); C.fill();
+      line([[0.05, 0.05], [0.1, 0.46]], 0.03, '#2b2e33');
+      // dois escapes cromados, um em cima do outro
+      line([[0.7, 0.07], [0.6, -0.03], [0.2, -0.04], [-0.08, 0.04]], 0.036, CR);
+      line([[0.72, 0.15], [0.63, 0.05], [0.24, 0.04], [-0.06, 0.12]], 0.034, CRd);
+      flameFx(-0.1, 0.05);
+      // motor: carcaça e dois cilindros aletados deitados pra frente
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.ellipse(0.42, 0.1, 0.14, 0.095, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.4, 0.09, 0.06, 0.05, 0, 0, Math.PI * 2); C.fill();
+      for (const [dy, col] of [[0.075, '#a3abb0'], [-0.005, '#c3c9cd']]) {
+        C.save(); C.translate(0.5, 0.1 + dy); C.rotate(-1.25);
+        C.fillStyle = col; C.fillRect(-0.04, 0, 0.08, 0.2);
+        C.strokeStyle = '#6f777c'; C.lineWidth = 0.007; C.beginPath();
+        for (let i = 1; i < 7; i++) { C.moveTo(-0.05, i * 0.028); C.lineTo(0.05, i * 0.028); }
+        C.stroke();
+        C.fillStyle = '#8f969c'; C.fillRect(-0.035, 0.2, 0.07, 0.03);
+        C.restore();
+      }
+      // quadro de cub: desce do guidão, passa baixo e sobe pra garupa
+      line([[0.9, 0.62], [0.72, 0.34], [0.55, 0.26], [0.3, 0.3], [0.12, 0.5], [-0.2, 0.55]], 0.045, BK);
+      // escudo de pernas
+      C.fillStyle = V; C.beginPath(); C.moveTo(0.93, 0.66); C.quadraticCurveTo(0.99, 0.42, 0.78, 0.22); C.lineTo(0.66, 0.27);
+      C.quadraticCurveTo(0.85, 0.44, 0.81, 0.64); C.closePath(); C.fill();
+      C.fillStyle = Vd; C.beginPath(); C.moveTo(0.78, 0.22); C.lineTo(0.66, 0.27); C.lineTo(0.7, 0.3); C.lineTo(0.8, 0.26); C.closePath(); C.fill();
+      // carenagem lateral com o nome
+      C.fillStyle = V; C.beginPath(); C.moveTo(-0.26, 0.57); C.lineTo(0.42, 0.57); C.lineTo(0.36, 0.34); C.lineTo(0.08, 0.3); C.lineTo(-0.2, 0.42); C.closePath(); C.fill();
+      C.strokeStyle = Vl; C.lineWidth = 0.01; C.beginPath(); C.moveTo(-0.2, 0.51); C.lineTo(0.38, 0.52); C.stroke();
+      C.fillStyle = '#d61f1f'; C.fillRect(-0.18, 0.455, 0.5, 0.022);
+      C.save(); C.translate(0.12, 0.405); C.scale(0.0031, -0.0031);
+      C.fillStyle = '#1b1d20'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('PÓ-POP 2C', 0, 0);
+      C.restore();
+      // lanterna, bagageiro e banco comprido
+      C.fillStyle = '#d61f1f'; rrect(-0.31, 0.47, 0.07, 0.06, 0.015); C.fill();
+      line([[-0.3, 0.63], [0.08, 0.63]], 0.02, BK); line([[-0.26, 0.63], [-0.2, 0.55]], 0.015, BK);
+      C.fillStyle = '#16181b'; rrect(-0.18, 0.56, 0.62, 0.07, 0.03); C.fill();
+      // garfo, carenagem do farol redondo e guidão
+      line([[0.93, 0.66], [0.99, 0.3]], 0.05, CR); line([[0.99, 0.3], [L, 0]], 0.04, '#e3e7ea');
+      C.fillStyle = V; rrect(0.84, 0.66, 0.21, 0.1, 0.045); C.fill();
+      C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(1.04, 0.71, 0.038, 0, Math.PI * 2); C.fill();
+      bars([0.9, 0.72], 0.82, [0.78, 0.8], '#2b2e33', '#16181b');
+    },
+    // Robozão: big trail de aventura com motor boxer (cilindro saindo pra frente embaixo), bico alto, para-brisa grande,
+    // tanque grande na cor da bike, protetor de motor, escape grosso e baús de alumínio
+    gs(F) {
+      const V = F, Vd = shadeHex(F, -0.3), Vl = shadeHex(F, 0.28), AL = '#c9ced3', ALd = '#9aa1a7', BK = '#1b1d20', CR = '#d6dbde';
+      // bico alto sobre a roda da frente
+      C.fillStyle = V; C.beginPath(); C.moveTo(0.9, 0.5); C.lineTo(1.3, 0.42); C.lineTo(1.26, 0.37); C.lineTo(0.92, 0.42); C.closePath(); C.fill();
+      // balança monobraço grossa e cardã
+      C.fillStyle = '#2b2e33'; C.beginPath(); C.moveTo(-0.03, 0.06); C.lineTo(0.42, 0.16); C.lineTo(0.42, 0.04); C.lineTo(-0.03, -0.06); C.closePath(); C.fill();
+      C.fillStyle = '#5b6168'; C.beginPath(); C.arc(0, 0, 0.1, 0, Math.PI * 2); C.fill();
+      line([[0.08, 0.06], [0.2, 0.5]], 0.035, '#d8a52a'); // amortecedor dourado
+      // escape grosso subindo do lado
+      line([[0.55, 0.04], [0.25, 0.06], [0.02, 0.24]], 0.05, ALd);
+      C.fillStyle = CR; rrect(-0.18, 0.18, 0.3, 0.12, 0.05); C.fill();
+      C.fillStyle = '#3a3e44'; C.beginPath(); C.ellipse(-0.18, 0.24, 0.02, 0.05, 0, 0, Math.PI * 2); C.fill();
+      flameFx(-0.2, 0.24);
+      // motor boxer: bloco, cilindro e cabeçote saindo pra frente embaixo, protetor tubular preto
+      C.fillStyle = '#3a3e44'; rrect(0.36, 0.06, 0.26, 0.2, 0.05); C.fill();
+      C.fillStyle = '#9aa1a7'; rrect(0.6, 0.08, 0.16, 0.11, 0.03); C.fill();
+      C.strokeStyle = '#6f777c'; C.lineWidth = 0.007; C.beginPath();
+      for (let i = 1; i < 5; i++) { C.moveTo(0.6 + i * 0.03, 0.08); C.lineTo(0.6 + i * 0.03, 0.19); } C.stroke();
+      C.fillStyle = '#d6dbde'; rrect(0.74, 0.085, 0.07, 0.1, 0.02); C.fill();
+      line([[0.6, 0.3], [0.84, 0.24], [0.86, 0.06], [0.72, 0.0]], 0.022, BK);
+      // quadro e subquadro
+      line([[0.92, 0.66], [0.62, 0.3], [0.4, 0.26]], 0.05, BK);
+      line([[0.4, 0.26], [0.3, 0.62], [0.88, 0.7]], 0.045, BK);
+      line([[0.3, 0.5], [-0.22, 0.66]], 0.035, BK);
+      // tanque grande com painel prata e listra
+      C.fillStyle = V; C.beginPath(); C.moveTo(0.36, 0.7); C.quadraticCurveTo(0.62, 0.9, 0.92, 0.78); C.lineTo(0.88, 0.5); C.lineTo(0.42, 0.48); C.closePath(); C.fill();
+      C.fillStyle = AL; C.beginPath(); C.moveTo(0.46, 0.5); C.lineTo(0.84, 0.52); C.lineTo(0.8, 0.64); C.lineTo(0.5, 0.62); C.closePath(); C.fill();
+      C.fillStyle = Vl; C.beginPath(); C.moveTo(0.42, 0.74); C.quadraticCurveTo(0.62, 0.86, 0.88, 0.77); C.lineTo(0.88, 0.75); C.quadraticCurveTo(0.62, 0.83, 0.44, 0.72); C.closePath(); C.fill();
+      // banco em dois níveis
+      C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(-0.24, 0.72); C.lineTo(0.12, 0.72); C.lineTo(0.18, 0.66); C.lineTo(0.44, 0.7); C.lineTo(0.46, 0.65); C.lineTo(-0.22, 0.64); C.closePath(); C.fill();
+      // garfo grosso dourado
+      line([[0.93, 0.7], [1.0, 0.32]], 0.075, '#2b2e33');
+      line([[1.0, 0.32], [L, 0]], 0.06, '#d8a52a');
+      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.08, 0, Math.PI * 2); C.fill();
+      // carenagem da frente com farol de LED, para-brisa alto e protetor de mão
+      C.fillStyle = Vd; C.beginPath(); C.moveTo(0.88, 0.62); C.lineTo(1.08, 0.66); C.lineTo(1.1, 0.78); C.lineTo(0.92, 0.84); C.closePath(); C.fill();
+      C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.06, 0.72, 0.03, 0.045, 0, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#d7f0ff'; C.lineWidth = 0.008; C.beginPath(); C.ellipse(1.06, 0.72, 0.042, 0.058, 0, 0, Math.PI * 2); C.stroke();
+      C.fillStyle = 'rgba(40, 52, 62, .7)'; C.beginPath(); C.moveTo(0.92, 0.84); C.lineTo(1.08, 0.78); C.lineTo(1.02, 1.04); C.lineTo(0.94, 1.02); C.closePath(); C.fill();
+      bars([0.9, 0.82], 0.92, [0.8, 0.9], '#2b2e33', '#16181b');
+      C.fillStyle = BK; C.beginPath(); C.ellipse(0.79, 0.91, 0.05, 0.03, -0.3, 0, Math.PI * 2); C.fill();
+      // baú de cima e baú lateral de alumínio
+      C.fillStyle = AL; rrect(-0.34, 0.74, 0.34, 0.24, 0.03); C.fill();
+      C.fillStyle = ALd; C.fillRect(-0.34, 0.84, 0.34, 0.02);
+      C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.88, 0.04, 0.03);
+      C.fillStyle = AL; rrect(-0.32, 0.36, 0.36, 0.28, 0.03); C.fill();
+      C.strokeStyle = ALd; C.lineWidth = 0.008; C.beginPath(); C.rect(-0.29, 0.39, 0.3, 0.22); C.stroke();
+      C.fillStyle = '#7f868c'; for (const [rx, ry] of [[-0.28, 0.4], [-0.0, 0.4], [-0.28, 0.6], [-0.0, 0.6]]) { C.beginPath(); C.arc(rx, ry, 0.008, 0, Math.PI * 2); C.fill(); }
+      C.fillStyle = '#d61f1f'; rrect(-0.3, 0.66, 0.08, 0.05, 0.015); C.fill();
     }
   };
 

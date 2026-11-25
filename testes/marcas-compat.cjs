@@ -60,9 +60,9 @@ const SAVE = {
       bikeleteLocked: __t.isLocked('model', __t.LOOKS.model.opts.bikelete),
       saved: JSON.parse(localStorage.getItem('grau80-look')), achSaved: localStorage.getItem('grau80-ach'), bestSaved: localStorage.getItem('grau80-best') }));
     ok(st.pick.bag === 'aifode' && st.bag === 'aiFudi', 'mochila aiFudi continua escolhida (nome mantido)', st.bag);
-    ok(st.pick.model === 'monark' && !st.monarkLocked && st.model === 'Pedalona 80', 'bike liberada e escolhida continua (agora aparece como Pedalona 80)', st.model);
+    ok(st.pick.model === 'monark' && !st.monarkLocked && st.model === 'Circuleira', 'bike liberada e escolhida continua (agora aparece como Circuleira)', st.model);
     ok(st.pick.frame === 'ferrari' && st.frame === 'Vermelho Foguete', 'cor escolhida continua (agora "Vermelho Foguete")', st.frame);
-    ok(!st.xrLocked && st.bikeleteLocked, 'desbloqueios iguais: Trilha Bruta liberada (200 m), Fumacinha ainda bloqueada (500 m)');
+    ok(!st.xrLocked && st.bikeleteLocked, 'desbloqueios iguais: XRrôna liberada (200 m), Pit Bike ainda bloqueada (500 m)');
     ok(JSON.stringify(st.ach) === '["grau100","grau200","grau30"]' && st.achSaved === SAVE['grau80-ach'], 'conquistas intactas', st.ach);
     ok(st.best === 412.3 && st.bestSaved === '412.30', 'recorde intacto', st.best);
     ok(st.owned.includes('mini_pastel') && !st.magroLocked && st.pick.dog === 'magro', 'compra (pastel) preservada: caramelo magrelo liberado e escolhido', st.owned);
@@ -102,9 +102,9 @@ const SAVE = {
   }
 
   console.log('\nD. Bikes, cores e traduções');
-  const NAMES = { caicara: 'Litorânea de cestinha', monark: 'Pedalona 80', xr: 'Trilha Bruta', bikelete: 'Fumacinha 4T', bruno: 'Bravona Turbinada' };
+  const NAMES = { caicara: 'Litorânea de cestinha', monark: 'Circuleira', xr: 'XRrôna', bikelete: 'Pit Bike', bruno: 'Titânica 99', pop2: 'Pó-pop Bicilíndrica', gs: 'Robozão' };
   for (const [model, name] of Object.entries(NAMES)) {
-    const all = JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau1000: 1, grau2000: 1 });
+    const all = JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau1000: 1, grau2000: 1, grau3000: 1, grau5000: 1 });
     const c = await session({ ...SAVE, 'grau80-ach': all, 'grau80-look': JSON.stringify({ model, frame: model === 'bruno' ? 'vinho' : undefined, bag: 'rango69' }) }, { dpr: 2 });
     const st = await c.p.evaluate(() => ({ k: __t.pick.model, n: __t.LOOKS.model.opts[__t.pick.model].name }));
     ok(st.k === model && st.n === name, `${name} selecionável`, st.n);
@@ -123,6 +123,13 @@ const SAVE = {
       await c2.p.screenshot({ path: path.join(OUT, 'cor-' + frame + '.png') });
       await c2.p.close();
     }
+  }
+  {
+    const c = await session({ ...SAVE, 'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau2000: 1 }) });
+    const st = await c.p.evaluate(() => ({ pop: __t.isLocked('model', __t.LOOKS.model.opts.pop2), gs: __t.isLocked('model', __t.LOOKS.model.opts.gs), lp: __t.LOOKS.model.opts.pop2.lock, lg: __t.LOOKS.model.opts.gs.lock, order: Object.keys(__t.LOOKS.model.opts) }));
+    ok(st.pop && st.gs && st.lp === 'grau3000' && st.lg === 'grau5000', 'Pó-pop libera aos 3.000 m e Robozão aos 5.000 m (bloqueadas pra quem tem só 2.000 m)', st);
+    ok(st.order.join() === 'caicara,monark,xr,bikelete,bruno,pop2,gs', 'motos novas vêm depois da Titânica na garagem', st.order);
+    await c.p.close();
   }
   for (const lang of ['en', 'es']) {
     const c = await session(SAVE, { lang });
