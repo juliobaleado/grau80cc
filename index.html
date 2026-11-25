@@ -1356,11 +1356,24 @@ html.kid #grow-dog { display: none !important; }
       const honk = ac.createBiquadFilter(); honk.type = 'bandpass'; honk.Q.value = 5;
       const honkG = ac.createGain(); honkG.gain.value = 0;
       const out4 = ac.createGain(); out4.gain.value = 0;
-      p4.connect(lp4); sub4.connect(sub4G).connect(lp4); lp4.connect(out4);
+      // Robozão: pulsação do boxer (modulação leve no volume), assovio mecânico e admissão de ar; mudos nas outras motos
+      const puls = ac.createGain(); puls.gain.value = 1;
+      const plfo = ac.createOscillator(); plfo.type = 'sine'; plfo.frequency.value = 20;
+      const plfoG = ac.createGain(); plfoG.gain.value = 0;
+      plfo.connect(plfoG).connect(puls.gain); plfo.start();
+      const whine = ac.createOscillator(); whine.type = 'triangle';
+      const whBP = ac.createBiquadFilter(); whBP.type = 'bandpass'; whBP.Q.value = 6;
+      const whG = ac.createGain(); whG.gain.value = 0;
+      whine.connect(whBP).connect(whG).connect(sfx); whine.start();
+      const air = ac.createBufferSource(); air.buffer = buf; air.loop = true;
+      const airBP = ac.createBiquadFilter(); airBP.type = 'bandpass'; airBP.Q.value = 0.9;
+      const airG = ac.createGain(); airG.gain.value = 0;
+      air.connect(airBP).connect(airG).connect(sfx); air.start();
+      p4.connect(lp4); sub4.connect(sub4G).connect(lp4); lp4.connect(puls); puls.connect(out4);
       p4.connect(honk).connect(honkG).connect(out4);
       out4.connect(sfx);
       p4.start(); sub4.start();
-      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4 };
+      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4, plfo, plfoG, whine, whBP, whG, airBP, airG };
       if (muted) ac.suspend();
       startMusic();
     } catch (e) { ac = null; }
@@ -1485,23 +1498,36 @@ html.kid #grow-dog { display: none !important; }
     nodes.o1.frequency.setTargetAtTime(f, t, 0.03);
     nodes.o2.frequency.setTargetAtTime(f * 2.02, t, 0.03);
     nodes.filt.frequency.setTargetAtTime(350 + s.rpm * 0.22 + s.thr * 600, t, 0.04);
-    // 4 tempos: monocilíndrica explode a cada 2 voltas (rpm / 120); bicilíndrica e boxer, uma vez por volta (rpm / 60).
-    // O boxer grande gira mais baixo e soa mais grave (filtro fechado e ronco de admissão mais embaixo).
-    const ff = s.rpm / (snd >= 2 ? 60 : 120) * (snd === 3 ? 0.62 : 1) * (1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0));
-    nodes.p4.frequency.setTargetAtTime(ff, t, 0.03);
-    nodes.sub4.frequency.setTargetAtTime(snd === 3 ? ff / 2 : ff, t, 0.03);
-    nodes.lp4.frequency.setTargetAtTime(snd === 3 ? 170 + s.rpm * 0.06 + s.thr * 320 : snd === 2 ? 320 + s.rpm * 0.12 + s.thr * 520 : 260 + s.rpm * 0.11 + s.thr * 500, t, 0.04);
-    nodes.honk.frequency.setTargetAtTime(snd === 3 ? 190 + s.rpm * 0.02 + s.thr * 110 : 330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
-    nodes.honkG.gain.setTargetAtTime(0.25 + s.thr * 1.6, t, 0.06);
+    // 4 tempos, um timbre por moto:
+    //  Titânica (1): monocilíndrica, explosão a cada 2 voltas, seca e rouca;
+    //  Pó-pop (2): bicilíndrica preparada, pulso grave e encorpado (sub uma oitava abaixo, filtro fechado, admissão forte);
+    //  Robozão (3): boxer grande, resposta rápida, escape mais aberto, pulsação do boxer, assovio crescente e admissão de ar.
+    const jit = 1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0);
+    const tc = snd === 3 ? 0.012 : 0.03;
+    const ff = s.rpm * jit * (snd === 2 ? 0.62 / 60 : snd === 3 ? 0.55 / 60 : 1 / 120);
+    nodes.p4.frequency.setTargetAtTime(ff, t, tc);
+    nodes.sub4.frequency.setTargetAtTime(snd >= 2 ? ff / 2 : ff, t, tc);
+    nodes.lp4.frequency.setTargetAtTime(snd === 2 ? 190 + s.rpm * 0.07 + s.thr * 420 : snd === 3 ? 420 + s.rpm * 0.1 + s.thr * 900 : 260 + s.rpm * 0.11 + s.thr * 500, t, snd === 3 ? 0.02 : 0.04);
+    nodes.honk.frequency.setTargetAtTime(snd === 2 ? 190 + s.rpm * 0.02 + s.thr * 110 : snd === 3 ? 260 + s.rpm * 0.03 + s.thr * 180 : 330 + s.rpm * 0.035 + s.thr * 160, t, 0.05);
+    nodes.honkG.gain.setTargetAtTime((0.25 + s.thr * 1.6) * (snd === 2 ? 1.25 : 1), t, 0.06);
+    const live = !paused && s.mode !== 'dog' && !(s.mode === 'over' && s.rpm < 1800), rr = Math.min(1, s.rpm / RPM_MAX);
+    nodes.plfoG.gain.setTargetAtTime(snd === 3 ? 0.28 : 0, t, 0.05);
+    nodes.plfo.frequency.setTargetAtTime(Math.max(4, ff / 2), t, tc);
+    nodes.whine.frequency.setTargetAtTime(700 + s.rpm * 0.34, t, 0.015);
+    nodes.whBP.frequency.setTargetAtTime(700 + s.rpm * 0.34, t, 0.015);
+    nodes.whG.gain.setTargetAtTime(snd === 3 && live ? (0.003 + 0.018 * s.thr) * rr * rr : 0, t, 0.05);
+    nodes.airBP.frequency.setTargetAtTime(600 + s.rpm * 0.2 + s.thr * 700, t, 0.03);
+    nodes.airG.gain.setTargetAtTime(snd === 3 && live ? (0.01 + 0.08 * s.thr) * (0.3 + 0.7 * rr) : 0, t, s.thr > 0.5 ? 0.03 : 0.08);
     const vol = paused || s.mode === 'dog' ? 0 : s.mode === 'over' && s.rpm < 1800 ? 0.02 : 0.05 + s.thr * 0.09;
     if (s.cut <= 0 || paused) {
       nodes.out.gain.setTargetAtTime(four ? 0 : vol, t, 0.05);
-      nodes.out4.gain.setTargetAtTime(four ? vol * (snd === 3 ? 1.9 : 1.5) : 0, t, 0.05);
+      nodes.out4.gain.setTargetAtTime(four ? vol * out4Mul(snd) : 0, t, 0.05);
     }
     nodes.ng.gain.setTargetAtTime(paused || s.mode === 'dog' ? 0 : (0.02 + s.thr * 0.06) * (four ? 0.6 : 1), t, 0.05);
     // sem filtro e com escape aberto, o 4 tempos estala quando solta o acelerador em giro alto
-    if (four && !paused && s.mode !== 'over' && s.thr < 0.15 && s.rpm > 4200 && Math.random() < 0.05) {
-      backfire(t + Math.random() * 0.03, 0.25 + Math.random() * 0.3);
+    const pp = snd === 2 ? [3800, 0.06] : snd === 3 ? [4600, 0.03] : [4200, 0.05]; // giro mínimo e chance por quadro
+    if (four && !paused && s.mode !== 'over' && s.thr < 0.15 && s.rpm > pp[0] && Math.random() < pp[1]) {
+      exhaustPop(t + Math.random() * 0.03, 0.25 + Math.random() * 0.3);
       if (Math.random() < 0.3) s.flame = 0.05;
     }
     nodes.scrapeG.gain.setTargetAtTime(paused ? 0 : s.scrape > 0 ? 0.1 + 0.1 * s.scrape : 0, t, 0.02);
@@ -1526,8 +1552,52 @@ html.kid #grow-dog { display: none !important; }
     const t = ac.currentTime, g = (four ? nodes.out4 : nodes.out).gain;
     g.cancelScheduledValues(t);
     g.setTargetAtTime(0.004, t, 0.004);
-    g.setTargetAtTime((0.05 + s.thr * 0.09) * (four ? (MOTO[MODEL].snd === 3 ? 1.9 : 1.5) : 1), t + 0.045, 0.006);
-    if (bang) backfire(t + 0.01 + Math.random() * 0.02, 0.75 + Math.random() * 0.35);
+    g.setTargetAtTime((0.05 + s.thr * 0.09) * (four ? out4Mul(MOTO[MODEL].snd) : 1), t + 0.045, 0.006);
+    if (bang) exhaustPop(t + 0.01 + Math.random() * 0.02, 0.75 + Math.random() * 0.35);
+  }
+  // volume do canal das 4 tempos por moto (Pó-pop encorpada, Robozão com mais camadas em volta)
+  const out4Mul = snd => (snd === 2 ? 1.9 : snd === 3 ? 1.6 : 1.5);
+  // estouros do escapamento do jogador: as bicicletas usam o estouro de sempre (backfire); cada moto 4 tempos tem o seu.
+  // (o pneu da viatura e o motor do Uno continuam usando o backfire, que não depende da moto escolhida)
+  function exhaustPop(t, k) {
+    const M = MOTO[MODEL];
+    if (!M) return backfire(t, k);
+    const burst = (t0, a, o) => { // corpo (ruído filtrado) + baque de pressão (seno caindo) + anel metálico opcional
+      const src = ac.createBufferSource(); src.buffer = nodes.noiseBuf;
+      const f = ac.createBiquadFilter(); f.type = o.type; f.frequency.value = o.f; f.Q.value = o.q;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(a, t0 + o.att); g.gain.exponentialRampToValueAtTime(0.0001, t0 + o.dur);
+      src.connect(f).connect(g).connect(sfx); src.start(t0, Math.random() * 0.8, o.dur + 0.03);
+      const th = ac.createOscillator(); th.type = 'sine';
+      th.frequency.setValueAtTime(o.th0, t0); th.frequency.exponentialRampToValueAtTime(o.th1, t0 + o.thd);
+      const tg = ac.createGain();
+      tg.gain.setValueAtTime(0.0001, t0); tg.gain.exponentialRampToValueAtTime(a * o.tha, t0 + 0.005); tg.gain.exponentialRampToValueAtTime(0.0001, t0 + o.thd);
+      th.connect(tg).connect(sfx); th.start(t0); th.stop(t0 + o.thd + 0.02);
+      if (o.ring) {
+        const rs = ac.createBufferSource(); rs.buffer = nodes.noiseBuf;
+        const rf = ac.createBiquadFilter(); rf.type = 'bandpass'; rf.frequency.value = o.ring; rf.Q.value = 14;
+        const rg = ac.createGain();
+        rg.gain.setValueAtTime(0.0001, t0); rg.gain.exponentialRampToValueAtTime(a * 1.6, t0 + 0.004); rg.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.11);
+        rs.connect(rf).connect(rg).connect(sfx); rs.start(t0, Math.random() * 0.8, 0.14);
+      }
+    };
+    const a = 0.5 * k;
+    if (M.snd === 1) { // Titânica: estalo seco e curto, às vezes um segundo logo atrás
+      burst(t, a, { type: 'bandpass', f: 2200 + Math.random() * 800, q: 0.9, att: 0.002, dur: 0.045, th0: 180, th1: 70, thd: 0.05, tha: 0.5 });
+      if (Math.random() < 0.35) burst(t + 0.04 + Math.random() * 0.03, a * 0.6, { type: 'bandpass', f: 2600, q: 1, att: 0.002, dur: 0.035, th0: 170, th1: 80, thd: 0.04, tha: 0.4 });
+    } else if (M.snd === 2) { // Pó-pop: estouros encorpados, irregulares, com sequências duplas (às vezes triplas)
+      const n = 1 + (Math.random() < 0.45 ? 1 : 0) + (Math.random() < 0.15 ? 1 : 0);
+      let tt = t;
+      for (let i = 0; i < n; i++) {
+        burst(tt, a * Math.pow(0.75, i), { type: 'lowpass', f: 900 + Math.random() * 500, q: 1.5, att: 0.004, dur: 0.11, th0: 120, th1: 42, thd: 0.12, tha: 0.9 });
+        tt += 0.05 + Math.random() * 0.08;
+      }
+    } else { // Robozão: estouro profundo e volumoso, com anel metálico; às vezes dois, bem espaçados
+      const n = 1 + (Math.random() < 0.3 ? 1 : 0);
+      for (let i = 0; i < n; i++) {
+        burst(t + i * (0.13 + Math.random() * 0.09), a * (i ? 0.7 : 1), { type: 'lowpass', f: 620 + Math.random() * 200, q: 2.5, att: 0.006, dur: 0.18, th0: 78, th1: 30, thd: 0.2, tha: 1.1, ring: 1100 + Math.random() * 300 });
+      }
+    }
   }
   function backfire(t, k) {
     const src = ac.createBufferSource(); src.buffer = nodes.noiseBuf;
@@ -1585,7 +1655,7 @@ html.kid #grow-dog { display: none !important; }
         unlocked[a.id] = true;
         try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
       }
-      const bike = Object.values(LOOKS.model.opts).find(o => o.lock === a.id);
+      const bike = Object.values(LOOKS.model.opts).find(o => o.lock && lockMain(o) === a.id);
       $('achWhy').textContent = T(cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? T(' · liberou a ') + bike.name : '');
       $('achName').textContent = a.name;
       $('ach').classList.add('show');
@@ -3000,7 +3070,7 @@ html.kid #grow-dog { display: none !important; }
     // óculos espelhado e a mochila "PERDEU PLAYBOY" nas costas
     const rider = (hip, sh, hand, knee, foot, back) => {
       const shirt = back ? '#d4161f' : '#2f6fd6', trim = back ? '#16181b' : '#f3efe6', shorts = back ? '#16181b' : '#3d6aa8';
-      const skin = back ? '#c68a5e' : '#8d5a3b';
+      const skin = back ? '#c68a5e' : '#f6dcc7';
       const hem = [hip[0] + (knee[0] - hip[0]) * 0.75, hip[1] + (knee[1] - hip[1]) * 0.75];
       line([knee, foot], 0.085, skin);
       line([hip, hem], 0.15, shorts);
@@ -3335,9 +3405,9 @@ html.kid #grow-dog { display: none !important; }
       monark: { name: 'Circuleira', c: '#d40000', def: 'ferrari', lock: 'grau30' },
       xr: { name: 'XRrôna', c: '#efe0b5', def: 'creme', lock: 'grau200' },
       bikelete: { name: 'Pit Bike', c: '#6f7f78', def: 'militar', lock: 'grau500' },
-      bruno: { name: 'Titânica 99', c: '#8a1020', def: 'vinho', lock: 'grau2000' },
-      pop2: { name: 'Pó-pop Bicilíndrica', c: '#f0f0ec', def: 'branca', lock: 'grau3000' },
-      gs: { name: 'Robozão', c: '#232528', def: 'preta', lock: 'grau5000' } } },
+      bruno: { name: 'Titânica 99', c: '#8a1020', def: 'vinho', lock: ['grau700', 'grau2000'] }, // 1.000 m (quem liberou com 2.000 m continua com ela)
+      pop2: { name: 'Pó-pop Bicilíndrica', c: '#f0f0ec', def: 'branca', lock: ['grau2000', 'grau3000'] }, // 2.000 m
+      gs: { name: 'Robozão', c: '#232528', def: 'preta', lock: ['grau3000', 'grau5000'] } } }, // 3.000 m
     frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelho Foguete', c: '#d40000' },
       azul: { name: 'Azul royal', c: '#1f5fd6' },
@@ -3374,7 +3444,9 @@ html.kid #grow-dog { display: none !important; }
   let HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL;
   // clareia (k > 0) ou escurece (k < 0) uma cor #rrggbb: tons do tanque da Bravona a partir da cor escolhida
   const shadeHex = (hex, k) => '#' + [1, 3, 5].map(i => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k).toString(16).padStart(2, '0'); }).join('');
-  const isLocked = (k, o) => o.lock && !cheat && (o.lock.startsWith('doa_') ? !owned.has(o.lock.slice(4)) : !unlocked[o.lock]); // modo teste libera tudo
+  // lock: uma conquista, uma lista (libera com qualquer uma; a 1ª é a exigida) ou 'doa_…' (caramelo comprado)
+  const lockMain = o => (Array.isArray(o.lock) ? o.lock[0] : o.lock);
+  const isLocked = (k, o) => o.lock && !cheat && (typeof o.lock === 'string' && o.lock.startsWith('doa_') ? !owned.has(o.lock.slice(4)) : ![].concat(o.lock).some(id => unlocked[id])); // modo teste libera tudo
   function applyLook() {
     const m = LOOKS.model.opts[pick.model];
     if (!m || isLocked('model', m)) { pick.model = 'caicara'; pick.frame = 'agua'; }
@@ -3424,12 +3496,12 @@ html.kid #grow-dog { display: none !important; }
         const dot = document.createElement('i'); dot.style.background = o.stripe ? `repeating-linear-gradient(90deg, ${o.base} 0 3px, ${o.stripe} 3px 6px)` : o.shell || o.base || o.c;
         if (dots) { b.append(dot); b.setAttribute('aria-label', T(o.name)); b.title = T(o.name); }
         else b.append(dot, locked ? '🔒 ' + T(o.name) : T(o.name));
-        if (locked && o.lock.startsWith('doa_')) { // caramelo especial: no app abre a doação; no site só avisa
+        if (locked && typeof o.lock === 'string' && o.lock.startsWith('doa_')) { // caramelo especial: no app abre a doação; no site só avisa
           const ps = PASTEIS.find(p => 'doa_' + p.id === o.lock);
           b.title = T('Libera com o') + ' ' + T(ps.nome) + (NATIVE ? '' : ' · ' + T('só no app da Play Store'));
           if (!NATIVE) b.disabled = true;
           else { b.addEventListener('click', e => { e.stopImmediatePropagation(); openPix(); }, true); }
-        } else if (locked) { b.disabled = true; b.title = T('Libera com a conquista') + ' ' + ACHS.find(a => a.id === o.lock).name; }
+        } else if (locked) { const ach = ACHS.find(a => a.id === lockMain(o)); b.disabled = true; b.title = T('Libera com a conquista') + ' ' + ach.name + ' (' + ach.why + ')'; }
         b.setAttribute('aria-pressed', String(pick[k] === id));
         b.addEventListener('click', () => {
           pick[k] = id;
@@ -3484,8 +3556,8 @@ html.kid #grow-dog { display: none !important; }
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
     bikelete: { hip: [0.22, 0.64], hand: [0.68, 0.74], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross' },
     bruno: { hip: [0.3, 0.76], hand: [0.78, 0.8], knee: [0.66, 0.52], ankle: [0.47, 0.1], wheel: 'moto' },
-    pop2: { hip: [0.24, 0.68], hand: [0.74, 0.78], knee: [0.62, 0.44], ankle: [0.5, 0.08], wheel: 'moto' },
-    gs: { hip: [0.3, 0.84], hand: [0.8, 0.92], knee: [0.68, 0.58], ankle: [0.5, 0.14], wheel: 'cross' }
+    pop2: { hip: [0.26, 0.72], hand: [0.76, 0.81], knee: [0.62, 0.46], ankle: [0.5, 0.1], wheel: 'cross' },
+    gs: { hip: [0.32, 0.86], hand: [0.8, 0.95], knee: [0.7, 0.6], ankle: [0.54, 0.14], wheel: 'cross' }
   };
   // motor 2 tempos de bicicleta motorizada (cilindro inclinado, escape com câmara de expansão)
   function motor2T() {
@@ -3680,7 +3752,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
       bars([0.86, 0.62], 0.8, [0.7, 0.75], '#1b1d20', '#16181b');
     },
-    // Titânica 99: vinho, adesivo de raio no tanque, motor prata, baú de alumínio. Lenda, não tem cor
+    // Titânica 99: vinho, adesivo de raio no tanque, motor prata. Lenda, não tem cor
     bruno() {
       const V = FRAME, Vd = shadeHex(FRAME, -0.32), Vl = shadeHex(FRAME, 0.22), CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20', AMB = '#ffab2e';
       // paralama dianteiro vinho com filete claro e haste cromada
@@ -3777,115 +3849,145 @@ html.kid #grow-dog { display: none !important; }
       poly([[0.99, 0.708], [1.05, 0.662], [1.035, 0.66]], '#ffffff');
       poly([[0.94, 0.79], [1.0, 0.765], [0.955, 0.772]], AMB);
       bars([0.9, 0.66], 0.84, [0.8, 0.8], '#2b2e33', '#16181b');
-      // baú de alumínio na garupa, com rebites e fecho
-      C.fillStyle = '#c9ced3'; rrect(-0.36, 0.62, 0.38, 0.27, 0.03); C.fill();
-      C.fillStyle = '#e1e5e8'; C.fillRect(-0.34, 0.84, 0.34, 0.025);
-      C.fillStyle = '#9aa1a7'; C.fillRect(-0.36, 0.74, 0.38, 0.02);
-      C.strokeStyle = '#7f868c'; C.lineWidth = 0.008; C.beginPath(); C.rect(-0.33, 0.65, 0.32, 0.21); C.stroke();
-      C.fillStyle = '#7f868c'; for (const [rx, ry] of [[-0.32, 0.66], [-0.02, 0.66], [-0.32, 0.85], [-0.02, 0.85]]) { C.beginPath(); C.arc(rx, ry, 0.008, 0, Math.PI * 2); C.fill(); }
-      C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.7, 0.04, 0.03);
-      C.fillStyle = '#d61f1f'; C.fillRect(-0.3, 0.68, 0.06, 0.02);
     },
-    // Pó-pop Bicilíndrica: cub de entrega com escudo de pernas e carenagem na cor da bike, mas com dois cilindros e dois escapes
+    // Pó-pop Bicilíndrica: pit bike compacta e preparada. Carenagens envolventes na cor da bike (tampa do tanque, aba do
+    // radiador, lateral e rabeta numa linha só com o banco), motor bicilíndrico aparecendo por baixo, escape alto preparado,
+    // garfo invertido, para-lama alto e placa de número com farol
     pop2(F) {
-      const V = F, Vd = shadeHex(F, -0.3), Vl = shadeHex(F, 0.25), CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20';
-      C.fillStyle = V; C.beginPath(); C.arc(L, 0, R + 0.1, 0.95, 2.05); C.arc(L, 0, R + 0.06, 2.05, 0.95, true); C.closePath(); C.fill();
-      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.07, 0, Math.PI * 2); C.fill();
-      // balança, capa da corrente e amortecedor
-      line([[0, 0], [0.42, 0.08]], 0.05, BK);
-      C.fillStyle = '#2b2e33'; C.beginPath(); C.moveTo(-0.02, 0.06); C.lineTo(0.42, 0.14); C.lineTo(0.42, 0.04); C.lineTo(-0.02, -0.05); C.closePath(); C.fill();
-      line([[0.05, 0.05], [0.1, 0.46]], 0.03, '#2b2e33');
-      // dois escapes cromados, um em cima do outro
-      line([[0.7, 0.07], [0.6, -0.03], [0.2, -0.04], [-0.08, 0.04]], 0.036, CR);
-      line([[0.72, 0.15], [0.63, 0.05], [0.24, 0.04], [-0.06, 0.12]], 0.034, CRd);
-      flameFx(-0.1, 0.05);
-      // motor: carcaça e dois cilindros aletados deitados pra frente
-      C.fillStyle = '#2b2e33'; C.beginPath(); C.ellipse(0.42, 0.1, 0.14, 0.095, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.4, 0.09, 0.06, 0.05, 0, 0, Math.PI * 2); C.fill();
-      for (const [dy, col] of [[0.075, '#a3abb0'], [-0.005, '#c3c9cd']]) {
-        C.save(); C.translate(0.5, 0.1 + dy); C.rotate(-1.25);
-        C.fillStyle = col; C.fillRect(-0.04, 0, 0.08, 0.2);
-        C.strokeStyle = '#6f777c'; C.lineWidth = 0.007; C.beginPath();
-        for (let i = 1; i < 7; i++) { C.moveTo(-0.05, i * 0.028); C.lineTo(0.05, i * 0.028); }
-        C.stroke();
-        C.fillStyle = '#8f969c'; C.fillRect(-0.035, 0.2, 0.07, 0.03);
+      const V = F, Vd = shadeHex(F, -0.3), Vl = shadeHex(F, 0.3), CR = '#d6dbde', AL = '#b8bfc4', BK = '#1b1d20', GR = '#2b2e33';
+      const poly = (pts, c) => { C.fillStyle = c; C.beginPath(); C.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) C.lineTo(pts[i][0], pts[i][1]); C.closePath(); C.fill(); };
+      // balança de alumínio e amortecedor com mola vermelha
+      poly([[-0.02, 0.05], [0.44, 0.17], [0.44, 0.08], [-0.02, -0.04]], AL);
+      line([[0.0, 0.0], [0.42, 0.12]], 0.012, '#8f969c');
+      line([[0.2, 0.12], [0.3, 0.48]], 0.03, GR);
+      C.strokeStyle = '#d61f1f'; C.lineWidth = 0.01; C.beginPath();
+      for (let i = 0; i < 7; i++) { const k = 0.15 + i * 0.1, px = 0.2 + 0.1 * k, py = 0.12 + 0.36 * k; C.moveTo(px - 0.03, py + 0.008); C.lineTo(px + 0.03, py - 0.008); }
+      C.stroke();
+      // motor bicilíndrico: carcaça, dois cilindros aletados com as cabeças pra frente, tampa prata
+      C.fillStyle = GR; C.beginPath(); C.ellipse(0.48, 0.14, 0.15, 0.1, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = AL; C.beginPath(); C.ellipse(0.45, 0.13, 0.065, 0.055, 0, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#7b8186'; C.lineWidth = 0.007; C.beginPath(); C.arc(0.45, 0.13, 0.04, 0, Math.PI * 2); C.stroke();
+      for (const [dx, dy, col] of [[0, 0.07, '#9aa1a7'], [0.03, 0, '#c3c9cd']]) {
+        C.save(); C.translate(0.56 + dx, 0.14 + dy); C.rotate(-1.15);
+        C.fillStyle = col; C.fillRect(-0.04, 0, 0.08, 0.17);
+        C.strokeStyle = '#6f777c'; C.lineWidth = 0.006; C.beginPath();
+        for (let i = 1; i < 6; i++) { C.moveTo(-0.048, i * 0.028); C.lineTo(0.048, i * 0.028); } C.stroke();
+        C.fillStyle = BK; C.fillRect(-0.035, 0.17, 0.07, 0.025);
         C.restore();
       }
-      // quadro de cub: desce do guidão, passa baixo e sobe pra garupa
-      line([[0.9, 0.62], [0.72, 0.34], [0.55, 0.26], [0.3, 0.3], [0.12, 0.5], [-0.2, 0.55]], 0.045, BK);
-      // escudo de pernas
-      C.fillStyle = V; C.beginPath(); C.moveTo(0.93, 0.66); C.quadraticCurveTo(0.99, 0.42, 0.78, 0.22); C.lineTo(0.66, 0.27);
-      C.quadraticCurveTo(0.85, 0.44, 0.81, 0.64); C.closePath(); C.fill();
-      C.fillStyle = Vd; C.beginPath(); C.moveTo(0.78, 0.22); C.lineTo(0.66, 0.27); C.lineTo(0.7, 0.3); C.lineTo(0.8, 0.26); C.closePath(); C.fill();
-      // carenagem lateral com o nome
-      C.fillStyle = V; C.beginPath(); C.moveTo(-0.26, 0.57); C.lineTo(0.42, 0.57); C.lineTo(0.36, 0.34); C.lineTo(0.08, 0.3); C.lineTo(-0.2, 0.42); C.closePath(); C.fill();
-      C.strokeStyle = Vl; C.lineWidth = 0.01; C.beginPath(); C.moveTo(-0.2, 0.51); C.lineTo(0.38, 0.52); C.stroke();
-      C.fillStyle = '#d61f1f'; C.fillRect(-0.18, 0.455, 0.5, 0.022);
-      C.save(); C.translate(0.12, 0.405); C.scale(0.0031, -0.0031);
+      // escapes: um baixo, saindo da frente; e o preparado, alto, subindo por baixo do banco até a ponteira na rabeta
+      line([[0.74, 0.12], [0.7, 0.03], [0.45, -0.01], [0.3, 0.02]], 0.03, CR);
+      line([[0.76, 0.2], [0.68, 0.3], [0.42, 0.36], [0.12, 0.44]], 0.034, '#c9ced3');
+      C.fillStyle = '#3a3e44'; C.beginPath(); C.roundRect(-0.22, 0.42, 0.36, 0.085, 0.04); C.fill();
+      C.fillStyle = CR; C.fillRect(-0.24, 0.435, 0.05, 0.055);
+      flameFx(-0.25, 0.46);
+      // quadro e pedaleira
+      line([[0.9, 0.66], [0.66, 0.34], [0.5, 0.24]], 0.04, BK);
+      line([[0.42, 0.42], [0.3, 0.58]], 0.035, BK);
+      line([[0.44, 0.1], [0.55, 0.1]], 0.03, '#16181b');
+      // carenagem lateral (cobre parte do motor), com faixa e o nome
+      poly([[0.2, 0.62], [0.52, 0.62], [0.62, 0.42], [0.54, 0.28], [0.36, 0.3], [0.22, 0.44]], V);
+      poly([[0.22, 0.44], [0.36, 0.3], [0.54, 0.28], [0.5, 0.33], [0.37, 0.35], [0.26, 0.47]], Vd);
+      poly([[0.24, 0.55], [0.56, 0.56], [0.585, 0.5], [0.25, 0.49]], '#f3efe6');
+      C.save(); C.translate(0.4, 0.525); C.rotate(0.02); C.scale(0.0029, -0.0029);
       C.fillStyle = '#1b1d20'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
       C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('PÓ-POP 2C', 0, 0);
       C.restore();
-      // lanterna, bagageiro e banco comprido
-      C.fillStyle = '#d61f1f'; rrect(-0.31, 0.47, 0.07, 0.06, 0.015); C.fill();
-      line([[-0.3, 0.63], [0.08, 0.63]], 0.02, BK); line([[-0.26, 0.63], [-0.2, 0.55]], 0.015, BK);
-      C.fillStyle = '#16181b'; rrect(-0.18, 0.56, 0.62, 0.07, 0.03); C.fill();
-      // garfo, carenagem do farol redondo e guidão
-      line([[0.93, 0.66], [0.99, 0.3]], 0.05, CR); line([[0.99, 0.3], [L, 0]], 0.04, '#e3e7ea');
-      C.fillStyle = V; rrect(0.84, 0.66, 0.21, 0.1, 0.045); C.fill();
-      C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(1.04, 0.71, 0.038, 0, Math.PI * 2); C.fill();
-      bars([0.9, 0.72], 0.82, [0.78, 0.8], '#2b2e33', '#16181b');
+      // banco e rabeta numa linha só, subindo até a lanterna
+      poly([[-0.32, 0.72], [-0.14, 0.7], [0.18, 0.66], [0.5, 0.66], [0.5, 0.61], [0.18, 0.6], [-0.12, 0.62], [-0.3, 0.66]], V);
+      poly([[-0.3, 0.7], [-0.1, 0.685], [0.18, 0.65], [0.18, 0.635], [-0.1, 0.665], [-0.3, 0.68]], Vl);
+      poly([[-0.12, 0.74], [0.5, 0.71], [0.56, 0.67], [0.18, 0.67], [-0.12, 0.7]], '#16181b');
+      C.fillStyle = '#d61f1f'; C.beginPath(); C.roundRect(-0.36, 0.69, 0.06, 0.04, 0.012); C.fill();
+      // tanque com a aba do radiador descendo pela frente
+      poly([[0.48, 0.71], [0.66, 0.79], [0.86, 0.73], [0.9, 0.62], [0.78, 0.44], [0.64, 0.42], [0.58, 0.6]], V);
+      poly([[0.62, 0.44], [0.78, 0.44], [0.86, 0.58], [0.74, 0.6]], Vd);
+      poly([[0.52, 0.72], [0.66, 0.78], [0.84, 0.725], [0.82, 0.71], [0.66, 0.76], [0.54, 0.705]], Vl);
+      C.fillStyle = CR; C.beginPath(); C.ellipse(0.66, 0.775, 0.03, 0.012, 0, 0, Math.PI * 2); C.fill();
+      // garfo invertido dourado, para-lama alto e placa de número com farol
+      line([[0.92, 0.7], [0.97, 0.42]], 0.06, '#d8a52a');
+      line([[0.97, 0.42], [L, 0]], 0.045, '#2b2e33');
+      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.065, 0, Math.PI * 2); C.fill();
+      poly([[0.88, 0.5], [1.32, 0.46], [1.3, 0.42], [0.9, 0.44]], V);
+      poly([[0.92, 0.7], [1.04, 0.68], [1.08, 0.56], [1.0, 0.5], [0.92, 0.56]], V);
+      poly([[0.95, 0.66], [1.03, 0.65], [1.05, 0.57], [0.99, 0.54], [0.94, 0.58]], '#f3efe6');
+      C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(1.0, 0.6, 0.03, 0, Math.PI * 2); C.fill();
+      bars([0.9, 0.74], 0.82, [0.78, 0.82], '#2b2e33', '#16181b');
+      line([[0.8, 0.83], [0.95, 0.85]], 0.015, '#2b2e33');
     },
-    // Robozão: big trail de aventura com motor boxer (cilindro saindo pra frente embaixo), bico alto, para-brisa grande,
-    // tanque grande na cor da bike, protetor de motor, escape grosso e baús de alumínio
+    // Robozão: big trail premium. Tanque largo e alto com painel prata, cabeçote boxer saltando pra frente embaixo,
+    // protetores tubulares, bico característico, para-brisa proporcional, banco em dois níveis, suspensão alta,
+    // escape grosso do lado e rabeta fina e esportiva (sem baú)
     gs(F) {
-      const V = F, Vd = shadeHex(F, -0.3), Vl = shadeHex(F, 0.28), AL = '#c9ced3', ALd = '#9aa1a7', BK = '#1b1d20', CR = '#d6dbde';
-      // bico alto sobre a roda da frente
-      C.fillStyle = V; C.beginPath(); C.moveTo(0.9, 0.5); C.lineTo(1.3, 0.42); C.lineTo(1.26, 0.37); C.lineTo(0.92, 0.42); C.closePath(); C.fill();
-      // balança monobraço grossa e cardã
-      C.fillStyle = '#2b2e33'; C.beginPath(); C.moveTo(-0.03, 0.06); C.lineTo(0.42, 0.16); C.lineTo(0.42, 0.04); C.lineTo(-0.03, -0.06); C.closePath(); C.fill();
+      const V = F, Vd = shadeHex(F, -0.32), Vl = shadeHex(F, 0.3), AL = '#c9ced3', ALd = '#8f969c', BK = '#1b1d20', GR = '#2b2e33', GO = '#d8a52a';
+      const poly = (pts, c) => { C.fillStyle = c; C.beginPath(); C.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) C.lineTo(pts[i][0], pts[i][1]); C.closePath(); C.fill(); };
+      // rabeta fina subindo, para-lama traseiro e suporte de placa
+      poly([[-0.36, 0.84], [-0.08, 0.8], [0.12, 0.74], [0.12, 0.68], [-0.06, 0.72], [-0.34, 0.79]], V);
+      poly([[-0.34, 0.8], [-0.08, 0.765], [0.12, 0.705], [0.12, 0.69], [-0.07, 0.745], [-0.33, 0.785]], Vd);
+      C.fillStyle = '#d61f1f'; C.beginPath(); C.roundRect(-0.4, 0.8, 0.07, 0.04, 0.012); C.fill();
+      C.fillStyle = 'rgba(255, 120, 120, .6)'; C.fillRect(-0.39, 0.815, 0.04, 0.012);
+      line([[-0.2, 0.78], [-0.26, 0.6]], 0.016, BK);
+      C.fillStyle = '#e8e2d2'; C.fillRect(-0.32, 0.53, 0.12, 0.08);
+      C.fillStyle = BK; C.beginPath(); C.arc(0, 0, R + 0.06, 1.75, 2.6); C.arc(0, 0, R + 0.03, 2.6, 1.75, true); C.closePath(); C.fill();
+      // balança paralever grossa com o cardã e amortecedor dourado alto
+      poly([[-0.03, 0.07], [0.44, 0.2], [0.44, 0.07], [-0.03, -0.07]], GR);
+      line([[0.0, 0.0], [0.42, 0.13]], 0.014, '#4a4f56');
       C.fillStyle = '#5b6168'; C.beginPath(); C.arc(0, 0, 0.1, 0, Math.PI * 2); C.fill();
-      line([[0.08, 0.06], [0.2, 0.5]], 0.035, '#d8a52a'); // amortecedor dourado
-      // escape grosso subindo do lado
-      line([[0.55, 0.04], [0.25, 0.06], [0.02, 0.24]], 0.05, ALd);
-      C.fillStyle = CR; rrect(-0.18, 0.18, 0.3, 0.12, 0.05); C.fill();
-      C.fillStyle = '#3a3e44'; C.beginPath(); C.ellipse(-0.18, 0.24, 0.02, 0.05, 0, 0, Math.PI * 2); C.fill();
-      flameFx(-0.2, 0.24);
-      // motor boxer: bloco, cilindro e cabeçote saindo pra frente embaixo, protetor tubular preto
-      C.fillStyle = '#3a3e44'; rrect(0.36, 0.06, 0.26, 0.2, 0.05); C.fill();
-      C.fillStyle = '#9aa1a7'; rrect(0.6, 0.08, 0.16, 0.11, 0.03); C.fill();
+      line([[0.16, 0.12], [0.3, 0.58]], 0.04, GO);
+      line([[0.16, 0.12], [0.3, 0.58]], 0.014, '#8a6a1a');
+      // escape: coletor por baixo do motor e silenciador grosso subindo do lado
+      line([[0.76, 0.16], [0.72, 0.05], [0.42, 0.02], [0.2, 0.12]], 0.05, ALd);
+      C.save(); C.translate(0.02, 0.28); C.rotate(0.38);
+      C.fillStyle = AL; C.beginPath(); C.roundRect(-0.2, -0.06, 0.36, 0.12, 0.05); C.fill();
+      C.fillStyle = '#e3e7ea'; C.fillRect(-0.18, 0.015, 0.32, 0.018);
+      C.fillStyle = GR; C.beginPath(); C.ellipse(-0.2, 0, 0.025, 0.05, 0, 0, Math.PI * 2); C.fill();
+      C.restore();
+      flameFx(-0.17, 0.2);
+      // motor boxer: bloco, cilindro aletado saltando pra fora e cabeçote com tampa preta, protetor tubular em volta
+      C.fillStyle = '#3a3e44'; C.beginPath(); C.roundRect(0.32, 0.08, 0.32, 0.24, 0.07); C.fill();
+      C.fillStyle = '#4f555b'; C.beginPath(); C.ellipse(0.46, 0.18, 0.08, 0.07, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = 'rgba(0, 0, 0, .35)'; C.beginPath(); C.ellipse(0.66, 0.15, 0.16, 0.07, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#aab1b6'; C.beginPath(); C.roundRect(0.56, 0.1, 0.18, 0.15, 0.04); C.fill();
       C.strokeStyle = '#6f777c'; C.lineWidth = 0.007; C.beginPath();
-      for (let i = 1; i < 5; i++) { C.moveTo(0.6 + i * 0.03, 0.08); C.lineTo(0.6 + i * 0.03, 0.19); } C.stroke();
-      C.fillStyle = '#d6dbde'; rrect(0.74, 0.085, 0.07, 0.1, 0.02); C.fill();
-      line([[0.6, 0.3], [0.84, 0.24], [0.86, 0.06], [0.72, 0.0]], 0.022, BK);
-      // quadro e subquadro
-      line([[0.92, 0.66], [0.62, 0.3], [0.4, 0.26]], 0.05, BK);
-      line([[0.4, 0.26], [0.3, 0.62], [0.88, 0.7]], 0.045, BK);
-      line([[0.3, 0.5], [-0.22, 0.66]], 0.035, BK);
-      // tanque grande com painel prata e listra
-      C.fillStyle = V; C.beginPath(); C.moveTo(0.36, 0.7); C.quadraticCurveTo(0.62, 0.9, 0.92, 0.78); C.lineTo(0.88, 0.5); C.lineTo(0.42, 0.48); C.closePath(); C.fill();
-      C.fillStyle = AL; C.beginPath(); C.moveTo(0.46, 0.5); C.lineTo(0.84, 0.52); C.lineTo(0.8, 0.64); C.lineTo(0.5, 0.62); C.closePath(); C.fill();
-      C.fillStyle = Vl; C.beginPath(); C.moveTo(0.42, 0.74); C.quadraticCurveTo(0.62, 0.86, 0.88, 0.77); C.lineTo(0.88, 0.75); C.quadraticCurveTo(0.62, 0.83, 0.44, 0.72); C.closePath(); C.fill();
-      // banco em dois níveis
-      C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(-0.24, 0.72); C.lineTo(0.12, 0.72); C.lineTo(0.18, 0.66); C.lineTo(0.44, 0.7); C.lineTo(0.46, 0.65); C.lineTo(-0.22, 0.64); C.closePath(); C.fill();
-      // garfo grosso dourado
-      line([[0.93, 0.7], [1.0, 0.32]], 0.075, '#2b2e33');
-      line([[1.0, 0.32], [L, 0]], 0.06, '#d8a52a');
-      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.08, 0, Math.PI * 2); C.fill();
-      // carenagem da frente com farol de LED, para-brisa alto e protetor de mão
-      C.fillStyle = Vd; C.beginPath(); C.moveTo(0.88, 0.62); C.lineTo(1.08, 0.66); C.lineTo(1.1, 0.78); C.lineTo(0.92, 0.84); C.closePath(); C.fill();
-      C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.06, 0.72, 0.03, 0.045, 0, 0, Math.PI * 2); C.fill();
-      C.strokeStyle = '#d7f0ff'; C.lineWidth = 0.008; C.beginPath(); C.ellipse(1.06, 0.72, 0.042, 0.058, 0, 0, Math.PI * 2); C.stroke();
-      C.fillStyle = 'rgba(40, 52, 62, .7)'; C.beginPath(); C.moveTo(0.92, 0.84); C.lineTo(1.08, 0.78); C.lineTo(1.02, 1.04); C.lineTo(0.94, 1.02); C.closePath(); C.fill();
-      bars([0.9, 0.82], 0.92, [0.8, 0.9], '#2b2e33', '#16181b');
-      C.fillStyle = BK; C.beginPath(); C.ellipse(0.79, 0.91, 0.05, 0.03, -0.3, 0, Math.PI * 2); C.fill();
-      // baú de cima e baú lateral de alumínio
-      C.fillStyle = AL; rrect(-0.34, 0.74, 0.34, 0.24, 0.03); C.fill();
-      C.fillStyle = ALd; C.fillRect(-0.34, 0.84, 0.34, 0.02);
-      C.fillStyle = '#2b2e33'; C.fillRect(-0.06, 0.88, 0.04, 0.03);
-      C.fillStyle = AL; rrect(-0.32, 0.36, 0.36, 0.28, 0.03); C.fill();
-      C.strokeStyle = ALd; C.lineWidth = 0.008; C.beginPath(); C.rect(-0.29, 0.39, 0.3, 0.22); C.stroke();
-      C.fillStyle = '#7f868c'; for (const [rx, ry] of [[-0.28, 0.4], [-0.0, 0.4], [-0.28, 0.6], [-0.0, 0.6]]) { C.beginPath(); C.arc(rx, ry, 0.008, 0, Math.PI * 2); C.fill(); }
-      C.fillStyle = '#d61f1f'; rrect(-0.3, 0.66, 0.08, 0.05, 0.015); C.fill();
+      for (let i = 1; i < 6; i++) { C.moveTo(0.56 + i * 0.03, 0.105); C.lineTo(0.56 + i * 0.03, 0.245); } C.stroke();
+      C.fillStyle = BK; C.beginPath(); C.roundRect(0.72, 0.085, 0.11, 0.18, 0.05); C.fill();
+      C.fillStyle = '#e3e7ea'; C.beginPath(); C.roundRect(0.735, 0.1, 0.04, 0.15, 0.02); C.fill();
+      C.fillStyle = '#5b6168'; for (const by of [0.12, 0.23]) { C.beginPath(); C.arc(0.805, by, 0.012, 0, Math.PI * 2); C.fill(); }
+      line([[0.6, 0.36], [0.9, 0.3], [0.92, 0.08], [0.8, 0.0], [0.6, 0.02]], 0.022, BK);
+      // quadro e pedaleira
+      line([[0.95, 0.74], [0.68, 0.36], [0.44, 0.3]], 0.05, BK);
+      line([[0.44, 0.3], [0.3, 0.66], [0.9, 0.76]], 0.045, BK);
+      line([[0.48, 0.12], [0.6, 0.12]], 0.03, '#16181b');
+      // tanque largo e alto, com painel prata, faixa clara e joelheira
+      poly([[0.4, 0.78], [0.52, 0.9], [0.72, 0.96], [0.92, 0.9], [0.98, 0.78], [0.92, 0.56], [0.7, 0.5], [0.46, 0.54]], V);
+      poly([[0.48, 0.56], [0.7, 0.52], [0.9, 0.58], [0.86, 0.72], [0.62, 0.7], [0.5, 0.66]], AL);
+      poly([[0.52, 0.64], [0.62, 0.68], [0.84, 0.7], [0.83, 0.67], [0.62, 0.65], [0.53, 0.61]], '#e3e7ea');
+      poly([[0.44, 0.82], [0.54, 0.91], [0.72, 0.955], [0.9, 0.9], [0.9, 0.88], [0.72, 0.93], [0.55, 0.89], [0.45, 0.8]], Vl);
+      poly([[0.4, 0.78], [0.46, 0.54], [0.5, 0.56], [0.45, 0.76]], Vd);
+      C.fillStyle = GR; C.beginPath(); C.ellipse(0.7, 0.955, 0.035, 0.012, 0, 0, Math.PI * 2); C.fill();
+      // protetor tubular de cima, contornando o tanque
+      line([[0.5, 0.52], [0.66, 0.44], [0.9, 0.46], [0.98, 0.6], [0.96, 0.7]], 0.022, BK);
+      // banco em dois níveis: piloto mais baixo, garupa mais alta
+      poly([[0.12, 0.76], [0.3, 0.8], [0.46, 0.84], [0.48, 0.79], [0.3, 0.74], [0.12, 0.71]], '#16181b');
+      poly([[-0.2, 0.84], [0.0, 0.86], [0.14, 0.83], [0.14, 0.77], [-0.02, 0.8], [-0.2, 0.8]], '#16181b');
+      line([[0.13, 0.78], [0.46, 0.83]], 0.006, '#3a3e44');
+      // suspensão dianteira alta: garfo grosso e telelever, cubo grande
+      line([[0.95, 0.78], [1.0, 0.36]], 0.075, GR);
+      line([[1.0, 0.36], [L, 0]], 0.06, GO);
+      line([[0.7, 0.36], [0.98, 0.4]], 0.03, '#3a3e44');
+      C.fillStyle = '#7b8186'; C.beginPath(); C.arc(L, 0, 0.085, 0, Math.PI * 2); C.fill();
+      // bico característico em duas peças por cima da roda
+      poly([[0.94, 0.62], [1.18, 0.6], [1.36, 0.52], [1.33, 0.47], [1.12, 0.52], [0.95, 0.55]], V);
+      poly([[1.12, 0.52], [1.33, 0.47], [1.3, 0.445], [1.1, 0.49]], Vd);
+      // frente: carenagem com farol de LED assimétrico, para-brisa proporcional e protetor de mão
+      poly([[0.9, 0.76], [1.0, 0.92], [1.12, 0.84], [1.14, 0.66], [0.96, 0.62]], Vd);
+      poly([[1.0, 0.92], [1.12, 0.84], [1.12, 0.8], [1.0, 0.86]], V);
+      C.fillStyle = '#1a1c1f'; C.beginPath(); C.ellipse(1.1, 0.74, 0.045, 0.07, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#fff3c4'; C.beginPath(); C.ellipse(1.105, 0.75, 0.025, 0.04, 0, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#d7f0ff'; C.lineWidth = 0.008; C.beginPath(); C.ellipse(1.1, 0.74, 0.04, 0.062, 0, 0, Math.PI * 2); C.stroke();
+      poly([[1.0, 0.92], [1.12, 0.84], [1.07, 1.06], [1.0, 1.08]], 'rgba(40, 52, 62, .65)');
+      line([[1.01, 1.07], [1.07, 1.05]], 0.008, 'rgba(255, 255, 255, .35)');
+      bars([0.92, 0.84], 0.96, [0.82, 0.96], '#2b2e33', '#16181b');
+      C.fillStyle = BK; C.beginPath(); C.ellipse(0.8, 0.965, 0.055, 0.032, -0.3, 0, Math.PI * 2); C.fill();
     }
   };
 

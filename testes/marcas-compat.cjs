@@ -126,9 +126,29 @@ const SAVE = {
   }
   {
     const c = await session({ ...SAVE, 'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau2000: 1 }) });
-    const st = await c.p.evaluate(() => ({ pop: __t.isLocked('model', __t.LOOKS.model.opts.pop2), gs: __t.isLocked('model', __t.LOOKS.model.opts.gs), lp: __t.LOOKS.model.opts.pop2.lock, lg: __t.LOOKS.model.opts.gs.lock, order: Object.keys(__t.LOOKS.model.opts) }));
-    ok(st.pop && st.gs && st.lp === 'grau3000' && st.lg === 'grau5000', 'Pó-pop libera aos 3.000 m e Robozão aos 5.000 m (bloqueadas pra quem tem só 2.000 m)', st);
+    const st = await c.p.evaluate(() => ({ order: Object.keys(__t.LOOKS.model.opts), main: ['bruno', 'pop2', 'gs'].map(k => [].concat(__t.LOOKS.model.opts[k].lock)[0]) }));
+    ok(st.main.join() === 'grau700,grau2000,grau3000', 'metragens novas: Titânica 1.000 m, Pó-pop 2.000 m, Robozão 3.000 m', st.main);
     ok(st.order.join() === 'caicara,monark,xr,bikelete,bruno,pop2,gs', 'motos novas vêm depois da Titânica na garagem', st.order);
+    await c.p.close();
+  }
+  // quem já tinha liberado alguma moto continua com ela; e cada metragem libera a moto certa
+  for (const [ach, esperado] of [
+    [{ grau700: 1 }, { bruno: false, pop2: true, gs: true }],
+    [{ grau2000: 1 }, { bruno: false, pop2: false, gs: true }],   // liberou a Titânica com 2.000 m (regra antiga): continua
+    [{ grau2000: 1, grau3000: 1 }, { bruno: false, pop2: false, gs: false }],
+    [{ grau5000: 1 }, { bruno: true, pop2: true, gs: false }],    // tinha o Robozão pela regra antiga (5.000 m): continua
+    [{ grau500: 1 }, { bruno: true, pop2: true, gs: true }]
+  ]) {
+    const c = await session({ ...SAVE, 'grau80-ach': JSON.stringify(ach) });
+    const st = await c.p.evaluate(() => ({ bruno: __t.isLocked('model', __t.LOOKS.model.opts.bruno), pop2: __t.isLocked('model', __t.LOOKS.model.opts.pop2), gs: __t.isLocked('model', __t.LOOKS.model.opts.gs),
+      tip: (document.getElementById('look-model-bruno') || {}).title || '' }));
+    const okk = st.bruno === esperado.bruno && st.pop2 === esperado.pop2 && st.gs === esperado.gs;
+    ok(okk, 'bloqueios com ' + Object.keys(ach).join('+') + ' (true = bloqueada)', { bruno: st.bruno, pop2: st.pop2, gs: st.gs });
+    if (st.bruno) ok(/1\.000 m de grau/.test(st.tip), 'a dica da Titânica bloqueada mostra a metragem', st.tip);
+    await c.p.close();
+  }
+  {
+    const c = await session(SAVE);
     await c.p.close();
   }
   for (const lang of ['en', 'es']) {
