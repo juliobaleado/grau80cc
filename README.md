@@ -1,6 +1,6 @@
 # Grau 80cc
 
-Jogo de navegador: empina a Monark 80cc o mais longe que der.
+Jogo de navegador: empina a bike motorizada 80cc o mais longe que der.
 
 **Jogar:** https://juliobaleado.github.io/grau80cc/
 

@@ -922,7 +922,7 @@ html.kid #grow-dog { display: none !important; }
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português (exceto as falas da D.U.R.O.)
-  const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelha Ferrari":["Ferrari red","Rojo Ferrari"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde oliva":["Olive green","Verde oliva"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
+  const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelho Foguete":["Rocket red","Rojo cohete"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde oliva":["Olive green","Verde oliva"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
   Object.assign(I18N, {
     'Esse nome já é de outro jogador. Escolhe outro.': ['That name belongs to another player. Pick another one.', 'Ese nombre ya es de otro jugador. Elige otro.'],
     'Esse nome não pode. Escolhe outro.': ['That name is not allowed. Pick another one.', 'Ese nombre no está permitido. Elige otro.'],
@@ -1041,11 +1041,11 @@ html.kid #grow-dog { display: none !important; }
       last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, achSeen: {}, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, gearN: 1, chapa: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
       // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, Caravana da D.U.R.O. 300–400,
-      // Esquadrilha do Protocolo 500–600, Uno 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
+      // Esquadrilha do Protocolo 500–600, Quadradinho 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at: 100 },
-      law: { car: null, bikes: [], cg: null, carDone: false, esqDone: false, carEscaped: false, esqEscaped: false,
-             uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
-             at: { kite: 20, car: 300, esq: 500, uno: 700, thief: 900 }, dur: { car: 100, esq: 100, uno: 100, thief: 100 },
+      law: { car: null, bikes: [], fuga: null, carDone: false, esqDone: false, carEscaped: false, esqEscaped: false,
+             quad: null, quadDone: false, quadBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
+             at: { kite: 20, car: 300, esq: 500, quad: 700, thief: 900 }, dur: { car: 100, esq: 100, quad: 100, thief: 100 },
              nextLoop: 1000, loopI: 0 },
       kite: null, kiteDone: false, sparks: [], scrape: 0, dieT: 0, pet: null,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
@@ -1510,7 +1510,7 @@ html.kid #grow-dog { display: none !important; }
       const ph = (now % 0.9) / 0.9;
       if (nodes.siren.type !== 'sine') { nodes.siren.type = 'sine'; nodes.sirenLp.frequency.value = 6000; }
       sirenHz = 2350 + 160 * Math.sin(now * Math.PI * 2 * 26); sirenVol = ph < 0.45 || (ph > 0.56 && ph < 0.7) ? 0.03 : 0;
-    } else { // corneta de repartição em três toques, "tá-tá-tááá" (diferente da buzina dupla do Uno)
+    } else { // corneta de repartição em três toques, "tá-tá-tááá" (diferente da buzina dupla do Quadradinho)
       const ph = (now % 1.3) / 1.3;
       if (nodes.siren.type !== 'sawtooth') { nodes.siren.type = 'sawtooth'; nodes.sirenLp.frequency.value = 1300; }
       sirenHz = ph < 0.33 ? 311 : 415; sirenVol = ph < 0.11 || (ph > 0.17 && ph < 0.28) || (ph > 0.36 && ph < 0.62) ? 0.06 : 0;
@@ -1525,7 +1525,7 @@ html.kid #grow-dog { display: none !important; }
   function onCut() {
     s.chapa = 1.1; // o motoca grita no corte de giro
     const four = MODEL === 'bruno';
-    // a CB engata a 2ª no corte da 1ª
+    // a Bravona engata a 2ª no corte da 1ª
     if (four && s.mode === 'ride' && s.gearN === 1 && s.v > 10.5) s.gearN = 2;
     const bang = Math.random() < (four ? 0.8 : 0.5);
     if (bang) s.flame = 0.07;
@@ -1565,7 +1565,7 @@ html.kid #grow-dog { display: none !important; }
     { id: 'grau100', why: '200 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
     { id: 'grau200', why: '400 m de grau com o D.U.R.O. na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
     { id: 'grau300', why: '600 m de grau com a Esquadrilha do Protocolo na cola', name: 'Motoka 244', test: () => s.law.esqEscaped },
-    { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
+    { id: 'grau500', why: '800 m de grau ganhando o racha do Quadradinho', name: 'Nasce uma lenda!', test: () => s.law.quadBeaten },
     { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
     { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
   ];
@@ -1676,7 +1676,7 @@ html.kid #grow-dog { display: none !important; }
     car: ['Você foi notificado', 'Seu grau foi indeferido'],
     esq: ['A Esquadrilha do Protocolo chegou', 'Faltou a terceira via'],
     thief: ['Os cara encostou', 'Perdeu Playboy'],
-    uno: ['O Uno ganhou o racha', 'Levou Benga']
+    quad: ['O Quadradinho ganhou o racha', 'Levou Benga']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
   // placar global (Supabase): qualquer um lê o top 10 e envia o recorde; o banco barra média acima de 90 km/h
@@ -1910,7 +1910,7 @@ html.kid #grow-dog { display: none !important; }
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
       : L.bikes.some(b => b.state === 'chase') ? 'esq'
       : L.car && L.car.state === 'chase' ? 'car'
-      : L.uno && L.uno.state === 'race' ? 'uno'
+      : L.quad && L.quad.state === 'race' ? 'quad'
       : gangChasing() ? 'gang' : how;
     s.mode = 'over'; s.reason = how;
     recordWheelie();
@@ -1947,7 +1947,7 @@ html.kid #grow-dog { display: none !important; }
     if (s.mode === 'ready') {
       revTo(IDLE + s.thr * 8600, 5, h);
     } else if (riding) {
-      // relação: quantos rpm por m/s. A CB 99 tem 2 marchas: a 1ª igual às bikes (corta perto de 46 km/h e aí engata),
+      // relação: quantos rpm por m/s. A Bravona tem 2 marchas: a 1ª igual às bikes (corta perto de 46 km/h e aí engata),
       // a 2ª longa até ~80 km/h; abaixo de ~34 km/h reduz pra 1ª
       if (MODEL === 'bruno' && s.gearN === 2 && s.v < 9.5) s.gearN = 1;
       const gear = MODEL === 'bruno' && s.gearN === 2 ? 188 : 330;
@@ -1958,7 +1958,7 @@ html.kid #grow-dog { display: none !important; }
       revTo(target, target > s.rpm ? 6 : 0.9, h);
       const drive = s.cut > 0 ? 0 : s.thr * powerNow(s.rpm);
 
-      // a CB 99 (160 4 tempos) tem mais força pra frente: máxima perto de 80 km/h em vez de ~70
+      // a Bravona (160 4 tempos) tem mais força pra frente: máxima perto de 80 km/h em vez de ~70
       const push = MODEL === 'bruno' ? 6.9 : 4.6;
       s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6) * h;
       if (s.v < 0) s.v = 0;
@@ -2121,10 +2121,10 @@ html.kid #grow-dog { display: none !important; }
   }
   // volume do latido: some aos poucos conforme o cachorro fica longe da moto
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
-  // perseguição: Caravana 3 Vias aos 300 m (fura o pneu aos 400 m), 3 motos da Esquadrilha aos 500 m (vão atrás de uma CG aos 600 m),
-  // racha com o Uno aos 700 m (funde aos 800 m) e a Titan dos ladrões aos 900 m (a Esquadrilha espanta aos 1.000 m)
-  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, Caravana, Esquadrilha, Uno, ladrões)
-  const LOOP = ['pack', 'car', 'esq', 'uno', 'thief'];
+  // perseguição: Caravana 3 Vias aos 300 m (fura o pneu aos 400 m), 3 motos da Esquadrilha aos 500 m (vão atrás de uma Bravona aos 600 m),
+  // racha com o Quadradinho aos 700 m (funde aos 800 m) e a Bravona dos ladrões aos 900 m (a Esquadrilha espanta aos 1.000 m)
+  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, Caravana, Esquadrilha, Quadradinho, ladrões)
+  const LOOP = ['pack', 'car', 'esq', 'quad', 'thief'];
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
     if (CHAL() && riding && s.wDist >= L.nextLoop) {
@@ -2133,8 +2133,8 @@ html.kid #grow-dog { display: none !important; }
       L.nextLoop += 200;
       if (kind === 'pack') { s.pack = { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at }; s.kite = null; s.kiteDone = false; L.at.kite = at - 60; }
       else if (kind === 'car') { L.car = null; L.carDone = false; L.at.car = at; }
-      else if (kind === 'esq') { L.bikes = []; L.cg = null; L.esqDone = false; L.at.esq = at; }
-      else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; }
+      else if (kind === 'esq') { L.bikes = []; L.fuga = null; L.esqDone = false; L.at.esq = at; }
+      else if (kind === 'quad') { L.quad = null; L.quadDone = false; L.at.quad = at; }
       else { L.thief = null; L.thiefDone = false; L.at.thief = at; }
     }
     if (CHAL() && riding) {
@@ -2180,27 +2180,27 @@ html.kid #grow-dog { display: none !important; }
     }
     if (!L.esqDone && riding && s.wDist >= L.at.esq + L.dur.esq && L.bikes.some(b => b.state === 'chase')) {
       L.esqDone = true; L.esqEscaped = true;
-      L.cg = { x: s.x - 9, v: 34 };
+      L.fuga = { x: s.x - 9, v: 34 };
       L.bikes.forEach(b => { b.state = 'go'; b.t = 0; });
-      cgSound(); checkAch();
+      fugaSound(); checkAch();
     }
-    if (L.cg) { L.cg.x += L.cg.v * h; if (L.cg.x - s.x > 60) L.cg = null; }
+    if (L.fuga) { L.fuga.x += L.fuga.v * h; if (L.fuga.x - s.x > 60) L.fuga = null; }
     L.bikes = L.bikes.filter(b => Math.abs(b.x - s.x) < 60);
 
-    // Uno com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
-    if (CHAL() && riding && !L.uno && !L.unoDone && s.wDist >= L.at.uno) {
-      L.uno = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
+    // Quadradinho com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
+    if (CHAL() && riding && !L.quad && !L.quadDone && s.wDist >= L.at.quad) {
+      L.quad = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
       hornSound();
     }
-    const u = L.uno;
+    const u = L.quad;
     if (u) {
       u.t += h;
       if (u.state === 'race') {
         if (!riding) u.state = 'stop';
-        else if (s.wDist >= L.at.uno + L.dur.uno) {
-          u.state = 'blown'; u.t = 0; L.unoDone = true; L.unoBeaten = true;
+        else if (s.wDist >= L.at.quad + L.dur.quad) {
+          u.state = 'blown'; u.t = 0; L.quadDone = true; L.quadBeaten = true;
           if (nodes && !muted && !paused) { backfire(ac.currentTime + 0.01, 1.6); backfire(ac.currentTime + 0.16, 1.1); }
-          flash('Fundiu o motor do Uno!'); checkAch();
+          flash('Fundiu o motor do Quadradinho!'); checkAch();
         }
         const tx = s.x + 1.3 + 1.6 * Math.sin(u.t * 0.7);
         u.v += (Math.min(s.v + 6, Math.max(s.v - 4, s.v + (tx - u.x) * 1.2)) - u.v) * Math.min(1, h * 2);
@@ -2213,14 +2213,14 @@ html.kid #grow-dog { display: none !important; }
         while (u.smk >= 1) {
           u.smk -= 1;
           if (s.parts.length > 320) s.parts.shift();
-          s.parts.push({ x: u.x - 0.4 - Math.random() * 0.5, y: 0.95 + UNO_LANE, vx: u.v * 0.85 - 0.3 + Math.random() * 0.6,
+          s.parts.push({ x: u.x - 0.4 - Math.random() * 0.5, y: 0.95 + QUAD_LANE, vx: u.v * 0.85 - 0.3 + Math.random() * 0.6,
             vy: 0.5 + Math.random() * 0.6, age: 0, life: 2 + Math.random() * 1.5, r0: 0.15, dark: true });
         }
       }
-      if (s.x - u.x > 50) L.uno = null;
+      if (s.x - u.x > 50) L.quad = null;
     }
 
-    // Titan com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Esquadrilha e eles vazam
+    // Bravona com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Esquadrilha e eles vazam
     if (CHAL() && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
       L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
     }
@@ -2245,7 +2245,7 @@ html.kid #grow-dog { display: none !important; }
       if (Math.abs(th.x - s.x) > 70) L.thief = null;
     }
   }
-  // buzina do Uno chamando pro racha: fom-fom
+  // buzina do Quadradinho chamando pro racha: fom-fom
   function hornSound() {
     if (!nodes || muted || paused) return;
     const t = ac.currentTime;
@@ -2268,7 +2268,7 @@ html.kid #grow-dog { display: none !important; }
       o.connect(g).connect(sfx); o.start(t + d); o.stop(t + d + 0.55);
     });
   }
-  function cgSound() {
+  function fugaSound() {
     if (!nodes || muted || paused) return;
     const t = ac.currentTime;
     const o = ac.createOscillator(); o.type = 'sawtooth';
@@ -2449,7 +2449,7 @@ html.kid #grow-dog { display: none !important; }
     drawRunCat(sx, sy, S, performance.now() / 1000);
     drawCar(sx, sy, S, performance.now() / 1000);
     drawEsquadrilha(sx, sy, S, performance.now() / 1000);
-    drawUno(sx, sy, S, performance.now() / 1000);
+    drawQuadradinho(sx, sy, S, performance.now() / 1000);
 
     // bandeira do recorde (na sala é o melhor grau teu na sala)
     if (best > 0 && s.active && s.mode === 'ride') {
@@ -2489,7 +2489,7 @@ html.kid #grow-dog { display: none !important; }
     drawRemotes(sx, S, yC);
     drawGarageFront(sxG, sy, S);
     drawKite(sx, sy, S, performance.now() / 1000);
-    drawCG(sx, sy, S, performance.now() / 1000);
+    drawFuga(sx, sy, S, performance.now() / 1000);
     // em cima da cabeça do motoca (s.head vem do drawBike, no quadro da bike: eixo traseiro, x pra frente, y pra cima)
     const [hx, hy] = s.head || [0.3, 1.3], ca = Math.cos(s.th), sa = Math.sin(s.th);
     const ax = BX + (hx * ca - hy * sa) * S, ay = yC - R * S - (hx * sa + hy * ca) * S - 0.42 * S;
@@ -2501,7 +2501,7 @@ html.kid #grow-dog { display: none !important; }
   }
 
   // pastelaria de onde ele sai: fachada com barrado de azulejo, balcão com estufa de pastel, toldo listrado e placa;
-  // na frente, mesa e cadeiras de plástico, cachorro caramelo e um Dolly no chão. Some quando a bike vai embora.
+  // na frente, mesa e cadeiras de plástico, cachorro caramelo e um Guaranazinho no chão. Some quando a bike vai embora.
   const GX0 = -9, GX1 = 0.8;
   let pixRect = null;          // onde a faixa do Pix está na tela (tocar nela abre o QR grande)
   const pixImg = new Image(); // o mesmo QR do Pix da janela de doação
@@ -2630,7 +2630,7 @@ html.kid #grow-dog { display: none !important; }
     C.fillStyle = '#ffd21f'; rrect(0.22, 0.75, 0.045, 0.13, 0.015); C.fill();
     C.restore();
 
-    // guaraná Dolly de 2 litros no chão
+    // Guaranazinho de 2 litros no chão (refrigerante fictício)
     C.save(); C.translate(sx(-0.5), sy(0)); C.scale(S, -S);
     C.fillStyle = 'rgba(40, 125, 55, .92)';
     rrect(-0.055, 0, 0.11, 0.24, 0.025); C.fill();
@@ -2638,11 +2638,13 @@ html.kid #grow-dog { display: none !important; }
     C.lineTo(0.018, 0.31); C.quadraticCurveTo(0.055, 0.3, 0.055, 0.23); C.closePath(); C.fill();
     C.fillStyle = 'rgba(122, 74, 20, .7)'; rrect(-0.048, 0.006, 0.096, 0.15, 0.02); C.fill();
     C.fillStyle = '#c8102e'; C.fillRect(-0.02, 0.31, 0.04, 0.03);
-    C.fillStyle = '#d4161f'; C.fillRect(-0.056, 0.09, 0.112, 0.07);
-    C.fillStyle = '#ffd21f'; C.fillRect(-0.056, 0.152, 0.112, 0.012);
-    C.save(); C.translate(0, 0.122); C.scale(0.004, -0.004);
-    C.fillStyle = '#ffffff'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('Dolly', 0, 0);
+    C.fillStyle = '#2e8b3e'; C.fillRect(-0.056, 0.09, 0.112, 0.07);
+    C.fillStyle = '#ffec6e'; C.fillRect(-0.056, 0.152, 0.112, 0.012); C.fillRect(-0.056, 0.09, 0.112, 0.008);
+    C.fillStyle = '#ffec6e'; C.beginPath(); C.ellipse(-0.036, 0.125, 0.012, 0.02, -0.5, 0, Math.PI * 2); C.fill();
+    C.save(); C.translate(0.008, 0.124); C.scale(0.003, -0.003);
+    C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.scale(Math.min(1, 28 / C.measureText('Guaranazinho').width), 1);
+    C.fillStyle = '#ffffff'; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('Guaranazinho', 0, 0);
     C.restore();
     C.fillStyle = 'rgba(255, 255, 255, .25)'; C.fillRect(-0.04, 0.02, 0.012, 0.2);
     C.restore();
@@ -2904,10 +2906,10 @@ html.kid #grow-dog { display: none !important; }
     C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx + 0.1, hy - 0.11, 0.055, 0.02, 0, 0, Math.PI * 2); C.fill();
     C.restore();
   }
-  // CG 160 passando voando na faixa da frente
-  // (a mesma Titan volta aos 600 m com os dois ladrões)
-  function drawCG(sx, sy, S, t) {
-    for (const c of [s.law.cg, s.law.thief]) {
+  // Bravona passando voando na faixa da frente
+  // (a mesma Bravona volta aos 600 m com os dois ladrões)
+  function drawFuga(sx, sy, S, t) {
+    for (const c of [s.law.fuga, s.law.thief]) {
       if (!c) continue;
       const x = sx(c.x), y = sy(0) + 0.28 * S;
       if (x < -2 * S || x - 2 * S > W) continue;
@@ -2916,44 +2918,54 @@ html.kid #grow-dog { display: none !important; }
         for (let i = 0; i < 4; i++) { const yy = y - (0.4 + i * 0.3) * S; C.moveTo(x - (1.8 + i * 0.2) * S, yy); C.lineTo(x - (3.2 + i * 0.5) * S, yy); }
         C.stroke();
       }
-      drawTitan(x, y, S * 1.05, -c.x / 0.3);
+      drawBravona(x, y, S * 1.05, -c.x / 0.3);
     }
   }
-  // Uno Mille branco com escada de alumínio no rack; na faixa de trás, tirando racha
-  const UNO_LANE = 0.3;
-  function drawUno(sx, sy, S, t) {
-    const u = s.law.uno;
+  // Quadradinho: peruinha fictícia de 5 portas, bicolor menta e branco, faróis redondos e a escada de pedreiro no teto;
+  // na faixa de trás, tirando racha. Mesmo comprimento e mesmas rodas (−0,62 e −2,98) do desenho anterior.
+  const QUAD_LANE = 0.3;
+  function drawQuadradinho(sx, sy, S, t) {
+    const u = s.law.quad;
     if (!u) return;
-    const x = sx(u.x), y = sy(0) - UNO_LANE * S, k = 0.96 * S;
+    const x = sx(u.x), y = sy(0) - QUAD_LANE * S, k = 0.96 * S;
     if (x < -0.5 * S || x - 4.2 * S > W) return;
-    const WH = '#eceeea', BK = '#26282c', GL = '#1a2733', AL = '#c9ced3';
+    const MN = '#8fdcc0', MNd = '#5fb597', WH = '#f4f3ee', BK = '#26282c', GL = '#1a2733', AL = '#c9ced3';
     const shake = u.state === 'blown' && u.t < 2 ? Math.sin(u.t * 70) * 0.012 : 0;
     C.save(); C.translate(x, y); C.scale(k, -k); C.translate(0, shake);
-    // carroceria quadradona de 3 portas
+    // carroceria alta de perua: capô curto, para-brisa em pé, teto reto até a traseira vertical
     C.fillStyle = WH;
-    C.beginPath(); C.moveTo(0.02, 0.32); C.lineTo(0.04, 0.68); C.lineTo(-0.05, 0.78); C.lineTo(-0.85, 0.88); C.lineTo(-1.4, 1.36);
-    C.lineTo(-3.25, 1.38); C.lineTo(-3.5, 0.95); C.lineTo(-3.58, 0.32); C.closePath(); C.fill();
-    C.fillStyle = BK; C.fillRect(-3.62, 0.28, 0.42, 0.2); C.fillRect(-0.3, 0.28, 0.36, 0.22);
+    C.beginPath(); C.moveTo(0.03, 0.32); C.lineTo(0.05, 0.66); C.lineTo(-0.05, 0.76); C.lineTo(-0.6, 0.84); C.lineTo(-1.02, 1.48);
+    C.lineTo(-3.42, 1.5); C.lineTo(-3.56, 1.3); C.lineTo(-3.6, 0.32); C.closePath(); C.fill();
+    C.fillStyle = MN;
+    C.beginPath(); C.moveTo(0.03, 0.32); C.lineTo(0.05, 0.66); C.lineTo(-0.05, 0.76); C.lineTo(-0.6, 0.84); C.lineTo(-0.72, 0.92);
+    C.lineTo(-3.58, 0.92); C.lineTo(-3.6, 0.32); C.closePath(); C.fill();
+    C.fillStyle = MNd; C.fillRect(-3.58, 0.6, 3.6, 0.035);
+    C.fillStyle = BK; C.fillRect(-3.64, 0.28, 0.42, 0.2); C.fillRect(-0.3, 0.28, 0.36, 0.22);
     C.fillRect(-3.2, 0.3, 2.9, 0.06);
-    C.fillStyle = '#4a4e54'; C.fillRect(-3.3, 0.6, 3.0, 0.04);
     C.beginPath(); C.arc(-0.62, 0.32, 0.36, 0, Math.PI); C.fill();
     C.beginPath(); C.arc(-2.98, 0.32, 0.36, 0, Math.PI); C.fill();
+    // três janelas de cada lado e o adesivo na de trás
     C.fillStyle = GL;
-    C.beginPath(); C.moveTo(-1.45, 1.3); C.lineTo(-2.3, 1.3); C.lineTo(-2.3, 0.92); C.lineTo(-1.0, 0.9); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-2.4, 1.3); C.lineTo(-3.2, 1.3); C.lineTo(-3.38, 0.95); C.lineTo(-2.4, 0.92); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-1.06, 1.42); C.lineTo(-1.82, 1.42); C.lineTo(-1.82, 0.97); C.lineTo(-0.78, 0.96); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-1.92, 1.42); C.lineTo(-2.68, 1.42); C.lineTo(-2.68, 0.97); C.lineTo(-1.92, 0.97); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.78, 1.42); C.lineTo(-3.38, 1.43); C.lineTo(-3.48, 1.28); C.lineTo(-3.48, 0.97); C.lineTo(-2.78, 0.97); C.closePath(); C.fill();
+    C.save(); C.translate(-3.12, 1.12); C.scale(0.0045, -0.0045);
+    C.fillStyle = '#ffec6e'; C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif'; C.textAlign = 'center'; C.textBaseline = 'middle';
+    C.fillText('É NOIS', 0, -8); C.fillText('NA OBRA', 0, 8);
+    C.restore();
     C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
-    C.moveTo(-1.02, 0.88); C.lineTo(-1.05, 0.38); C.moveTo(-2.35, 0.9); C.lineTo(-2.35, 0.38); C.stroke();
-    C.fillStyle = BK; C.fillRect(-2.25, 0.78, 0.14, 0.03);
-    C.beginPath(); C.ellipse(-1.05, 0.98, 0.07, 0.05, 0, 0, Math.PI * 2); C.fill();
-    C.fillStyle = '#fff3c4'; C.fillRect(-0.12, 0.6, 0.16, 0.1);
-    C.fillStyle = '#c0161a'; C.fillRect(-3.58, 0.72, 0.06, 0.18);
-    // rack e escada de alumínio amarrada com fita vermelha
-    line([[-1.75, 1.38], [-1.75, 1.47]], 0.04, BK); line([[-2.9, 1.38], [-2.9, 1.47]], 0.04, BK);
-    C.fillStyle = AL; C.fillRect(-3.95, 1.47, 4.15, 0.035); C.fillRect(-3.95, 1.56, 4.15, 0.035);
+    C.moveTo(-0.76, 0.92); C.lineTo(-0.8, 0.38); C.moveTo(-1.87, 0.95); C.lineTo(-1.87, 0.38); C.moveTo(-2.73, 0.95); C.lineTo(-2.73, 0.38); C.stroke();
+    C.fillStyle = BK; C.fillRect(-1.75, 0.8, 0.13, 0.03); C.fillRect(-2.62, 0.8, 0.13, 0.03);
+    // farol redondo e lanterna
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(-0.02, 0.6, 0.07, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#c0161a'; C.fillRect(-3.6, 0.72, 0.06, 0.2);
+    // bagageiro e a escada de alumínio amarrada com fita vermelha (a piada continua)
+    line([[-1.5, 1.49], [-1.5, 1.59]], 0.04, BK); line([[-3.0, 1.5], [-3.0, 1.6]], 0.04, BK);
+    C.fillStyle = AL; C.fillRect(-3.95, 1.59, 4.15, 0.035); C.fillRect(-3.95, 1.68, 4.15, 0.035);
     C.strokeStyle = '#8f969c'; C.lineWidth = 0.02; C.beginPath();
-    for (let lx = 0.1; lx > -3.95; lx -= 0.3) { C.moveTo(lx, 1.47); C.lineTo(lx, 1.6); }
+    for (let lx = 0.1; lx > -3.95; lx -= 0.3) { C.moveTo(lx, 1.59); C.lineTo(lx, 1.72); }
     C.stroke();
-    C.fillStyle = '#d61f1f'; C.fillRect(-1.8, 1.42, 0.06, 0.22); C.fillRect(-2.95, 1.42, 0.06, 0.22);
+    C.fillStyle = '#d61f1f'; C.fillRect(-1.55, 1.54, 0.06, 0.22); C.fillRect(-3.05, 1.54, 0.06, 0.22);
     // rodas de liga
     for (const wx of [-0.62, -2.98]) {
       C.fillStyle = '#111214'; C.beginPath(); C.arc(wx, 0.3, 0.29, 0, Math.PI * 2); C.fill();
@@ -2963,7 +2975,7 @@ html.kid #grow-dog { display: none !important; }
       C.stroke();
     }
     // motorista
-    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-1.85, 1.08, 0.12, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-1.4, 1.14, 0.12, 0, Math.PI * 2); C.fill();
     // motor fundindo: labareda saindo do capô
     if (u.state === 'blown' && u.t < 1.2) {
       const fl = 1 - u.t / 1.2;
@@ -2974,9 +2986,9 @@ html.kid #grow-dog { display: none !important; }
     }
     C.restore();
   }
-  // CG 160 laranja (tanque e farol laranja, banco e rabeta pretos) com piloto e garupa de preto
-  function drawTitan(x, y, S, rot) {
-    const OR = '#ff7a12', ORd = '#c95500', BK = '#141518', SU = '#1b1d21', SUh = '#3b4048', SV = '#c3c8cd';
+  // Bravona dos ladrões: laranja-ferrugem (tanque e farol), banco e rabeta pretos, caveirinha sorridente; piloto e garupa de preto
+  function drawBravona(x, y, S, rot) {
+    const OR = '#e0612a', ORd = '#a8431a', BK = '#141518', SU = '#1b1d21', SUh = '#3b4048', SV = '#c3c8cd';
     C.save(); C.translate(x, y); C.scale(S, -S);
     const wheel = cx => {
       C.fillStyle = BK; C.beginPath(); C.arc(cx, 0.3, 0.3, 0, Math.PI * 2); C.fill();
@@ -3023,9 +3035,11 @@ html.kid #grow-dog { display: none !important; }
     C.fillStyle = BK; C.beginPath(); C.moveTo(-0.82, 0.78); C.lineTo(-0.5, 0.72); C.lineTo(-0.66, 0.62); C.lineTo(-0.92, 0.66); C.closePath(); C.fill();
     line([[-0.33, 0.75], [-0.6, 0.83]], 0.018, '#e8eaec');
     C.save(); C.translate(-0.72, 0.7); C.rotate(0.17); C.scale(0.005, -0.005);
-    C.fillStyle = OR; C.font = 'italic 700 15px "Barlow Condensed", "Arial Narrow", sans-serif';
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CG 160', 0, 0);
     C.restore();
+    // caveirinha sorridente na aba do tanque
+    C.fillStyle = '#e8eaec'; C.beginPath(); C.arc(-0.66, 0.72, 0.045, 0, Math.PI * 2); C.fill(); C.fillRect(-0.685, 0.665, 0.05, 0.03);
+    C.fillStyle = BK; C.beginPath(); C.arc(-0.68, 0.73, 0.012, 0, Math.PI * 2); C.arc(-0.64, 0.73, 0.012, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = BK; C.lineWidth = 0.007; C.beginPath(); C.arc(-0.66, 0.705, 0.016, Math.PI + 0.5, 2 * Math.PI - 0.5); C.stroke();
     // piloto e garupa de preto, capacete preto fechado
     const rider = (hip, sh, hand, knee, foot, back) => {
       line([hip, knee, foot], 0.13, back ? '#16181b' : SU);
@@ -3340,13 +3354,13 @@ html.kid #grow-dog { display: none !important; }
       // 69 Rango: delivery fictício do jogo, com chave própria (versão antiga que receber 'rango69' na sala mostra a primeira mochila)
       rango69: { name: '69 Rango', c: '#ffec6e', ink: '#141414', text: 'RANGO', italic: false, rango: true } } },
     model: { label: 'Bike', opts: {
-      caicara: { name: 'Caiçara de cestinha', c: '#3fc1a8', def: 'agua' },
-      monark: { name: 'Monark Barra Circular', c: '#d40000', def: 'ferrari', lock: 'grau30' },
-      xr: { name: 'Motorizada XR', c: '#efe0b5', def: 'creme', lock: 'grau200' },
-      bikelete: { name: 'Bikelete 4T', c: '#6f7f78', def: 'militar', lock: 'grau500' },
-      bruno: { name: 'Titan 99 Turbinada', c: '#8a1020', def: 'vinho', lock: 'grau2000' } } },
+      caicara: { name: 'Litorânea de cestinha', c: '#3fc1a8', def: 'agua' },
+      monark: { name: 'Pedalona 80', c: '#d40000', def: 'ferrari', lock: 'grau30' },
+      xr: { name: 'Trilha Bruta', c: '#efe0b5', def: 'creme', lock: 'grau200' },
+      bikelete: { name: 'Fumacinha 4T', c: '#6f7f78', def: 'militar', lock: 'grau500' },
+      bruno: { name: 'Bravona Turbinada', c: '#8a1020', def: 'vinho', lock: 'grau2000' } } },
     frame: { label: 'Cor da bike', opts: {
-      ferrari: { name: 'Vermelha Ferrari', c: '#d40000' },
+      ferrari: { name: 'Vermelho Foguete', c: '#d40000' },
       vinho: { name: 'Vinho', c: '#8a1020' },
       calcinha: { name: 'Azul calcinha', c: '#8ec9e8' },
       creme: { name: 'Creme', c: '#efe0b5' },
@@ -3376,7 +3390,7 @@ html.kid #grow-dog { display: none !important; }
   const pick = { helmet: 'branco', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'caicara', frame: 'agua' };
   try { Object.assign(pick, JSON.parse(localStorage.getItem('grau80-look') || '{}')); } catch (e) {}
   let HELMET, JERSEY, SHORTS, BAG, FRAME, MODEL;
-  // clareia (k > 0) ou escurece (k < 0) uma cor #rrggbb: tons do tanque da Titan a partir da cor escolhida
+  // clareia (k > 0) ou escurece (k < 0) uma cor #rrggbb: tons do tanque da Bravona a partir da cor escolhida
   const shadeHex = (hex, k) => '#' + [1, 3, 5].map(i => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k).toString(16).padStart(2, '0'); }).join('');
   const isLocked = (k, o) => o.lock && !cheat && (o.lock.startsWith('doa_') ? !owned.has(o.lock.slice(4)) : !unlocked[o.lock]); // modo teste libera tudo
   function applyLook() {
@@ -3529,7 +3543,7 @@ html.kid #grow-dog { display: none !important; }
   }
 
   const FRAMES = {
-    // Monark Barra Circular: tubo de cima reto e o aro no meio do quadro
+    // Pedalona 80: quadro de barra dupla reta (estilo bicicleta de carga antiga) e losango "P80"
     monark(F) {
       C.strokeStyle = F; C.lineWidth = 0.035;
       C.beginPath(); C.arc(0, 0, R + 0.035, 0.35, Math.PI - 0.35); C.stroke();
@@ -3542,8 +3556,12 @@ html.kid #grow-dog { display: none !important; }
       line([[0.44, -0.01], [0.25, 0.48]], 0.046, F);
       line([[0.25, 0.48], [0.86, 0.52]], 0.046, F);
       line([[0.44, -0.01], [0.9, 0.36]], 0.05, F);
-      C.strokeStyle = F; C.lineWidth = 0.036;
-      C.beginPath(); C.arc(0.55, 0.3, 0.17, 0, Math.PI * 2); C.stroke();
+      line([[0.3, 0.37], [0.88, 0.41]], 0.04, F);
+      line([[0.5, 0.385], [0.5, 0.495]], 0.022, F); line([[0.7, 0.4], [0.7, 0.51]], 0.022, F);
+      C.save(); C.translate(0.6, 0.445); C.rotate(Math.PI / 4 + 0.07);
+      C.fillStyle = '#f3efe6'; C.fillRect(-0.035, -0.035, 0.07, 0.07);
+      C.fillStyle = F; C.fillRect(-0.02, -0.02, 0.04, 0.04);
+      C.restore();
       line([[0.85, 0.56], [0.92, 0.33]], 0.06, F);
       line([[0.92, 0.33], [L, 0]], 0.04, F);
       line([[-0.2, 0.47], [0.25, 0.48]], 0.03, F);
@@ -3556,7 +3574,7 @@ html.kid #grow-dog { display: none !important; }
       line([[0.17, 0.6], [0.2, 0.575], [0.16, 0.555], [0.2, 0.535], [0.17, 0.51]], 0.01, '#b9c3c8');
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.24, 0.615, 0.115, 0.04, 0.05, 0, Math.PI * 2); C.fill();
     },
-    // motorizada estilo MTB: quadro creme, tanque preto no tubo de cima, banco comprido "XR" sobre o bagageiro, suspensão
+    // Trilha Bruta: estilo MTB, quadro creme, tanque preto no tubo de cima, banco comprido "TB" com rastro de pneu, suspensão
     xr(F) {
       motor2T(); flameFx(-0.14, 0.125);
       pedal();
@@ -3576,7 +3594,8 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#16181b'; rrect(-0.24, 0.55, 0.62, 0.075, 0.03); C.fill();
       C.save(); C.translate(0.08, 0.588); C.scale(0.004, -0.004);
       C.fillStyle = '#f3efe6'; C.font = 'italic 700 15px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('XR', 0, 0);
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('TB', -9, 0);
+      C.fillStyle = '#f3efe6'; for (let i = 0; i < 4; i++) C.fillRect(4 + i * 7, -5 + (i % 2) * 4, 4, 3);
       C.restore();
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.66, 0.6, 0.15, 0.055, 0.08, 0, Math.PI * 2); C.fill();
       C.fillStyle = '#c3c9cd'; C.fillRect(0.6, 0.65, 0.04, 0.025);
@@ -3601,6 +3620,16 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = CR; rrect(0.06, 0.0, 0.42, 0.08, 0.04); C.fill();
       // tanque pequeno preso no tubo de baixo
       C.fillStyle = '#d9dde0'; C.beginPath(); C.ellipse(0.64, 0.3, 0.1, 0.04, 0.55, 0, Math.PI * 2); C.fill();
+      // adesivo da Litorânea: onda e coqueiro
+      C.save(); C.translate(0.47, 0.37); C.rotate(0.35);
+      C.fillStyle = CR; rrect(-0.055, -0.035, 0.11, 0.07, 0.02); C.fill();
+      C.strokeStyle = '#2f8fd6'; C.lineWidth = 0.009; C.beginPath(); C.moveTo(-0.045, -0.015);
+      C.quadraticCurveTo(-0.03, 0.0, -0.015, -0.015); C.quadraticCurveTo(0.0, -0.03, 0.015, -0.015); C.quadraticCurveTo(0.03, 0.0, 0.045, -0.015); C.stroke();
+      C.strokeStyle = '#7a5230'; C.lineWidth = 0.007; C.beginPath(); C.moveTo(0.02, -0.01); C.quadraticCurveTo(0.025, 0.01, 0.015, 0.027); C.stroke();
+      C.strokeStyle = '#3f9a4a'; C.lineWidth = 0.007; C.beginPath();
+      for (const a of [-2.6, -1.9, -0.9, -0.3]) { C.moveTo(0.015, 0.027); C.lineTo(0.015 + Math.cos(a) * -0.022, 0.027 + Math.abs(Math.sin(a)) * 0.006 - 0.004); }
+      C.stroke();
+      C.restore();
       // bagageiro creme
       line([[-0.22, 0.5], [0.2, 0.5]], 0.025, CR);
       line([[-0.2, 0.5], [-0.02, 0.03]], 0.016, CR);
@@ -3623,7 +3652,7 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       line([[0.92, 0.5], [0.94, 0.55]], 0.02, '#c3c9cd');
     },
-    // bikelete: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
+    // Fumacinha 4T: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
     bikelete(F) {
       line([[0.62, 0.1], [0.66, -0.02], [0.4, -0.06], [-0.12, 0.02]], 0.05, '#c9d0d5');
       line([[0.2, -0.03], [-0.14, 0.03]], 0.075, '#dfe4e7');
@@ -3640,6 +3669,13 @@ html.kid #grow-dog { display: none !important; }
       line([[0.18, 0.44], [0.3, 0.06]], 0.045, F);
       line([[0.86, 0.46], [0.62, 0.12], [0.4, 0.05]], 0.045, F);
       line([[0.86, 0.62], [0.9, 0.42]], 0.06, F);
+      // a nuvenzinha da Fumacinha, pintada entre os dois tubos de cima
+      C.save(); C.translate(0.55, 0.45); C.rotate(0.2);
+      C.fillStyle = '#f3efe6';
+      for (const [cx, cy, r] of [[-0.045, -0.005, 0.03], [-0.012, 0.012, 0.036], [0.025, 0.0, 0.03], [0.05, -0.01, 0.022]]) { C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill(); }
+      C.scale(0.0032, -0.0032); C.fillStyle = '#2b2e33'; C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('4T', 0, 1);
+      C.restore();
       // garrafinha de combustível entre os tubos
       C.save(); C.translate(0.55, 0.42); C.rotate(0.2);
       C.fillStyle = '#d9dde0'; rrect(-0.1, -0.03, 0.18, 0.06, 0.02); C.fill();
@@ -3660,7 +3696,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
       bars([0.86, 0.62], 0.8, [0.7, 0.75], '#1b1d20', '#16181b');
     },
-    // Titan 99 do Bruno CB 99: vinho, adesivo azul e amarelo no tanque, motor prata, baú de alumínio. Lenda, não tem cor
+    // Bravona Turbinada: vinho, adesivo de raio no tanque, motor prata, baú de alumínio. Lenda, não tem cor
     bruno() {
       const V = FRAME, Vd = shadeHex(FRAME, -0.32), Vl = shadeHex(FRAME, 0.22), CR = '#d6dbde', CRd = '#9aa1a7', BK = '#1b1d20', AMB = '#ffab2e';
       // paralama dianteiro vinho com filete claro e haste cromada
@@ -3717,7 +3753,7 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = V; C.beginPath(); C.moveTo(0.18, 0.5); C.lineTo(0.42, 0.5); C.lineTo(0.38, 0.32); C.lineTo(0.2, 0.36); C.closePath(); C.fill();
       C.save(); C.translate(0.3, 0.42); C.rotate(0.1); C.scale(0.0032, -0.0032);
       C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('TITAN', 0, 0);
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('BRAVONA', 0, 0);
       C.restore();
       C.fillStyle = V; C.beginPath(); C.moveTo(-0.22, 0.58); C.lineTo(0.2, 0.56); C.lineTo(0.2, 0.47); C.lineTo(-0.12, 0.48); C.closePath(); C.fill();
       C.strokeStyle = Vl; C.lineWidth = 0.008; C.beginPath(); C.moveTo(-0.2, 0.55); C.lineTo(0.18, 0.535); C.stroke();
@@ -3739,10 +3775,9 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#26282c'; rrect(0.5, 0.53, 0.1, 0.08, 0.02); C.fill();
       C.fillStyle = CR; C.beginPath(); C.ellipse(0.66, 0.735, 0.035, 0.014, 0, 0, Math.PI * 2); C.fill();
       C.save(); C.translate(0.71, 0.62); C.rotate(0.1);
-      C.fillStyle = '#ffd21f'; rrect(-0.1, -0.035, 0.2, 0.07, 0.02); C.fill();
-      C.fillStyle = '#2f6fd6'; rrect(-0.09, -0.025, 0.18, 0.05, 0.015); C.fill();
-      C.scale(0.0035, -0.0035); C.fillStyle = '#f3efe6'; C.font = 'italic 700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('CB 99', 0, 0);
+      C.fillStyle = '#16181b'; rrect(-0.1, -0.035, 0.2, 0.07, 0.02); C.fill();
+      C.fillStyle = '#ffd21f'; C.beginPath(); // raio da Bravona
+      C.moveTo(-0.07, -0.005); C.lineTo(-0.01, 0.022); C.lineTo(-0.005, 0.004); C.lineTo(0.075, 0.008); C.lineTo(0.01, -0.024); C.lineTo(0.006, -0.006); C.closePath(); C.fill();
       C.restore();
       // frente moderna em seta: carenagem pontuda na cor do quadro, farol em V, viseira fumê e painel digital
       const poly = (pts, c) => { C.fillStyle = c; C.beginPath(); C.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) C.lineTo(pts[i][0], pts[i][1]); C.closePath(); C.fill(); };
@@ -4555,7 +4590,7 @@ html.kid #grow-dog { display: none !important; }
   // re-arma os desafios a cada empinada nova na sala (lá a volta não acaba quando a frente encosta)
   function rearm() {
     const L = s.law, F = fresh();
-    for (const k of ['car', 'bikes', 'cg', 'uno', 'thief']) F.law[k] = L[k];
+    for (const k of ['car', 'bikes', 'fuga', 'quad', 'thief']) F.law[k] = L[k];
     s.law = F.law;
     s.pack = { ...F.pack, dogs: s.pack.dogs.filter(d => d.state !== 'sleep'), cat: s.pack.cat };
     if (!s.kite) s.kiteDone = false;
