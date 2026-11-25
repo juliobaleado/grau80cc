@@ -972,20 +972,17 @@ html.kid #grow-dog { display: none !important; }
       ["Create a room and share the code, or join a friend's code (up to 7). Each player sees their own challenges. Front wheel down resets your wheelie; flip over and you turn into a stray dog chasing whoever is still riding. Pass the Agenor stall as a dog and you get your bike back. When everyone falls, a new round starts.",
        "Crea una sala y comparte el código, o entra con el código de un amigo (hasta 7). Cada uno ve sus propios desafíos. Si la rueda delantera toca el suelo, el caballito vuelve a cero; si te das vuelta, te conviertes en perro y corres detrás de quien sigue en una rueda. Si pasas por el Agenor siendo perro, vuelves a la moto. Cuando todos caen, empieza otra ronda."]
   });
-  // D.U.R.O.: as falas da repartição são traduzidas (o resto das frases do jogo continua em português)
+  // D.U.R.O.: as falas da corporação são traduzidas (o resto das frases do jogo continua em português)
   Object.assign(I18N, {
-    'Você foi notificado': ['You have been served', 'Has sido notificado'],
-    'Seu grau foi indeferido': ['Wheelie request: DENIED', 'Tu caballito fue denegado'],
-    'A Esquadrilha do Protocolo chegou': ['The Paperwork Squadron is here', 'Llegó la Escuadrilla del Trámite'],
-    'Faltou a terceira via': ['You forgot copy #3', 'Te faltó la tercera copia'],
-    'Sujou! Lá vem o D.U.R.O.': ['Uh-oh! Here comes D.U.R.O.', '¡Se armó! Ahí viene el D.U.R.O.'],
-    'Compareça ao guichê 80!': ['Please proceed to window 80!', '¡Pase por la ventanilla 80!'],
-    'Faltou a terceira via!': ['Copy #3 is missing!', '¡Falta la tercera copia!'],
-    'Recurso negado!': ['Appeal denied!', '¡Recurso denegado!'],
-    'Sua roda dianteira está irregular!': ['Your front wheel lacks a permit!', '¡Su rueda delantera está irregular!'],
-    'Pegue uma senha!': ['Take a number!', '¡Saque su número!'],
-    'Atendimento das 9h às 9h05': ['Open 9:00 to 9:05 a.m.', 'Atención de 9:00 a 9:05'],
-    'SENHA': ['NUMBER', 'TURNO'],
+    'O D.U.R.O. encostou': ['D.U.R.O. pulled you over', 'El D.U.R.O. te paró'],
+    'A tropa de moto encostou': ['The bike squad caught up', 'La tropa en moto te alcanzó'],
+    'Sujou! A tropa de moto chegou': ['Uh-oh! The bike squad is here', '¡Se armó! Llegó la tropa en moto'],
+    'Encosta aí, piloto!': ['Pull over, rider!', '¡Oríllate, piloto!'],
+    'Baixa essa frente!': ['Front wheel down!', '¡Baja esa rueda!'],
+    'Cadê o documento da bike?': ['License and registration!', '¿Y los papeles de la moto?'],
+    'Hoje não, playboy!': ['Not today, hotshot!', '¡Hoy no, chico!'],
+    'DESTACAMENTO URBANO': ['URBAN DETACHMENT', 'DESTACAMENTO URBANO'],
+    'Azul royal': ['Royal blue', 'Azul rey'], 'Verde bandeira': ['Flag green', 'Verde bandera'], 'Cromado': ['Chrome', 'Cromado'],
     'As instituições, corporações e personagens deste jogo são fictícios. Qualquer semelhança com órgãos reais é coincidência.':
       ['All institutions, agencies and characters in this game are fictional. Any resemblance to real organizations is coincidental.',
        'Las instituciones, corporaciones y personajes de este juego son ficticios. Cualquier parecido con organismos reales es coincidencia.']
@@ -1040,12 +1037,12 @@ html.kid #grow-dog { display: none !important; }
       active: false, wStart: 0, wDist: 0, top: 0, reason: '',
       last: 0, runBest: 0, wTime: 0, runTime: 0, sent: false, achSeen: {}, count: 0, newRecord: false, pull: 0, pullCd: 0, stand: 0, gearN: 1, chapa: 0, cut: 0, flame: 0,
       cat: { state: 'sit', t: 0, y: 0, vy: 0 },
-      // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, Caravana da D.U.R.O. 300–400,
-      // Esquadrilha do Protocolo 500–600, Quadradinho 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
+      // desafios: cada um aparece depois de 100 m de folga e dura 100 m (caramelos 100–200, viatura do D.U.R.O. 300–400,
+      // tropa de moto 500–600, Uno 700–800, ladrões 900–1.000); depois voltam em ciclo no mesmo ritmo
       pack: { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at: 100 },
       law: { car: null, bikes: [], fuga: null, carDone: false, esqDone: false, carEscaped: false, esqEscaped: false,
-             quad: null, quadDone: false, quadBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
-             at: { kite: 20, car: 300, esq: 500, quad: 700, thief: 900 }, dur: { car: 100, esq: 100, quad: 100, thief: 100 },
+             uno: null, unoDone: false, unoBeaten: false, thief: null, thiefDone: false, thiefEscaped: false,
+             at: { kite: 20, car: 300, esq: 500, uno: 700, thief: 900 }, dur: { car: 100, esq: 100, uno: 100, thief: 100 },
              nextLoop: 1000, loopI: 0 },
       kite: null, kiteDone: false, sparks: [], scrape: 0, dieT: 0, pet: null,
       dog: { x: -1.15, v: 0, state: 'lie', t: 0, bark: 0, say: 0, leg: 0 },
@@ -1338,9 +1335,9 @@ html.kid #grow-dog { display: none !important; }
       const sbp = ac.createBiquadFilter(); sbp.type = 'bandpass'; sbp.frequency.value = 2600; sbp.Q.value = 1.2;
       const scrapeG = ac.createGain(); scrapeG.gain.value = 0;
       sn.connect(sbp).connect(scrapeG).connect(sfx); sn.start();
-      // D.U.R.O.: corneta de três toques da Caravana e apito de repartição da Esquadrilha (mesmo canal, liga nas mesmas condições)
-      const so = ac.createOscillator(); so.type = 'sawtooth';
-      const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1300;
+      // sirene: onda quadrada com o tom variando (viatura = lamento lento, tropa de moto = yelp rápido)
+      const so = ac.createOscillator(); so.type = 'square';
+      const slp = ac.createBiquadFilter(); slp.type = 'lowpass'; slp.frequency.value = 1900;
       const sirenG = ac.createGain(); sirenG.gain.value = 0;
       so.connect(slp).connect(sirenG).connect(sfx); so.start();
       // 4 tempos monocilíndrico sem filtro: uma explosão a cada 2 voltas (pulso estreito = "bu-bu-bu" grosso),
@@ -1358,7 +1355,7 @@ html.kid #grow-dog { display: none !important; }
       p4.connect(honk).connect(honkG).connect(out4);
       out4.connect(sfx);
       p4.start(); sub4.start();
-      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, sirenLp: slp, sirenWas: false, p4, sub4, lp4, honk, honkG, out4 };
+      nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4 };
       if (muted) ac.suspend();
       startMusic();
     } catch (e) { ac = null; }
@@ -1505,20 +1502,10 @@ html.kid #grow-dog { display: none !important; }
     const L = s.law, esqOn = L.bikes.some(b => b.state === 'chase' || (b.state === 'hunt' && Math.abs(b.x - s.x) < 35));
     const sirenOn = !paused && (esqOn || (L.car && L.car.state === 'chase'));
     const now = performance.now() / 1000;
-    let sirenHz, sirenVol;
-    if (esqOn) { // apito: trinado agudo, "fiiii · fi"
-      const ph = (now % 0.9) / 0.9;
-      if (nodes.siren.type !== 'sine') { nodes.siren.type = 'sine'; nodes.sirenLp.frequency.value = 6000; }
-      sirenHz = 2350 + 160 * Math.sin(now * Math.PI * 2 * 26); sirenVol = ph < 0.45 || (ph > 0.56 && ph < 0.7) ? 0.03 : 0;
-    } else { // corneta de repartição em três toques, "tá-tá-tááá" (diferente da buzina dupla do Quadradinho)
-      const ph = (now % 1.3) / 1.3;
-      if (nodes.siren.type !== 'sawtooth') { nodes.siren.type = 'sawtooth'; nodes.sirenLp.frequency.value = 1300; }
-      sirenHz = ph < 0.33 ? 311 : 415; sirenVol = ph < 0.11 || (ph > 0.17 && ph < 0.28) || (ph > 0.36 && ph < 0.62) ? 0.06 : 0;
-    }
-    nodes.siren.frequency.setTargetAtTime(sirenHz, t, 0.004);
-    nodes.sirenG.gain.setTargetAtTime(sirenOn ? sirenVol : 0, t, sirenOn ? 0.012 : 0.9); // some num fade quando escapa
-    if (sirenOn && !nodes.sirenWas) duroPlim(t);
-    nodes.sirenWas = sirenOn;
+    const sirenHz = esqOn ? 750 + 450 * (0.5 + 0.5 * Math.sin(now * Math.PI * 2 / 0.35))
+                          : 700 + 500 * (0.5 + 0.5 * Math.sin(now * Math.PI * 2 / 2.6));
+    nodes.siren.frequency.setTargetAtTime(sirenHz, t, 0.02);
+    nodes.sirenG.gain.setTargetAtTime(sirenOn ? 0.05 : 0, t, sirenOn ? 0.3 : 0.9); // some num fade quando escapa
   }
 
   // corte de giro: o som some por um instante e às vezes o escape dá um tiro
@@ -1563,9 +1550,9 @@ html.kid #grow-dog { display: none !important; }
   const ACHS = [
     { id: 'grau30', why: 'Primeiros 30 m de grau', name: 'Acima de mim só Deus e a roda da frente', test: () => s.active && s.wDist >= 30 },
     { id: 'grau100', why: '200 m de grau com 3 caramelos na cola', name: 'Situação Cãoplicada', test: () => s.pack.chasedOff },
-    { id: 'grau200', why: '400 m de grau com o D.U.R.O. na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
-    { id: 'grau300', why: '600 m de grau com a Esquadrilha do Protocolo na cola', name: 'Motoka 244', test: () => s.law.esqEscaped },
-    { id: 'grau500', why: '800 m de grau ganhando o racha do Quadradinho', name: 'Nasce uma lenda!', test: () => s.law.quadBeaten },
+    { id: 'grau200', why: '400 m de grau com a viatura do D.U.R.O. na cola', name: 'Os Menó é zika', test: () => s.law.carEscaped },
+    { id: 'grau300', why: '600 m de grau com a tropa de moto na cola', name: 'Motoka 244', test: () => s.law.esqEscaped },
+    { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
     { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
     { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 }
   ];
@@ -1673,10 +1660,10 @@ html.kid #grow-dog { display: none !important; }
     flip: ['Passou do ponto', 'Perdeu os lanche'],
     landed: ['Frente no chão', 'Piloto de azeitona'],
     gang: ['Os caramelo venceram', 'Caiu no beco da mordida'],
-    car: ['Você foi notificado', 'Seu grau foi indeferido'],
-    esq: ['A Esquadrilha do Protocolo chegou', 'Faltou a terceira via'],
+    car: ['O D.U.R.O. encostou', 'Pegaro os lanche'],
+    esq: ['A tropa de moto encostou', 'É só trocar ideia'],
     thief: ['Os cara encostou', 'Perdeu Playboy'],
-    quad: ['O Quadradinho ganhou o racha', 'Levou Benga']
+    uno: ['O Uno ganhou o racha', 'Levou Benga']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
   // placar global (Supabase): qualquer um lê o top 10 e envia o recorde; o banco barra média acima de 90 km/h
@@ -1910,7 +1897,7 @@ html.kid #grow-dog { display: none !important; }
     const msg = L.thief && L.thief.state === 'chase' ? 'thief'
       : L.bikes.some(b => b.state === 'chase') ? 'esq'
       : L.car && L.car.state === 'chase' ? 'car'
-      : L.quad && L.quad.state === 'race' ? 'quad'
+      : L.uno && L.uno.state === 'race' ? 'uno'
       : gangChasing() ? 'gang' : how;
     s.mode = 'over'; s.reason = how;
     recordWheelie();
@@ -2121,10 +2108,10 @@ html.kid #grow-dog { display: none !important; }
   }
   // volume do latido: some aos poucos conforme o cachorro fica longe da moto
   const earshot = x => Math.max(0, 1 - Math.abs(s.x - x) / 14);
-  // perseguição: Caravana 3 Vias aos 300 m (fura o pneu aos 400 m), 3 motos da Esquadrilha aos 500 m (vão atrás de uma Bravona aos 600 m),
-  // racha com o Quadradinho aos 700 m (funde aos 800 m) e a Bravona dos ladrões aos 900 m (a Esquadrilha espanta aos 1.000 m)
-  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, Caravana, Esquadrilha, Quadradinho, ladrões)
-  const LOOP = ['pack', 'car', 'esq', 'quad', 'thief'];
+  // perseguição: viatura do D.U.R.O. aos 300 m (fura o pneu aos 400 m), 3 motos da tropa aos 500 m (vão atrás de uma Bravona aos 600 m),
+  // racha com o Uno aos 700 m (funde aos 800 m) e a Bravona dos ladrões aos 900 m (a tropa de moto espanta aos 1.000 m)
+  // depois dos 1.000 m os desafios voltam em ciclo: 100 m de folga e 100 m de desafio (caramelos + pipa, viatura, tropa de moto, Uno, ladrões)
+  const LOOP = ['pack', 'car', 'esq', 'uno', 'thief'];
   function stepLaw(h) {
     const L = s.law, riding = s.mode === 'ride' && s.active;
     if (CHAL() && riding && s.wDist >= L.nextLoop) {
@@ -2134,7 +2121,7 @@ html.kid #grow-dog { display: none !important; }
       if (kind === 'pack') { s.pack = { spawned: false, dogs: [], cat: null, catDone: false, chasedOff: false, at }; s.kite = null; s.kiteDone = false; L.at.kite = at - 60; }
       else if (kind === 'car') { L.car = null; L.carDone = false; L.at.car = at; }
       else if (kind === 'esq') { L.bikes = []; L.fuga = null; L.esqDone = false; L.at.esq = at; }
-      else if (kind === 'quad') { L.quad = null; L.quadDone = false; L.at.quad = at; }
+      else if (kind === 'uno') { L.uno = null; L.unoDone = false; L.at.uno = at; }
       else { L.thief = null; L.thiefDone = false; L.at.thief = at; }
     }
     if (CHAL() && riding) {
@@ -2187,20 +2174,20 @@ html.kid #grow-dog { display: none !important; }
     if (L.fuga) { L.fuga.x += L.fuga.v * h; if (L.fuga.x - s.x > 60) L.fuga = null; }
     L.bikes = L.bikes.filter(b => Math.abs(b.x - s.x) < 60);
 
-    // Quadradinho com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
-    if (CHAL() && riding && !L.quad && !L.quadDone && s.wDist >= L.at.quad) {
-      L.quad = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
+    // Uno com escada aos 350 m: tira racha lado a lado e funde o motor aos 500 m
+    if (CHAL() && riding && !L.uno && !L.unoDone && s.wDist >= L.at.uno) {
+      L.uno = { x: s.x - 7, v: s.v + 5, state: 'race', t: 0, smk: 0 };
       hornSound();
     }
-    const u = L.quad;
+    const u = L.uno;
     if (u) {
       u.t += h;
       if (u.state === 'race') {
         if (!riding) u.state = 'stop';
-        else if (s.wDist >= L.at.quad + L.dur.quad) {
-          u.state = 'blown'; u.t = 0; L.quadDone = true; L.quadBeaten = true;
+        else if (s.wDist >= L.at.uno + L.dur.uno) {
+          u.state = 'blown'; u.t = 0; L.unoDone = true; L.unoBeaten = true;
           if (nodes && !muted && !paused) { backfire(ac.currentTime + 0.01, 1.6); backfire(ac.currentTime + 0.16, 1.1); }
-          flash('Fundiu o motor do Quadradinho!'); checkAch();
+          flash('Fundiu o motor do Uno!'); checkAch();
         }
         const tx = s.x + 1.3 + 1.6 * Math.sin(u.t * 0.7);
         u.v += (Math.min(s.v + 6, Math.max(s.v - 4, s.v + (tx - u.x) * 1.2)) - u.v) * Math.min(1, h * 2);
@@ -2213,14 +2200,14 @@ html.kid #grow-dog { display: none !important; }
         while (u.smk >= 1) {
           u.smk -= 1;
           if (s.parts.length > 320) s.parts.shift();
-          s.parts.push({ x: u.x - 0.4 - Math.random() * 0.5, y: 0.95 + QUAD_LANE, vx: u.v * 0.85 - 0.3 + Math.random() * 0.6,
+          s.parts.push({ x: u.x - 0.4 - Math.random() * 0.5, y: 0.95 + UNO_LANE, vx: u.v * 0.85 - 0.3 + Math.random() * 0.6,
             vy: 0.5 + Math.random() * 0.6, age: 0, life: 2 + Math.random() * 1.5, r0: 0.15, dark: true });
         }
       }
-      if (s.x - u.x > 50) L.quad = null;
+      if (s.x - u.x > 50) L.uno = null;
     }
 
-    // Bravona com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a Esquadrilha e eles vazam
+    // Bravona com dois na garupa aos 600 m querendo levar a moto; aos 700 m chega a tropa de moto e eles vazam
     if (CHAL() && riding && !L.thief && !L.thiefDone && s.wDist >= L.at.thief) {
       L.thief = { x: s.x - 12, v: s.v + 6, state: 'chase', t: 0 };
     }
@@ -2232,7 +2219,7 @@ html.kid #grow-dog { display: none !important; }
         else if (s.wDist >= L.at.thief + L.dur.thief) {
           th.state = 'flee'; th.t = 0; L.thiefDone = true; L.thiefEscaped = true;
           L.bikes = [0, 1, 2].map(i => ({ x: s.x - 14 - i * 2.5, v: s.v + 8, gap: 0, lane: [0.22, 0.1, 0][i], state: 'hunt', t: 0, phase: i * 0.5 }));
-          flash(T('Sujou! Lá vem o D.U.R.O.')); checkAch();
+          flash(T('Sujou! A tropa de moto chegou')); checkAch();
         }
         const tx = s.x - 1.5 - 0.5 * Math.sin(th.t * 1.3);
         th.v += (Math.min(s.v + 7, s.v + (tx - th.x) * 1.5) - th.v) * Math.min(1, h * 3);
@@ -2245,7 +2232,7 @@ html.kid #grow-dog { display: none !important; }
       if (Math.abs(th.x - s.x) > 70) L.thief = null;
     }
   }
-  // buzina do Quadradinho chamando pro racha: fom-fom
+  // buzina do Uno chamando pro racha: fom-fom
   function hornSound() {
     if (!nodes || muted || paused) return;
     const t = ac.currentTime;
@@ -2257,16 +2244,6 @@ html.kid #grow-dog { display: none !important; }
       f.connect(g).connect(sfx);
       for (const hz of [415, 520]) { const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = hz; o.connect(f); o.start(t0); o.stop(t0 + 0.24); }
     }
-  }
-  // "plim-plom" de painel de senha: a D.U.R.O. chegou
-  function duroPlim(t) {
-    if (!nodes || muted || paused) return;
-    [[1319, 0], [988, 0.16]].forEach(([f, d]) => {
-      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
-      const g = ac.createGain();
-      g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.12, t + d + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.5);
-      o.connect(g).connect(sfx); o.start(t + d); o.stop(t + d + 0.55);
-    });
   }
   function fugaSound() {
     if (!nodes || muted || paused) return;
@@ -2448,8 +2425,8 @@ html.kid #grow-dog { display: none !important; }
     for (const d of s.pack.dogs) drawDog(sx, sy, S, performance.now() / 1000, d);
     drawRunCat(sx, sy, S, performance.now() / 1000);
     drawCar(sx, sy, S, performance.now() / 1000);
-    drawEsquadrilha(sx, sy, S, performance.now() / 1000);
-    drawQuadradinho(sx, sy, S, performance.now() / 1000);
+    drawTropa(sx, sy, S, performance.now() / 1000);
+    drawUno(sx, sy, S, performance.now() / 1000);
 
     // bandeira do recorde (na sala é o melhor grau teu na sala)
     if (best > 0 && s.active && s.mode === 'ride') {
@@ -2701,209 +2678,243 @@ html.kid #grow-dog { display: none !important; }
     C.restore();
   }
 
-  // pisca da D.U.R.O.: âmbar e verde-limão alternando, em coordenadas de tela
+  // giroflex: brilho vermelho e azul alternando, em coordenadas de tela
   function drawLights(x, y, rad, t, phase) {
     const on = Math.floor(t * 6 + phase) % 2;
-    const col = on ? '255, 176, 40' : '182, 222, 58';
+    const col = on ? '255, 40, 40' : '40, 90, 255';
     C.save(); C.globalCompositeOperation = 'lighter';
     const g = C.createRadialGradient(x, y, 0, x, y, 1.6 * rad);
-    g.addColorStop(0, `rgba(${col}, .5)`); g.addColorStop(1, `rgba(${col}, 0)`);
+    g.addColorStop(0, `rgba(${col}, .55)`); g.addColorStop(1, `rgba(${col}, 0)`);
     C.fillStyle = g; C.fillRect(x - 1.6 * rad, y - 1.6 * rad, 3.2 * rad, 3.2 * rad);
     C.restore();
   }
-  // D.U.R.O. · Divisão Urbana de Requerimentos e Ofícios: repartição fictícia do jogo que se acha tropa de elite.
-  // Paleta própria (berinjela, mostarda, creme e verde-limão) e símbolo próprio (carimbo sorridente "INDEFERIDO").
-  const DURO = { ber: '#5e3474', berD: '#3a1e4a', berL: '#8a56a6', mus: '#e8ac2a', musD: '#a87512', cre: '#f3e6c8', lim: '#b6d43a',
-    cro: '#d5d9dc', bk: '#17181c', gl: '#1d2a36', pele: '#c98d62' };
-  // texto pintado no mundo (unidades em metros, y pra cima)
-  function duroTxt(str, tx, ty, px, col, rot = 0) {
-    C.save(); C.translate(tx, ty); if (rot) C.rotate(rot); C.scale(0.01, -0.01);
-    C.fillStyle = col; C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(str, 0, 0);
+  // D.U.R.O. · Destacamento Urbano de Reação e Ordem: corporação fictícia do jogo. Viatura é uma picape cabine dupla,
+  // e a Tropa de Moto anda de trail. Paleta própria: branco, azul-marinho e âmbar (com preto e cinza); giroflex vermelho e azul.
+  // Sem emblema oficial, sem sigla real, sem número de emergência.
+  const DURO = { wh: '#f1f2f0', nv: '#1d3557', nvD: '#132540', amb: '#f2a516', bk: '#1b1d20', gl: '#1a2733', cin: '#8d949a', al: '#c9ced3' };
+  // texto pintado no mundo (unidades em metros, y pra cima); maxW encolhe pra caber
+  function duroTxt(str, tx, ty, px, col, maxW, font = '700 $px "Barlow Condensed", "Arial Narrow", sans-serif') {
+    C.save(); C.translate(tx, ty); C.scale(0.01, -0.01);
+    C.font = font.replace('$', px);
+    if (maxW) { const w = C.measureText(str).width; if (w > maxW * 100) C.scale(maxW * 100 / w, 1); }
+    C.fillStyle = col; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(str, 0, 0);
     C.restore();
   }
-  // o símbolo: carimbo de borracha sorridente com "INDEFERIDO" na sola (cx, cy = meio da sola; r = meia largura)
-  function duroStamp(cx, cy, r, word) {
-    const D = DURO;
-    C.fillStyle = D.lim; C.beginPath(); C.roundRect(cx - r, cy - 0.2 * r, 2 * r, 0.42 * r, 0.06 * r); C.fill();
-    if (word) duroTxt('INDEFERIDO', cx, cy + 0.01 * r, 28 * r, D.berD);
-    C.fillStyle = D.ber; C.beginPath(); C.roundRect(cx - 0.8 * r, cy + 0.22 * r, 1.6 * r, 0.78 * r, 0.12 * r); C.fill();
-    C.fillStyle = D.cre;
-    C.beginPath(); C.arc(cx - 0.3 * r, cy + 0.7 * r, 0.08 * r, 0, Math.PI * 2); C.arc(cx + 0.3 * r, cy + 0.7 * r, 0.08 * r, 0, Math.PI * 2); C.fill();
-    C.strokeStyle = D.cre; C.lineWidth = 0.07 * r; C.lineCap = 'round';
-    C.beginPath(); C.arc(cx, cy + 0.66 * r, 0.3 * r, Math.PI + 0.55, 2 * Math.PI - 0.55); C.stroke();
-    C.fillStyle = D.berD; C.fillRect(cx - 0.16 * r, cy + r, 0.32 * r, 0.42 * r);
-    C.fillStyle = D.mus; C.beginPath(); C.arc(cx, cy + 1.62 * r, 0.32 * r, 0, Math.PI * 2); C.fill();
-    C.fillStyle = 'rgba(255, 255, 255, .35)'; C.beginPath(); C.arc(cx - 0.1 * r, cy + 1.72 * r, 0.1 * r, 0, Math.PI * 2); C.fill();
+  // emblema fictício do D.U.R.O.: círculo marinho com aro âmbar e um "D" (nada de escudo, estrela ou louro)
+  function duroBadge(cx, cy, r) {
+    C.fillStyle = DURO.nv; C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill();
+    C.strokeStyle = DURO.amb; C.lineWidth = r * 0.18; C.beginPath(); C.arc(cx, cy, r * 0.78, 0, Math.PI * 2); C.stroke();
+    duroTxt('D', cx, cy - r * 0.04, r * 115, DURO.wh, 0, '400 $px "Bowlby One", "Arial Black", sans-serif');
   }
-  // falas da Caravana durante a perseguição (traduzidas; mudam a cada 2,6 s)
-  const DURO_FALAS = ['Compareça ao guichê 80!', 'Faltou a terceira via!', 'Recurso negado!', 'Sua roda dianteira está irregular!', 'Pegue uma senha!'];
+  // falas no megafone da viatura durante a perseguição (traduzidas; mudam a cada 2,6 s)
+  const DURO_FALAS = ['Encosta aí, piloto!', 'Baixa essa frente!', 'Cadê o documento da bike?', 'Hoje não, playboy!'];
   function duroBalloon(x, y, S, msg) {
     const px = Math.round(Math.max(12, Math.min(20, 0.15 * S)));
     C.save(); C.font = `700 ${px}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-    const tw = C.measureText(msg).width, w = tw + px * 1.1, h = px * 1.6;
+    const w = C.measureText(msg).width + px * 1.1, h = px * 1.6;
     const bx = Math.max(8, Math.min(W - w - 8, x - w / 2)), by = y - h;
-    C.fillStyle = DURO.cre; C.strokeStyle = DURO.berD; C.lineWidth = 2;
+    C.fillStyle = '#f3efe6'; C.strokeStyle = DURO.nvD; C.lineWidth = 2;
     C.beginPath(); C.roundRect(bx, by, w, h, 6); C.fill(); C.stroke();
     C.beginPath(); C.moveTo(x - 6, by + h - 1); C.lineTo(x, by + h + 9); C.lineTo(x + 6, by + h - 1); C.closePath(); C.fill();
     C.beginPath(); C.moveTo(x - 6, by + h); C.lineTo(x, by + h + 9); C.lineTo(x + 6, by + h); C.stroke();
-    C.fillStyle = DURO.berD; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(msg, bx + w / 2, by + h / 2 + 1);
+    C.fillStyle = DURO.nvD; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(msg, bx + w / 2, by + h / 2 + 1);
     C.restore();
   }
-  // Caravana 3 Vias: sedã-caixote anos 80 da D.U.R.O. c.x é o para-choque dianteiro; com o pneu furado a frente afunda.
-  // Mesmo comprimento e mesmas rodas (-0,95 e -4,05) da versão anterior: só o desenho mudou.
+  // carroceria do Uno quadradão de 3 portas (coordenadas do carro: frente em x≈0, rodas em −0,62 e −2,98, raio 0,29)
+  function unoBody(WH, wheelRot, flat) {
+    const BK = '#26282c', GL = '#1a2733';
+    C.fillStyle = WH;
+    C.beginPath(); C.moveTo(0.02, 0.32); C.lineTo(0.04, 0.68); C.lineTo(-0.05, 0.78); C.lineTo(-0.85, 0.88); C.lineTo(-1.4, 1.36);
+    C.lineTo(-3.25, 1.38); C.lineTo(-3.5, 0.95); C.lineTo(-3.58, 0.32); C.closePath(); C.fill();
+    C.fillStyle = BK; C.fillRect(-3.62, 0.28, 0.42, 0.2); C.fillRect(-0.3, 0.28, 0.36, 0.22);
+    C.fillRect(-3.2, 0.3, 2.9, 0.06);
+    C.beginPath(); C.arc(-0.62, 0.32, 0.36, 0, Math.PI); C.fill();
+    C.beginPath(); C.arc(-2.98, 0.32, 0.36, 0, Math.PI); C.fill();
+    C.fillStyle = GL;
+    C.beginPath(); C.moveTo(-1.45, 1.3); C.lineTo(-2.3, 1.3); C.lineTo(-2.3, 0.92); C.lineTo(-1.0, 0.9); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.4, 1.3); C.lineTo(-3.2, 1.3); C.lineTo(-3.38, 0.95); C.lineTo(-2.4, 0.92); C.closePath(); C.fill();
+    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
+    C.moveTo(-1.02, 0.88); C.lineTo(-1.05, 0.38); C.moveTo(-2.35, 0.9); C.lineTo(-2.35, 0.38); C.stroke();
+    C.fillStyle = BK; C.fillRect(-2.25, 0.78, 0.14, 0.03);
+    C.beginPath(); C.ellipse(-1.05, 0.98, 0.07, 0.05, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#fff3c4'; C.fillRect(-0.12, 0.6, 0.16, 0.1);
+    C.fillStyle = '#c0161a'; C.fillRect(-3.58, 0.72, 0.06, 0.18);
+    return () => { // rodas por último (por cima da pintura)
+      for (const [wx, sq] of [[-0.62, 1 - 0.35 * flat], [-2.98, 1]]) {
+        C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.3 * sq, 0.29, 0.29 * sq, 0, 0, Math.PI * 2); C.fill();
+        C.fillStyle = '#9aa3a8'; C.beginPath(); C.ellipse(wx, 0.3 * sq, 0.17, 0.17 * sq, 0, 0, Math.PI * 2); C.fill();
+        C.strokeStyle = '#3a3f44'; C.lineWidth = 0.035; C.beginPath();
+        for (let i = 0; i < 5; i++) { const a = wheelRot + i * Math.PI * 0.4; C.moveTo(wx, 0.3 * sq); C.lineTo(wx + Math.cos(a) * 0.16, 0.3 * sq + Math.sin(a) * 0.16 * sq); }
+        C.stroke();
+      }
+    };
+  }
+  // escada de alumínio no rack, amarrada com fita vermelha (a marca registrada do Uno do jogo)
+  function unoLadder() {
+    const BK = '#26282c', AL = '#c9ced3';
+    line([[-1.75, 1.38], [-1.75, 1.47]], 0.04, BK); line([[-2.9, 1.38], [-2.9, 1.47]], 0.04, BK);
+    C.fillStyle = AL; C.fillRect(-3.95, 1.47, 4.15, 0.035); C.fillRect(-3.95, 1.56, 4.15, 0.035);
+    C.strokeStyle = '#8f969c'; C.lineWidth = 0.02; C.beginPath();
+    for (let lx = 0.1; lx > -3.95; lx -= 0.3) { C.moveTo(lx, 1.47); C.lineTo(lx, 1.6); }
+    C.stroke();
+    C.fillStyle = '#d61f1f'; C.fillRect(-1.8, 1.42, 0.06, 0.22); C.fillRect(-2.95, 1.42, 0.06, 0.22);
+  }
+  // viatura do D.U.R.O.: picape cabine dupla branca (a mesma geometria da viatura original), faixa marinho reta com friso
+  // âmbar, "D.U.R.O." na porta, emblema e número fictícios, quebra-mato e giroflex vermelho e azul no teto.
+  // c.x é o para-choque dianteiro; com o pneu furado a frente afunda.
   function drawCar(sx, sy, S, t) {
     const c = s.law.car;
     if (!c) return;
     const x = sx(c.x);
     if (x < -0.5 * S || x - 5.4 * S > W) return;
-    const D = DURO, chase = c.state === 'chase';
-    if (chase) drawLights(sx(c.x - 2.9), sy(1.85), S, t, 0); // o brilho fica atrás da carroceria
+    const D = DURO, WH = D.wh, BK = D.bk, GL = D.gl, chase = c.state === 'chase';
+    if (chase) drawLights(sx(c.x - 2.6), sy(1.8), S, t, 0); // brilho atrás da carroceria
     C.save(); C.translate(x, sy(0)); C.scale(S, -S);
     C.translate(-4.05, 0); C.rotate(-0.035 * c.flat); C.translate(4.05, 0);
-    // papelada voando pela janela de trás
-    if (chase) for (let i = 0; i < 3; i++) {
-      const k = (t * 0.9 + i / 3) % 1, px = -4.25 - k * 1.7, py = 1.2 + k * 0.5 + Math.sin(t * 7 + i * 2) * 0.12;
-      C.save(); C.translate(px, py); C.rotate(Math.sin(t * 5 + i) * 0.9);
-      C.fillStyle = D.cre; C.fillRect(-0.08, -0.1, 0.16, 0.2);
-      C.fillStyle = 'rgba(58, 30, 74, .5)'; C.fillRect(-0.05, 0.03, 0.1, 0.015); C.fillRect(-0.05, -0.01, 0.1, 0.015); C.fillRect(-0.05, -0.05, 0.07, 0.015);
-      C.restore();
-    }
-    // carroceria quadradona: capô comprido, cabine reta e porta-malas comprido
-    C.fillStyle = D.ber;
-    C.beginPath(); C.moveTo(0.05, 0.36); C.lineTo(0.07, 0.86); C.lineTo(-1.5, 0.94); C.lineTo(-2.05, 1.58); C.lineTo(-3.8, 1.6);
-    C.lineTo(-4.3, 0.98); C.lineTo(-5.16, 0.96); C.lineTo(-5.2, 0.36); C.closePath(); C.fill();
-    // cabine creme (teto e colunas) e vidros
-    C.fillStyle = D.cre;
-    C.beginPath(); C.moveTo(-1.5, 0.94); C.lineTo(-2.05, 1.58); C.lineTo(-3.8, 1.6); C.lineTo(-4.3, 0.98); C.closePath(); C.fill();
-    C.fillStyle = D.gl;
-    C.beginPath(); C.moveTo(-1.64, 0.99); C.lineTo(-2.1, 1.5); C.lineTo(-2.86, 1.5); C.lineTo(-2.86, 0.99); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-2.98, 0.99); C.lineTo(-2.98, 1.5); C.lineTo(-3.74, 1.51); C.lineTo(-4.12, 0.99); C.closePath(); C.fill();
-    // o Carimbado no volante: topete penteado de lado, óculos fundo de garrafa, bigode e gravata limão
-    const hx = -2.48, hy = 1.2;
-    C.fillStyle = D.cre; C.fillRect(hx - 0.13, 0.99, 0.24, 0.1);
-    C.fillStyle = D.lim; C.beginPath(); C.moveTo(hx - 0.02, 1.08); C.lineTo(hx + 0.03, 0.99); C.lineTo(hx - 0.07, 0.99); C.closePath(); C.fill();
-    C.fillStyle = D.pele; C.beginPath(); C.arc(hx, hy, 0.13, 0, Math.PI * 2); C.fill();
-    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx - 0.03, hy + 0.11, 0.13, 0.05, 0.25, 0, Math.PI * 2); C.fill();
-    C.strokeStyle = D.bk; C.lineWidth = 0.022; C.beginPath(); C.arc(hx + 0.08, hy + 0.01, 0.055, 0, Math.PI * 2); C.stroke();
-    C.fillStyle = 'rgba(255, 255, 255, .5)'; C.beginPath(); C.arc(hx + 0.09, hy + 0.02, 0.025, 0, Math.PI * 2); C.fill();
-    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx + 0.1, hy - 0.07, 0.06, 0.022, 0, 0, Math.PI * 2); C.fill();
-    // pilha de processos no vidro de trás
-    for (let i = 0; i < 4; i++) { C.fillStyle = i % 2 ? '#e6d6b0' : D.cre; C.fillRect(-3.75 + i * 0.03, 0.99 + i * 0.05, 0.42, 0.05); }
-    C.fillStyle = D.lim; C.fillRect(-3.5, 1.19, 0.08, 0.05);
-    // faixa mostarda com franja de carimbo batido
-    C.fillStyle = D.mus; C.fillRect(-5.18, 0.58, 5.24, 0.22);
-    C.beginPath();
-    for (let fx = 0.04; fx > -5.15; fx -= 0.16) { C.moveTo(fx, 0.58); C.lineTo(fx - 0.08, 0.52); C.lineTo(fx - 0.16, 0.58); }
-    C.fill();
-    duroTxt('D.U.R.O.', -2.95, 0.69, 21, D.berD);
-    duroTxt('GUICHÊ 80', -4.72, 0.69, 12, D.berD);
-    duroStamp(-1.78, 0.62, 0.13, false);
-    duroTxt(T('Atendimento das 9h às 9h05').toUpperCase(), -2.95, 0.46, 8.5, D.cre);
-    C.fillStyle = D.berD; C.fillRect(-5.18, 0.36, 5.23, 0.035);
-    // portas
-    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
-    C.moveTo(-1.6, 0.95); C.lineTo(-1.66, 0.4); C.moveTo(-2.92, 0.99); C.lineTo(-2.92, 0.4); C.moveTo(-4.1, 0.98); C.lineTo(-4.1, 0.4);
-    C.stroke();
-    // caixas de roda, para-choques cromados enormes, farol quadrado e lanterna
-    C.fillStyle = D.bk;
+    // picape cabine dupla: capô alto, cabine e caçamba
+    C.fillStyle = WH;
+    C.beginPath(); C.moveTo(0.02, 0.38); C.lineTo(0.06, 0.82); C.lineTo(-0.05, 0.98); C.lineTo(-1.3, 1.1); C.lineTo(-1.95, 1.68);
+    C.lineTo(-3.35, 1.7); C.lineTo(-3.45, 1.12); C.lineTo(-5.15, 1.12); C.lineTo(-5.2, 0.38); C.closePath(); C.fill();
+    // faixa marinho reta ao longo do carro, com friso âmbar por cima
+    C.fillStyle = D.nv; C.fillRect(-5.18, 0.45, 5.22, 0.15);
+    C.fillStyle = D.amb; C.fillRect(-5.18, 0.6, 5.22, 0.03);
+    duroTxt(T('DESTACAMENTO URBANO'), -2.6, 0.525, 9, WH, 1.6);
+    // para-choque, estribo e para-lamas pretos
+    C.fillStyle = BK; C.fillRect(-5.25, 0.3, 5.3, 0.15);
+    C.fillRect(-3.45, 0.36, 2.0, 0.07);
     C.beginPath(); C.arc(-0.95, 0.4, 0.5, 0, Math.PI); C.fill();
     C.beginPath(); C.arc(-4.05, 0.4, 0.5, 0, Math.PI); C.fill();
-    C.fillStyle = D.cro; C.beginPath(); C.roundRect(-0.42, 0.25, 0.5, 0.18, 0.05); C.fill(); C.beginPath(); C.roundRect(-5.32, 0.25, 0.52, 0.18, 0.05); C.fill();
-    C.fillStyle = 'rgba(0, 0, 0, .18)'; C.fillRect(-0.42, 0.32, 0.5, 0.02); C.fillRect(-5.32, 0.32, 0.52, 0.02);
-    C.fillStyle = '#fff3c4'; C.fillRect(-0.05, 0.66, 0.11, 0.13);
-    C.fillStyle = '#c0161a'; C.fillRect(-5.2, 0.78, 0.07, 0.16);
-    // no teto, o carimbo gigante: martela enquanto persegue, com um pisca âmbar e um limão nas pontas
-    const on = Math.floor(t * 6) % 2, bob = chase ? 0.16 * Math.abs(Math.sin(t * 3.4)) : 0;
-    line([[-2.55, 1.59], [-2.65, 1.72]], 0.04, D.cro); line([[-3.25, 1.6], [-3.15, 1.72]], 0.04, D.cro);
-    C.fillStyle = D.bk; C.fillRect(-3.35, 1.7, 0.9, 0.05);
-    C.fillStyle = chase && on ? '#ffb028' : '#7a5414'; C.beginPath(); C.arc(-3.3, 1.78, 0.06, 0, Math.PI); C.fill();
-    C.fillStyle = chase && !on ? '#c6ec4a' : '#4d5a1c'; C.beginPath(); C.arc(-2.5, 1.78, 0.06, 0, Math.PI); C.fill();
-    duroStamp(-2.9, 1.8 + bob, 0.32, true);
-    // rodas de banda branca
+    C.fillStyle = '#2a2d31'; C.fillRect(-0.02, 0.62, 0.08, 0.26);
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(0.04, 0.82); C.lineTo(-0.22, 0.86); C.lineTo(-0.2, 0.78); C.lineTo(0.04, 0.74); C.closePath(); C.fill();
+    C.fillStyle = '#c0161a'; C.fillRect(-5.2, 0.8, 0.07, 0.22);
+    // quebra-mato preto na frente
+    C.fillStyle = BK; C.fillRect(0.04, 0.36, 0.07, 0.42); C.fillRect(-0.06, 0.72, 0.17, 0.05); C.fillRect(-0.06, 0.42, 0.17, 0.05);
+    // vidros, colunas e o agente de boné marinho no volante
+    C.fillStyle = GL;
+    C.beginPath(); C.moveTo(-1.98, 1.6); C.lineTo(-2.6, 1.6); C.lineTo(-2.6, 1.16); C.lineTo(-1.48, 1.14); C.closePath(); C.fill();
+    C.beginPath(); C.moveTo(-2.7, 1.6); C.lineTo(-3.28, 1.6); C.lineTo(-3.35, 1.16); C.lineTo(-2.7, 1.16); C.closePath(); C.fill();
+    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-2.2, 1.32, 0.12, 0, Math.PI * 2); C.fill();
+    C.fillStyle = D.nv; C.beginPath(); C.arc(-2.2, 1.36, 0.125, 0, Math.PI); C.fill(); C.fillRect(-2.2, 1.35, 0.2, 0.03);
+    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
+    C.moveTo(-1.48, 1.12); C.lineTo(-1.6, 0.42); C.moveTo(-2.65, 1.14); C.lineTo(-2.65, 0.45); C.moveTo(-3.42, 1.1); C.lineTo(-3.42, 0.45);
+    C.stroke();
+    // porta: D.U.R.O.; porta de trás: emblema; caçamba: número fictício
+    duroTxt('D.U.R.O.', -2.08, 0.84, 20, D.nv, 1.0);
+    duroBadge(-3.03, 0.86, 0.11);
+    duroTxt('DU-08', -4.3, 0.86, 18, D.nv, 1.2);
+    // giroflex vermelho e azul no teto
+    const on = Math.floor(t * 6) % 2;
+    C.fillStyle = '#2a2d31'; C.fillRect(-3.05, 1.7, 0.9, 0.05);
+    C.fillStyle = chase && on ? '#ff2a2a' : '#7a1414'; C.fillRect(-3.0, 1.75, 0.4, 0.09);
+    C.fillStyle = chase && !on ? '#3d7bff' : '#1e3f9e'; C.fillRect(-2.6, 1.75, 0.4, 0.09);
+    // rodas maiores de picape
     for (const [wx, sq] of [[-0.95, 1 - 0.35 * c.flat], [-4.05, 1]]) {
       C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.38, 0.38 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = D.cre; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.27, 0.27 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#111214'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.22, 0.22 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = D.cro; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.16, 0.16 * sq, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = D.musD; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.05, 0.05 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#6f767c'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.2, 0.2 * sq, 0, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#3a3f44'; C.beginPath(); C.ellipse(wx, 0.38 * sq, 0.06, 0.06 * sq, 0, 0, Math.PI * 2); C.fill();
     }
     C.restore();
-    if (chase) {
-      duroBalloon(sx(c.x - 2.9), sy(2.85), S, T(DURO_FALAS[Math.floor(t / 2.6) % DURO_FALAS.length]));
-    }
+    if (chase) duroBalloon(sx(c.x - 2.6), sy(2.35), S, T(DURO_FALAS[Math.floor(t / 2.6) % DURO_FALAS.length]));
   }
-  // Esquadrilha do Protocolo: as 3 motos da D.U.R.O. (mesmas posições, faixas e estados de antes)
-  function drawEsquadrilha(sx, sy, S, t) {
+  // Tropa de Moto do D.U.R.O.: 3 trails (mesmas posições, faixas e estados de antes)
+  function drawTropa(sx, sy, S, t) {
     [...s.law.bikes].sort((a, b) => b.lane - a.lane).forEach(b => {
       const k = 1 - b.lane * 0.6, x = sx(b.x), y = sy(0) - b.lane * S;
       if (x < -2 * S || x - 2 * S > W) return;
-      if (b.state === 'chase') drawLights(x - 1.55 * S * k, y - 1.62 * S * k, S * 0.5, t, b.phase * 2);
-      drawScooter(x, y, S * k, t, b.phase, -b.x / 0.25);
+      if (b.state === 'chase') drawLights(x - 1.55 * S * k, y - 1.55 * S * k, S * 0.5, t, b.phase * 2);
+      drawTrail(x, y, S * k, t, b.phase, -b.x / 0.32);
     });
   }
-  // scooter berinjela com sidecar de pastas, placa de senha na antena e um Carimbado de capacete-caixote e gravata ao vento
-  function drawScooter(x, y, S, t, phase, rot) {
-    const D = DURO;
+  // visual de cada piloto da tropa: camisa de time, bermuda, chinelo e uma cabeça diferente
+  const TROPA = [
+    { shirt: '#c8e021', trim: '#1b5e20', shorts: '#2c4a7a', skin: '#c68a5e', head: 'capacete' },
+    { shirt: '#ff7a12', trim: '#1b1d20', shorts: '#1b1d20', skin: '#8d5a3b', head: 'bone' },
+    { shirt: '#2f6fd6', trim: '#f3efe6', shorts: '#5b6b45', skin: '#e0b088', head: 'bandana' }
+  ];
+  // trail estilo 300 cc: branca com faixas marinho e âmbar, bico, para-brisa curto e um pisca na antena traseira.
+  // O piloto vai de camisa de time, bermuda e chinelo, com a mochila "PERDEU PLAYBOY" nas costas.
+  function drawTrail(x, y, S, t, phase, rot) {
+    const D = DURO, WH = '#eef0f2', BK = '#16181b', SV = '#b9bec4', who = TROPA[Math.round(phase * 2) % TROPA.length];
     C.save(); C.translate(x, y); C.scale(S, -S);
-    const wheel = (cx, cy, r) => {
-      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill();
-      C.fillStyle = D.cro; C.beginPath(); C.arc(cx, cy, r * 0.58, 0, Math.PI * 2); C.fill();
-      C.fillStyle = D.musD; C.beginPath(); C.arc(cx + Math.cos(rot) * r * 0.3, cy + Math.sin(rot) * r * 0.3, r * 0.1, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, cy, r * 0.14, 0, Math.PI * 2); C.fill();
+    const wheel = (cx, r) => {
+      C.fillStyle = '#111214'; C.beginPath(); C.arc(cx, r, r, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = SV; C.lineWidth = 0.02; C.beginPath(); C.arc(cx, r, r - 0.07, 0, Math.PI * 2); C.stroke();
+      C.lineWidth = 0.008; C.beginPath();
+      for (let i = 0; i < 18; i++) { const a = rot + i * Math.PI / 9; C.moveTo(cx, r); C.lineTo(cx + Math.cos(a) * (r - 0.07), r + Math.sin(a) * (r - 0.07)); }
+      C.stroke();
+      C.fillStyle = '#5b6067'; C.beginPath(); C.arc(cx, r, 0.04, 0, Math.PI * 2); C.fill();
     };
-    // sidecar do lado de lá (um pouco mais alto = mais longe), com pastas e processos saindo
-    C.save(); C.translate(0.02, 0.12);
-    wheel(-0.62, 0.2, 0.2);
-    C.fillStyle = D.berD;
-    C.beginPath(); C.moveTo(-1.3, 0.36); C.lineTo(-1.3, 0.74); C.lineTo(-0.35, 0.8); C.quadraticCurveTo(0.14, 0.74, 0.1, 0.52);
-    C.quadraticCurveTo(0.04, 0.34, -0.3, 0.33); C.closePath(); C.fill();
-    line([[-1.25, 0.6], [-0.05, 0.63]], 0.04, D.musD);
-    const pastas = [[-1.15, 0.12, D.lim], [-0.95, -0.1, D.cre], [-0.78, 0.2, D.mus], [-0.6, -0.05, D.cre]];
-    for (const [px, a, col] of pastas) {
-      C.save(); C.translate(px, 0.74); C.rotate(a + Math.sin(t * 6 + px * 9) * 0.05);
-      C.fillStyle = col; C.fillRect(-0.09, 0, 0.18, 0.24); C.restore();
-    }
+    wheel(-1.45, 0.31); wheel(0, 0.33);
+    // balança, motor com protetor e escape
+    line([[-1.45, 0.31], [-0.92, 0.48]], 0.06, BK);
+    line([[-1.2, 0.4], [-1.05, 0.9]], 0.045, D.amb);
+    C.fillStyle = '#2c2f34'; C.beginPath(); C.ellipse(-0.72, 0.45, 0.22, 0.15, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#4a4f56'; C.fillRect(-0.7, 0.5, 0.2, 0.26);
+    line([[-0.42, 0.85], [-0.38, 0.5], [-0.55, 0.32], [-0.9, 0.34]], 0.035, BK);
+    line([[-0.55, 0.5], [-0.75, 0.3], [-1.0, 0.42], [-1.3, 0.72]], 0.05, '#3a3e44');
+    C.fillStyle = SV; C.beginPath(); C.moveTo(-1.15, 0.6); C.lineTo(-1.5, 0.8); C.lineTo(-1.5, 0.92); C.lineTo(-1.15, 0.74); C.closePath(); C.fill();
+    // garfo comprido, para-lama baixo e bico
+    line([[0, 0.33], [-0.2, 1.08]], 0.055, SV);
+    line([[-0.16, 0.92], [-0.24, 1.18]], 0.075, BK);
+    C.fillStyle = BK; C.beginPath(); C.arc(0, 0.33, 0.39, 0.4, 1.6); C.arc(0, 0.33, 0.35, 1.6, 0.4, true); C.closePath(); C.fill();
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.12, 0.98); C.lineTo(0.22, 0.88); C.lineTo(0.12, 0.98); C.lineTo(-0.08, 1.06); C.closePath(); C.fill();
+    // carenagem do farol com faixa marinho, para-brisa curto e guidão
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.08, 1.06); C.lineTo(0.0, 1.22); C.lineTo(-0.18, 1.4); C.lineTo(-0.36, 1.22); C.lineTo(-0.3, 1.0); C.closePath(); C.fill();
+    line([[-0.05, 1.14], [-0.31, 1.13]], 0.05, D.nv);
+    C.fillStyle = '#fff3c4'; C.beginPath(); C.moveTo(-0.02, 1.06); C.lineTo(0.03, 1.15); C.lineTo(-0.03, 1.15); C.closePath(); C.fill();
+    C.fillStyle = 'rgba(40, 52, 66, .85)'; C.beginPath(); C.moveTo(-0.18, 1.4); C.lineTo(-0.3, 1.56); C.lineTo(-0.36, 1.53); C.lineTo(-0.3, 1.3); C.closePath(); C.fill();
+    line([[-0.3, 1.36], [-0.4, 1.46], [-0.5, 1.46]], 0.035, BK);
+    // tanque branco com aba marinho e "D.U.R.O.", banco preto, rabeta branca com faixa âmbar
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.3, 1.18); C.quadraticCurveTo(-0.55, 1.26, -0.85, 1.12); C.lineTo(-0.85, 0.95); C.lineTo(-0.35, 0.95); C.closePath(); C.fill();
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-0.28, 1.12); C.lineTo(-0.72, 1.06); C.lineTo(-0.8, 0.8); C.lineTo(-0.5, 0.74); C.lineTo(-0.3, 0.88); C.closePath(); C.fill();
+    C.fillStyle = D.nv; C.beginPath(); C.moveTo(-0.32, 0.86); C.lineTo(-0.5, 0.76); C.lineTo(-0.78, 0.82); C.lineTo(-0.76, 0.9); C.lineTo(-0.5, 0.85); C.closePath(); C.fill();
+    C.save(); C.translate(-0.53, 0.97); C.rotate(0.12); C.scale(0.0052, -0.0052);
+    C.fillStyle = D.nv; C.font = '700 16px "Barlow Condensed", "Arial Narrow", sans-serif';
+    C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('D.U.R.O.', 0, 0);
     C.restore();
-    wheel(-1.45, 0.25, 0.25); wheel(0, 0.25, 0.25);
-    // carenagem traseira gorducha, assoalho, escudo e para-lama da frente
-    C.fillStyle = D.ber;
-    C.beginPath(); C.moveTo(-1.82, 0.48); C.quadraticCurveTo(-1.88, 0.98, -1.35, 1.02); C.lineTo(-0.86, 1.0);
-    C.quadraticCurveTo(-0.7, 0.72, -0.8, 0.44); C.lineTo(-1.76, 0.4); C.closePath(); C.fill();
-    line([[-1.78, 0.72], [-0.84, 0.74]], 0.06, D.mus);
-    C.fillStyle = '#2a2c31'; C.fillRect(-0.9, 0.36, 0.72, 0.07);
-    C.fillStyle = D.ber;
-    C.beginPath(); C.moveTo(-0.34, 0.4); C.quadraticCurveTo(0.12, 0.55, -0.05, 1.22); C.lineTo(-0.21, 1.24); C.quadraticCurveTo(-0.08, 0.62, -0.44, 0.42); C.closePath(); C.fill();
-    line([[-0.2, 0.55], [-0.12, 1.12]], 0.04, D.mus);
-    C.fillStyle = D.mus; C.beginPath(); C.arc(0, 0.25, 0.31, 0.15, Math.PI - 0.15); C.arc(0, 0.25, 0.26, Math.PI - 0.15, 0.15, true); C.closePath(); C.fill();
-    // guidão, farol redondo e banco
-    C.fillStyle = D.mus; C.beginPath(); C.roundRect(-0.24, 1.2, 0.26, 0.14, 0.06); C.fill();
-    C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(0.01, 1.27, 0.055, 0, Math.PI * 2); C.fill();
-    line([[-0.14, 1.33], [-0.34, 1.4]], 0.035, D.bk);
-    C.fillStyle = D.bk; C.beginPath(); C.roundRect(-1.5, 1.0, 0.62, 0.1, 0.05); C.fill();
-    // antena com a placa de senha e o pisca
-    line([[-1.62, 1.0], [-1.55, 1.64]], 0.022, D.cro);
-    C.fillStyle = D.cre; C.beginPath(); C.roundRect(-1.98, 1.28, 0.44, 0.19, 0.03); C.fill();
-    duroTxt(T('SENHA') + ' 00' + (4 + Math.round(phase * 2)), -1.76, 1.375, 8.5, D.berD);
+    C.fillStyle = BK; C.beginPath(); C.moveTo(-0.8, 1.1); C.lineTo(-1.25, 1.1); C.lineTo(-1.62, 1.14); C.lineTo(-1.6, 1.04); C.lineTo(-1.2, 0.96); C.lineTo(-0.82, 0.96); C.closePath(); C.fill();
+    C.fillStyle = WH; C.beginPath(); C.moveTo(-1.2, 1.02); C.lineTo(-1.6, 1.08); C.lineTo(-1.56, 0.92); C.lineTo(-1.2, 0.86); C.closePath(); C.fill();
+    line([[-1.22, 0.93], [-1.57, 0.99]], 0.03, D.amb);
+    // antena com o pisca vermelho e azul
     const on = Math.floor(t * 8 + phase * 2) % 2;
-    C.fillStyle = on ? '#ffb028' : '#c6ec4a'; C.beginPath(); C.arc(-1.55, 1.67, 0.05, 0, Math.PI * 2); C.fill();
-    // o Carimbado sentado reto: paletó berinjela, crachá, gravata limão ao vento, capacete-caixote mostarda
-    const hip = [-1.05, 1.12], sh = [-0.94, 1.66], hand = [-0.34, 1.4], knee = [-0.6, 1.04], foot = [-0.56, 0.46];
-    line([hip, knee, foot], 0.13, D.berD);
-    C.fillStyle = D.bk; C.beginPath(); C.ellipse(foot[0] + 0.05, foot[1], 0.1, 0.045, 0, 0, Math.PI * 2); C.fill();
-    line([hip, sh], 0.24, D.berL);
-    const wv = Math.sin(t * 14 + phase * 3) * 0.05;
-    line([[sh[0] + 0.06, sh[1] - 0.04], [sh[0] - 0.12, sh[1] - 0.08 + wv], [sh[0] - 0.3, sh[1] - 0.06 - wv]], 0.06, D.lim);
-    C.fillStyle = D.cre; C.fillRect(-0.94, 1.36, 0.1, 0.12);
-    C.fillStyle = D.lim; C.fillRect(-0.91, 1.47, 0.04, 0.03);
-    line([sh, [-0.68, 1.44], hand], 0.09, D.berL);
-    C.fillStyle = D.pele; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
+    line([[-1.5, 1.08], [-1.5, 1.6]], 0.02, '#8d9499');
+    C.fillStyle = on ? '#2f5bff' : '#ff2a2a'; C.beginPath(); C.arc(-1.5, 1.64, 0.05, 0, Math.PI * 2); C.fill();
+    // piloto da tropa: bermuda, perna de fora, chinelo, camisa de time e a mochila "PERDEU PLAYBOY"
+    const hip = [-0.95, 1.14], sh = [-0.82, 1.68], hand = [-0.45, 1.44], knee = [-0.58, 0.98], foot = [-0.74, 0.58];
+    const hem = [hip[0] + (knee[0] - hip[0]) * 0.7, hip[1] + (knee[1] - hip[1]) * 0.7];
+    line([knee, foot], 0.09, who.skin);
+    line([hip, hem], 0.15, who.shorts);
+    line([hem, knee], 0.1, who.skin);
+    C.fillStyle = '#2b2e33'; C.fillRect(foot[0] - 0.08, foot[1] - 0.035, 0.2, 0.03); // chinelo
+    line([[foot[0] - 0.02, foot[1] - 0.005], [foot[0] + 0.04, foot[1] + 0.03]], 0.014, '#2f6fd6');
+    line([hip, sh], 0.22, who.shirt);
+    line([[sh[0] + 0.02, sh[1] - 0.02], [sh[0] + 0.1, sh[1] - 0.1]], 0.05, who.trim);
+    line([sh, [-0.66, 1.45], hand], 0.09, who.shirt);
+    line([[-0.62, 1.45], hand], 0.08, who.skin);
+    C.fillStyle = who.skin; C.beginPath(); C.arc(hand[0], hand[1], 0.045, 0, Math.PI * 2); C.fill();
+    line([[sh[0] - 0.1, sh[1] - 0.02], [-1.0, 1.55]], 0.03, '#2a2a2a'); // alça da mochila
+    // mochila nas costas (por cima do tronco, pra frase ficar legível)
+    C.save(); C.translate(-1.2, 1.42); C.rotate(-0.08);
+    C.fillStyle = '#151515'; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.fill();
+    C.strokeStyle = '#3a3a3a'; C.lineWidth = 0.012; C.beginPath(); C.roundRect(-0.19, -0.26, 0.38, 0.52, 0.05); C.stroke();
+    C.fillStyle = '#262626'; C.fillRect(-0.19, 0.14, 0.38, 0.12);
+    duroTxt('PERDEU', 0, 0.02, 11, '#f3efe6', 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
+    duroTxt('PLAYBOY', 0, -0.12, 11, D.amb, 0.33, '400 $px "Bowlby One", "Arial Black", sans-serif');
+    C.restore();
     const hx = sh[0] + 0.07, hy = sh[1] + 0.21;
-    C.fillStyle = D.pele; C.beginPath(); C.arc(hx, hy, 0.14, 0, Math.PI * 2); C.fill();
-    C.fillStyle = D.mus; C.beginPath(); C.roundRect(hx - 0.18, hy - 0.01, 0.34, 0.25, 0.05); C.fill();
-    C.fillStyle = D.lim; C.fillRect(hx - 0.18, hy + 0.06, 0.34, 0.04);
-    C.strokeStyle = D.bk; C.lineWidth = 0.022; C.beginPath(); C.arc(hx + 0.09, hy - 0.04, 0.05, 0, Math.PI * 2); C.stroke();
-    C.fillStyle = D.bk; C.beginPath(); C.ellipse(hx + 0.1, hy - 0.11, 0.055, 0.02, 0, 0, Math.PI * 2); C.fill();
+    C.fillStyle = who.skin; C.beginPath(); C.arc(hx, hy, 0.14, 0, Math.PI * 2); C.fill();
+    if (who.head === 'capacete') { // capacete aberto branco, viseira levantada
+      C.fillStyle = '#f4f5f6'; C.beginPath(); C.arc(hx - 0.01, hy + 0.02, 0.155, 0.35, Math.PI * 1.15); C.closePath(); C.fill();
+      C.fillStyle = 'rgba(40, 52, 66, .8)'; C.fillRect(hx - 0.02, hy + 0.12, 0.17, 0.04);
+    } else if (who.head === 'bone') { // sem capacete, boné de aba reta virado pra trás
+      C.fillStyle = '#1b1d20'; C.beginPath(); C.arc(hx, hy + 0.03, 0.14, 0, Math.PI); C.fill(); C.fillRect(hx - 0.27, hy + 0.04, 0.15, 0.035);
+      C.fillStyle = '#ffd21f'; C.fillRect(hx - 0.02, hy + 0.13, 0.05, 0.03);
+    } else { // bandana e óculos escuros
+      C.fillStyle = '#c0161a'; C.beginPath(); C.arc(hx, hy + 0.03, 0.145, 0, Math.PI); C.fill();
+      line([[hx - 0.14, hy + 0.05], [hx - 0.27, hy - 0.02]], 0.035, '#c0161a');
+      C.fillStyle = '#111'; C.fillRect(hx + 0.02, hy - 0.01, 0.13, 0.045);
+    }
+    C.fillStyle = '#1a1a1a'; C.beginPath(); C.arc(hx + 0.1, hy + (who.head === 'bandana' ? -0.06 : 0.0), 0.022, 0, Math.PI * 2); C.fill();
     C.restore();
   }
   // Bravona passando voando na faixa da frente
@@ -2921,61 +2932,21 @@ html.kid #grow-dog { display: none !important; }
       drawBravona(x, y, S * 1.05, -c.x / 0.3);
     }
   }
-  // Quadradinho: peruinha fictícia de 5 portas, bicolor menta e branco, faróis redondos e a escada de pedreiro no teto;
-  // na faixa de trás, tirando racha. Mesmo comprimento e mesmas rodas (−0,62 e −2,98) do desenho anterior.
-  const QUAD_LANE = 0.3;
-  function drawQuadradinho(sx, sy, S, t) {
-    const u = s.law.quad;
+  // Uno branco com escada de alumínio no rack; na faixa de trás, tirando racha
+  const UNO_LANE = 0.3;
+  function drawUno(sx, sy, S, t) {
+    const u = s.law.uno;
     if (!u) return;
-    const x = sx(u.x), y = sy(0) - QUAD_LANE * S, k = 0.96 * S;
+    const x = sx(u.x), y = sy(0) - UNO_LANE * S, k = 0.96 * S;
     if (x < -0.5 * S || x - 4.2 * S > W) return;
-    const MN = '#8fdcc0', MNd = '#5fb597', WH = '#f4f3ee', BK = '#26282c', GL = '#1a2733', AL = '#c9ced3';
     const shake = u.state === 'blown' && u.t < 2 ? Math.sin(u.t * 70) * 0.012 : 0;
     C.save(); C.translate(x, y); C.scale(k, -k); C.translate(0, shake);
-    // carroceria alta de perua: capô curto, para-brisa em pé, teto reto até a traseira vertical
-    C.fillStyle = WH;
-    C.beginPath(); C.moveTo(0.03, 0.32); C.lineTo(0.05, 0.66); C.lineTo(-0.05, 0.76); C.lineTo(-0.6, 0.84); C.lineTo(-1.02, 1.48);
-    C.lineTo(-3.42, 1.5); C.lineTo(-3.56, 1.3); C.lineTo(-3.6, 0.32); C.closePath(); C.fill();
-    C.fillStyle = MN;
-    C.beginPath(); C.moveTo(0.03, 0.32); C.lineTo(0.05, 0.66); C.lineTo(-0.05, 0.76); C.lineTo(-0.6, 0.84); C.lineTo(-0.72, 0.92);
-    C.lineTo(-3.58, 0.92); C.lineTo(-3.6, 0.32); C.closePath(); C.fill();
-    C.fillStyle = MNd; C.fillRect(-3.58, 0.6, 3.6, 0.035);
-    C.fillStyle = BK; C.fillRect(-3.64, 0.28, 0.42, 0.2); C.fillRect(-0.3, 0.28, 0.36, 0.22);
-    C.fillRect(-3.2, 0.3, 2.9, 0.06);
-    C.beginPath(); C.arc(-0.62, 0.32, 0.36, 0, Math.PI); C.fill();
-    C.beginPath(); C.arc(-2.98, 0.32, 0.36, 0, Math.PI); C.fill();
-    // três janelas de cada lado e o adesivo na de trás
-    C.fillStyle = GL;
-    C.beginPath(); C.moveTo(-1.06, 1.42); C.lineTo(-1.82, 1.42); C.lineTo(-1.82, 0.97); C.lineTo(-0.78, 0.96); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-1.92, 1.42); C.lineTo(-2.68, 1.42); C.lineTo(-2.68, 0.97); C.lineTo(-1.92, 0.97); C.closePath(); C.fill();
-    C.beginPath(); C.moveTo(-2.78, 1.42); C.lineTo(-3.38, 1.43); C.lineTo(-3.48, 1.28); C.lineTo(-3.48, 0.97); C.lineTo(-2.78, 0.97); C.closePath(); C.fill();
-    C.save(); C.translate(-3.12, 1.12); C.scale(0.0045, -0.0045);
-    C.fillStyle = '#ffec6e'; C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif'; C.textAlign = 'center'; C.textBaseline = 'middle';
-    C.fillText('É NOIS', 0, -8); C.fillText('NA OBRA', 0, 8);
-    C.restore();
-    C.strokeStyle = 'rgba(0, 0, 0, .3)'; C.lineWidth = 0.015; C.beginPath();
-    C.moveTo(-0.76, 0.92); C.lineTo(-0.8, 0.38); C.moveTo(-1.87, 0.95); C.lineTo(-1.87, 0.38); C.moveTo(-2.73, 0.95); C.lineTo(-2.73, 0.38); C.stroke();
-    C.fillStyle = BK; C.fillRect(-1.75, 0.8, 0.13, 0.03); C.fillRect(-2.62, 0.8, 0.13, 0.03);
-    // farol redondo e lanterna
-    C.fillStyle = '#fff3c4'; C.beginPath(); C.arc(-0.02, 0.6, 0.07, 0, Math.PI * 2); C.fill();
-    C.fillStyle = '#c0161a'; C.fillRect(-3.6, 0.72, 0.06, 0.2);
-    // bagageiro e a escada de alumínio amarrada com fita vermelha (a piada continua)
-    line([[-1.5, 1.49], [-1.5, 1.59]], 0.04, BK); line([[-3.0, 1.5], [-3.0, 1.6]], 0.04, BK);
-    C.fillStyle = AL; C.fillRect(-3.95, 1.59, 4.15, 0.035); C.fillRect(-3.95, 1.68, 4.15, 0.035);
-    C.strokeStyle = '#8f969c'; C.lineWidth = 0.02; C.beginPath();
-    for (let lx = 0.1; lx > -3.95; lx -= 0.3) { C.moveTo(lx, 1.59); C.lineTo(lx, 1.72); }
-    C.stroke();
-    C.fillStyle = '#d61f1f'; C.fillRect(-1.55, 1.54, 0.06, 0.22); C.fillRect(-3.05, 1.54, 0.06, 0.22);
-    // rodas de liga
-    for (const wx of [-0.62, -2.98]) {
-      C.fillStyle = '#111214'; C.beginPath(); C.arc(wx, 0.3, 0.29, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#9aa3a8'; C.beginPath(); C.arc(wx, 0.3, 0.17, 0, Math.PI * 2); C.fill();
-      C.strokeStyle = '#3a3f44'; C.lineWidth = 0.035; C.beginPath();
-      for (let i = 0; i < 5; i++) { const a = -u.x / 0.29 + i * Math.PI * 0.4; C.moveTo(wx, 0.3); C.lineTo(wx + Math.cos(a) * 0.16, 0.3 + Math.sin(a) * 0.16); }
-      C.stroke();
-    }
+    const wheels = unoBody('#eceeea', -u.x / 0.29, 0);
+    C.fillStyle = '#4a4e54'; C.fillRect(-3.3, 0.6, 3.0, 0.04);
+    unoLadder();
+    wheels();
     // motorista
-    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-1.4, 1.14, 0.12, 0, Math.PI * 2); C.fill();
+    C.fillStyle = '#3a2a20'; C.beginPath(); C.arc(-1.85, 1.08, 0.12, 0, Math.PI * 2); C.fill();
     // motor fundindo: labareda saindo do capô
     if (u.state === 'blown' && u.t < 1.2) {
       const fl = 1 - u.t / 1.2;
@@ -3262,26 +3233,19 @@ html.kid #grow-dog { display: none !important; }
     });
   }
 
-  // mochila 69 Rango (coordenadas da mochila: x -0,4…-0,1, y 0,1…0,6): tampa preta com vapor, selo redondo
-  // com o 69 e RANGO em preto na vertical. Contorno preto pra ler bem à noite.
-  function drawRango() {
-    const K = BAG.ink, Y = BAG.c;
-    C.fillStyle = K; C.fillRect(-0.4, 0.52, 0.3, 0.08);
-    C.strokeStyle = Y; C.lineWidth = 0.012; C.lineCap = 'round'; C.beginPath();
-    for (const vx of [-0.32, -0.25, -0.18]) { C.moveTo(vx, 0.535); C.quadraticCurveTo(vx + 0.02, 0.555, vx, 0.57); C.quadraticCurveTo(vx - 0.02, 0.585, vx, 0.595); }
-    C.stroke();
-    C.fillStyle = K; C.beginPath(); C.arc(-0.25, 0.44, 0.092, 0, Math.PI * 2); C.fill();
-    C.save(); C.translate(-0.25, 0.438); C.scale(0.01, -0.01);
-    C.fillStyle = Y; C.font = '400 10.5px "Bowlby One", "Arial Black", sans-serif'; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('69', 0, 0.5);
-    C.restore();
-    // RANGO na vertical entre o pé e o selo, no maior tamanho que couber (0,21 m)
-    C.save(); C.translate(-0.25, 0.228); C.scale(0.01, -0.01); C.rotate(-Math.PI / 2);
-    C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-    const fit = Math.min(1, 21 / C.measureText(BAG.text).width);
-    C.font = `700 ${(14 * fit).toFixed(2)}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-    C.fillStyle = K; C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(BAG.text, 0, 0);
-    C.restore();
-    C.strokeStyle = K; C.lineWidth = 0.014; rrect(-0.4, 0.1, 0.3, 0.5, 0.04); C.stroke();
+  // mochila térmica no desenho dos modelos: corpo com contorno, tampa, dois frisos claros e o nome no meio
+  // (coordenadas da mochila: x −0,4…−0,1, y 0,1…0,6; o modelo é 64×105 a partir de x=23, y=10)
+  function drawBag() {
+    const B = BAG, X = mx => -0.4 + (mx - 23) / 64 * 0.3, Y = my => 0.6 - (my - 10) / 105 * 0.5, OL = '#242424';
+    C.fillStyle = B.c; rrect(-0.4, 0.1, 0.3, 0.5, 0.05); C.fill();
+    C.fillStyle = B.lid || B.c; rrect(-0.4, Y(35), 0.3, 0.6 - Y(35), 0.033); C.fill();
+    C.strokeStyle = OL; C.lineWidth = 0.008; rrect(-0.4, Y(35), 0.3, 0.6 - Y(35), 0.033); C.stroke();
+    C.globalAlpha = 0.4; line([[X(29), Y(39)], [X(81), Y(39)]], 0.006, B.ink); line([[X(29), Y(105)], [X(81), Y(105)]], 0.006, B.ink); C.globalAlpha = 1;
+    if (B.rango) {
+      duroTxt('69', -0.25, Y(61), 16, B.ink, 0.25, '400 $px "Bowlby One", "Arial Black", sans-serif');
+      duroTxt(B.text, -0.25, Y(85), 7.5, B.ink, 0.25, '700 $px "Barlow Condensed", "Arial Narrow", sans-serif');
+    } else duroTxt(B.text, -0.25, Y(68), 9.5, B.ink, 0.255, `${B.italic ? 'italic ' : ''}700 $px "Barlow Condensed", "Arial Narrow", sans-serif`);
+    C.strokeStyle = OL; C.lineWidth = 0.011; rrect(-0.4, 0.1, 0.3, 0.5, 0.05); C.stroke();
   }
   function line(pts, w, col) {
     C.strokeStyle = col; C.lineWidth = w; C.beginPath();
@@ -3349,10 +3313,10 @@ html.kid #grow-dog { display: none !important; }
       cinza: { name: 'Cinza', c: '#8a9096' },
       amarela: { name: 'Amarela', c: '#ffd400' } } },
     bag: { label: 'Mochila', opts: {
-      keetute: { name: 'keetute', c: '#ffd21f', ink: '#16181b', text: 'keetute', italic: false },
-      aifode: { name: 'aiFudi', c: '#ea1d2c', ink: '#ffffff', text: 'aiFudi', italic: true },
+      keetute: { name: 'keetute', c: '#218879', ink: '#fff6db', text: 'keetute', italic: true },
+      aifode: { name: 'aiFudi', c: '#bf4668', ink: '#ffffff', text: 'aiFudi', italic: true },
       // 69 Rango: delivery fictício do jogo, com chave própria (versão antiga que receber 'rango69' na sala mostra a primeira mochila)
-      rango69: { name: '69 Rango', c: '#ffec6e', ink: '#141414', text: 'RANGO', italic: false, rango: true } } },
+      rango69: { name: '69 Rango', c: '#ffec6e', ink: '#171717', lid: '#222222', text: 'RANGO', italic: false, rango: true } } },
     model: { label: 'Bike', opts: {
       caicara: { name: 'Litorânea de cestinha', c: '#3fc1a8', def: 'agua' },
       monark: { name: 'Pedalona 80', c: '#d40000', def: 'ferrari', lock: 'grau30' },
@@ -3361,6 +3325,10 @@ html.kid #grow-dog { display: none !important; }
       bruno: { name: 'Bravona Turbinada', c: '#8a1020', def: 'vinho', lock: 'grau2000' } } },
     frame: { label: 'Cor da bike', opts: {
       ferrari: { name: 'Vermelho Foguete', c: '#d40000' },
+      azul: { name: 'Azul royal', c: '#1f5fd6' },
+      verde: { name: 'Verde bandeira', c: '#1f9a46' },
+      rosa: { name: 'Rosa chiclete', c: '#ff6fae' },
+      cromado: { name: 'Cromado', c: '#cfd6db' },
       vinho: { name: 'Vinho', c: '#8a1020' },
       calcinha: { name: 'Azul calcinha', c: '#8ec9e8' },
       creme: { name: 'Creme', c: '#efe0b5' },
@@ -3370,7 +3338,6 @@ html.kid #grow-dog { display: none !important; }
       branca: { name: 'Branca', c: '#f0f0ec' },
       amarela: { name: 'Amarela', c: '#ffcc00' },
       laranja: { name: 'Laranja', c: '#ff7a12' },
-      rosa: { name: 'Rosa chiclete', c: '#ff6fae' },
       roxa: { name: 'Roxa', c: '#6b3fb8' } } },
     dog: { label: 'Caramelo (multiplayer)', opts: {
       normal: { name: 'Caramelo raiz', c: '#d9a441' },
@@ -3837,16 +3804,7 @@ html.kid #grow-dog { display: none !important; }
 
     C.save(); C.translate(hip[0], hip[1]); C.rotate(ta);
     // mochila térmica de entrega
-    C.fillStyle = BAG.c; rrect(-0.4, 0.1, 0.3, 0.5, 0.04); C.fill();
-    if (BAG.rango) drawRango();
-    else {
-      C.fillStyle = 'rgba(0, 0, 0, .16)'; C.fillRect(-0.4, 0.53, 0.3, 0.07);
-      C.fillStyle = '#d9dde0'; C.fillRect(-0.4, 0.17, 0.3, 0.022);
-      C.save(); C.translate(-0.25, 0.36); C.scale(0.01, -0.01); C.rotate(-Math.PI / 2);
-      C.fillStyle = BAG.ink; C.font = `${BAG.italic ? 'italic ' : ''}700 12px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText(BAG.text, 0, 0);
-      C.restore();
-    }
+    drawBag();
     // camisa de time listrada
     rrect(-0.095, -0.02, 0.19, 0.53, 0.06); C.fillStyle = JERSEY.base; C.fill();
     C.save(); rrect(-0.095, -0.02, 0.19, 0.53, 0.06); C.clip();
@@ -4590,7 +4548,7 @@ html.kid #grow-dog { display: none !important; }
   // re-arma os desafios a cada empinada nova na sala (lá a volta não acaba quando a frente encosta)
   function rearm() {
     const L = s.law, F = fresh();
-    for (const k of ['car', 'bikes', 'fuga', 'quad', 'thief']) F.law[k] = L[k];
+    for (const k of ['car', 'bikes', 'fuga', 'uno', 'thief']) F.law[k] = L[k];
     s.law = F.law;
     s.pack = { ...F.pack, dogs: s.pack.dogs.filter(d => d.state !== 'sleep'), cat: s.pack.cat };
     if (!s.kite) s.kiteDone = false;

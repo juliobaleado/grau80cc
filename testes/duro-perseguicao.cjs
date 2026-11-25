@@ -30,7 +30,7 @@ const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  
       window.__vt = 1000; const q = [];
       performance.now = () => window.__vt; Date.now = () => 1764000000000 + window.__vt;
       window.requestAnimationFrame = cb => { q.push(cb); return q.length; };
-      window.__tick = ms => { window.__vt += ms; const cbs = q.splice(0); for (const cb of cbs) { try { cb(window.__vt); } catch (e) { console.error(e); } } };
+      window.__errs = []; window.__tick = ms => { window.__vt += ms; const cbs = q.splice(0); for (const cb of cbs) { try { cb(window.__vt); } catch (e) { window.__errs.push(String(e && e.message || e)); } } };
     }, lang);
     await p.setViewport({ width: vw, height: vh });
     await p.goto(`http://127.0.0.1:8841/${which}`, { waitUntil: 'load' });
@@ -53,6 +53,7 @@ const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  
     const log = [];
     for (let i = 0; i < 6000; i++) { await c.tick(1); if (i % 3 === 0) log.push(await c.p.evaluate(snap)); if (await c.p.evaluate(() => __t.s.mode === 'over')) break; }
     const fim = await c.p.evaluate(() => ({ eyebrow: document.getElementById('endEyebrow').textContent, achs: __t.achGot() }));
+    c.errs.push(...await c.p.evaluate(() => [...new Set(window.__errs)]));
     await c.p.close();
     return { log, errs: c.errs, fim };
   }
@@ -63,9 +64,11 @@ const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  
   let diff = -1; for (let i = 0; i < Math.min(A.log.length, N.log.length); i++) if (JSON.stringify(A.log[i]) !== JSON.stringify(N.log[i])) { diff = i; break; }
   ok(diff === -1, 'estado da perseguição idêntico em todas as amostras (posição, velocidade, estado de cada veículo, fim)', diff === -1 ? undefined : { i: diff, antigo: A.log[diff], novo: N.log[diff] });
   const seen = k => N.log.some(e => k(e));
-  ok(seen(e => e.car && e.car.st === 'chase') && seen(e => e.car && e.car.st === 'flat'), 'a Caravana persegue e fura o pneu nos mesmos pontos');
-  ok(seen(e => e.bikes.length === 3 && e.bikes.every(q => q.st === 'chase')) && seen(e => e.bikes.some(q => q.st === 'go')), 'a Esquadrilha persegue e vai atrás da CG nos mesmos pontos');
-  ok(seen(e => e.bikes.some(q => q.st === 'hunt')), 'a Esquadrilha volta e espanta os ladrões');
+  ok(seen(e => e.car && e.car.st === 'chase') && seen(e => e.car && e.car.st === 'flat'), 'a viatura persegue e fura o pneu nos mesmos pontos');
+  ok(seen(e => e.bikes.length === 3 && e.bikes.every(q => q.st === 'chase')) && seen(e => e.bikes.some(q => q.st === 'go')), 'a tropa de moto persegue e vai atrás da moto que passa nos mesmos pontos');
+  ok(seen(e => e.bikes.some(q => q.st === 'hunt')), 'a tropa de moto volta e espanta os ladrões');
+  const blownA = A.log.findIndex(e => e.uno && e.uno.st === 'blown'), blownN = N.log.findIndex(e => e.uno && e.uno.st === 'blown');
+  ok(blownN > 0 && blownA === blownN && N.log.some(e => e.flags.split(',')[6] === 'true'), 'racha termina por falha do motor do Uno no mesmo quadro e conta a vitória', [blownA, blownN]);
   ok(A.fim.achs === N.fim.achs, 'mesmas conquistas no fim', N.fim.achs);
   const last = N.log[N.log.length - 1];
   console.log('    partida comparada até', last.w, 'm de grau,', N.log.length, 'amostras');

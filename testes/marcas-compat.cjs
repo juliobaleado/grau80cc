@@ -1,5 +1,5 @@
 // Compatibilidade e visual das marcas fictícias (69 Rango, Pedalona 80, Fumacinha 4T, Litorânea, Bravona, Trilha Bruta,
-// Quadradinho, Vermelho Foguete, Guaranazinho). Abre o jogo com dados salvos de um jogador da versão anterior e confere
+// Vermelho Foguete, Guaranazinho; o Uno com escada voltou) e das cores novas de bike. Abre o jogo com dados salvos de um jogador da versão anterior e confere
 // que nada se perde: visual escolhido, bikes liberadas, conquistas, recordes e compras (pastéis da Google Play).
 // Também confere as três mochilas, a troca na garagem, as traduções e tira capturas. Sem rede: o WebSocket é falso e
 // toda requisição externa responde 404 (não entra no saguão nem em sala nenhuma).
@@ -111,6 +111,19 @@ const SAVE = {
     await c.p.screenshot({ path: path.join(OUT, `bike-${model}.png`) });
     await c.p.close();
   }
+  {
+    const c = await session(SAVE);
+    const st = await c.p.evaluate(() => { const o = __t.LOOKS.frame.opts, k = Object.keys(o); return { k: k.slice(0, 6), azul: o.azul && o.azul.name, verde: o.verde && o.verde.name, rosa: o.rosa && o.rosa.name, cromado: o.cromado && o.cromado.name, first: k[0] }; });
+    ok(st.azul === 'Azul royal' && st.verde === 'Verde bandeira' && st.rosa === 'Rosa chiclete' && st.cromado === 'Cromado', 'cores novas de bike: azul, verde, rosa e cromado', st.k);
+    ok(st.first === 'ferrari' && st.k.slice(1, 5).join() === 'azul,verde,rosa,cromado', 'as quatro aparecem logo no começo da fileira (sem rolar)', st.k);
+    await c.p.close();
+    for (const frame of ['azul', 'verde', 'rosa', 'cromado']) {
+      const c2 = await session({ ...SAVE, 'grau80-look': JSON.stringify({ model: 'caicara', frame, bag: 'rango69' }) }, { dpr: 2 });
+      ok(await c2.p.evaluate(f => __t.pick.frame === f, frame), 'cor ' + frame + ' selecionável e salva');
+      await c2.p.screenshot({ path: path.join(OUT, 'cor-' + frame + '.png') });
+      await c2.p.close();
+    }
+  }
   for (const lang of ['en', 'es']) {
     const c = await session(SAVE, { lang });
     const n = await c.p.evaluate(() => [...document.querySelectorAll('#garage *')].map(e => e.textContent).find(t => /Rocket red|Rojo cohete/.test(t)) || '');
@@ -118,13 +131,13 @@ const SAVE = {
     await c.p.close();
   }
 
-  console.log('\nE. Na rua: Quadradinho, Bravona dos ladrões e Guaranazinho');
+  console.log('\nE. Na rua: Uno do racha, Bravona dos ladrões e Guaranazinho');
   {
     const c = await session({ ...SAVE, 'grau80-look': JSON.stringify({ bag: 'rango69' }) });
     await c.p.screenshot({ path: path.join(OUT, 'guaranazinho-menu.png') });
     
     await c.p.evaluate(() => __t.begin('motoca')); await c.tick(5); await c.p.keyboard.type('agenor'); await c.tick(60);
-    for (const [name, at] of [['quadradinho', 735], ['quadradinho-fundiu', 806], ['bravona-ladroes', 935], ['bravona-fuga', 604]]) {
+    for (const [name, at] of [['uno', 735], ['uno-fundiu', 806], ['bravona-ladroes', 935], ['bravona-fuga', 604]]) {
       if (name === 'bravona-fuga') { await c.p.close(); break; }
       await c.p.evaluate(at => { __t.s.wStart -= at - 40 - __t.s.wDist; }, at);
       for (let i = 0; i < 900 && (await c.p.evaluate(() => __t.s.wDist)) < at; i++) await c.tick(5);
@@ -136,7 +149,7 @@ const SAVE = {
     await c2.p.evaluate(() => { __t.s.wStart -= 563 - __t.s.wDist; });
     for (let i = 0; i < 900 && (await c2.p.evaluate(() => __t.s.wDist)) < 603; i++) await c2.tick(5);
     await c2.tick(8); await c2.p.screenshot({ path: path.join(OUT, 'bravona-fuga.png') });
-    // fim da volta perdendo o racha pro Quadradinho, nos 3 idiomas (a frase é do jogo, fica em português)
+    // fim da volta perdendo o racha pro Uno (a frase é do jogo, fica em português)
     await c2.p.close();
     const c3 = await session(SAVE);
     await c3.p.evaluate(() => __t.begin('motoca')); await c3.tick(5); await c3.p.keyboard.type('agenor'); await c3.tick(60);
@@ -146,8 +159,8 @@ const SAVE = {
     for (let i = 0; i < 600 && !(await c3.p.evaluate(() => __t.s.mode === 'over')); i++) await c3.tick(5);
     await wait(1500); await c3.tick(10);
     const fim = await c3.p.evaluate(() => [document.getElementById('endEyebrow').textContent, document.getElementById('endTitle').textContent]);
-    ok(fim[0] === 'O Quadradinho ganhou o racha', 'fim da volta no racha: "O Quadradinho ganhou o racha"', fim);
-    await c3.p.screenshot({ path: path.join(OUT, 'fim-quadradinho.png') });
+    ok(fim[0] === 'O Uno ganhou o racha', 'fim da volta no racha: "O Uno ganhou o racha"', fim);
+    await c3.p.screenshot({ path: path.join(OUT, 'fim-uno.png') });
     ok(!c3.errs.length, 'sem erro de JavaScript na rua', c3.errs);
     await c3.p.close();
   }
@@ -156,7 +169,7 @@ const SAVE = {
   {
     const c = await session({ ...SAVE, 'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau1000: 1, grau2000: 1 }) });
     const txt = await c.p.evaluate(() => document.body.innerText + ' ' + [...document.querySelectorAll('[title],[aria-label]')].map(e => (e.title || '') + ' ' + (e.getAttribute('aria-label') || '')).join(' '));
-    const achou = (txt.match(/Monark|Bikelete|Caiçara|Titan|CB 99|CG 160|Motorizada XR|Ferrari|Dolly|\bUno\b|Pol[ií]cia|Rocam|viatura/g) || []);
+    const achou = (txt.match(/Monark|Bikelete|Caiçara|Titan|CB 99|CG 160|Motorizada XR|Ferrari|Dolly|Pol[ií]cia|PMSC|Rocam|ROCAM|viatura/g) || []);
     ok(!achou.length, 'texto visível da tela inicial (garagem completa) sem marcas reais', achou);
     await c.p.close();
   }
