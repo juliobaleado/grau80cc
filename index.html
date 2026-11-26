@@ -921,8 +921,12 @@ html.kid #grow-dog { display: none !important; }
   const MOTO = {
     bruno: { push: 6.9, g2: 188, snd: 1 },  // Titânica 99: 160 4 tempos
     pop2: { push: 8.9, g2: 170, snd: 2 },   // Pó-pop Bicilíndrica: dois cilindros, mais rápida que a 99
-    gs: { push: 14.5, g2: 125, snd: 3 }     // Robozão: boxer grande, a mais rápida do jogo (~120 km/h)
+    // Robozão: boxer grande, a mais rápida do jogo (~120 km/h). Torquezão: rev = giro sobe mais rápido, lift = força de
+    // levantar a frente, fade = velocidade em que essa força cai (maior = segura o torque lá em cima), damp = amortecimento
+    // do grau (menor = mais nervosa), brk = freio
+    gs: { push: 14.5, g2: 125, snd: 3, rev: 2.5, lift: 1.4, fade: 50, damp: 0.7, brk: 1.6 }
   };
+  const MX = k => (MOTO[MODEL] && MOTO[MODEL][k]) || 1; // multiplicador da moto atual (1 = comportamento padrão)
   const powerNow = rpm => (MOTO[MODEL] ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
@@ -2010,7 +2014,7 @@ html.kid #grow-dog { display: none !important; }
     s.chapa = Math.max(0, s.chapa - h);
 
     if (s.mode === 'ready') {
-      revTo(IDLE + s.thr * 8600, 5, h);
+      revTo(IDLE + s.thr * 8600, 5 * MX('rev'), h);
     } else if (riding) {
       // relação: quantos rpm por m/s. As 4 tempos têm 2 marchas: a 1ª igual às bikes (corta perto de 46 km/h e aí engata),
       // a 2ª longa (cada moto tem a sua); abaixo de ~34 km/h reduz pra 1ª
@@ -2021,21 +2025,21 @@ html.kid #grow-dog { display: none !important; }
       const off = Math.min(9000, IDLE + s.v * gear * 0.76);
       // soltou o acelerador: o 2 tempos perde giro devagar; voltou a acelerar, retoma de onde estava
       const target = off + (on - off) * s.thr;
-      revTo(target, target > s.rpm ? 6 : 0.9, h);
+      revTo(target, target > s.rpm ? 6 * MX('rev') : 0.9, h);
       const drive = s.cut > 0 ? 0 : s.thr * powerNow(s.rpm);
 
       // as 4 tempos têm mais força pra frente (Titânica ~81, Pó-pop ~90, Robozão ~120 km/h); as 2 tempos, ~48 a ~70
       const push = M4 ? M4.push : 4.6;
-      s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6) * h;
+      s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6 * MX('brk')) * h;
       if (s.v < 0) s.v = 0;
       const dx = s.v * h;
       s.x += dx; s.wheel += dx / R;
 
-      const lift = drive * 14 * (1 - Math.min(s.v, 22) / 40);
+      const lift = drive * 14 * MX('lift') * (1 - Math.min(s.v, 22) / (M4 && M4.fade || 40));
       const grav = 10 * Math.cos(s.th + PHI0 + STAND_PHI * s.stand);
       // freio traseiro: quanto mais rápido, mais forte ele enterra a frente
-      const brakeTq = s.th > 0 ? s.brk * (8 + s.v * 0.7) : 0;
-      let a = lift - grav - 0.9 * s.om - brakeTq;
+      const brakeTq = s.th > 0 ? s.brk * (8 + s.v * 0.7) * MX('brk') : 0;
+      let a = lift - grav - 0.9 * MX('damp') * s.om - brakeTq;
       // passou de ~85°: o paralama traseiro raspa no chão, solta faísca e segura a moto de leve
       s.scrape = s.th > SCRAPE ? (s.th - SCRAPE) / (CRASH - SCRAPE) : 0;
       if (s.scrape > 0) {
@@ -3500,7 +3504,7 @@ html.kid #grow-dog { display: none !important; }
       line([[0.25, -0.005], [0.25, 0.48]], 0.046, F); // tubo do selim, reto
       line([[0.25, 0.48], [0.86, 0.52]], 0.046, F);   // tubo de cima, horizontal
       line([[0.44, -0.01], [0.9, 0.36]], 0.05, F);    // tubo de baixo, do movimento central à caixa de direção
-      C.strokeStyle = F; C.lineWidth = 0.04; C.beginPath(); C.arc(0.4625, 0.281, 0.2125, 0, Math.PI * 2); C.stroke(); // barra circular
+      C.strokeStyle = F; C.lineWidth = 0.034; C.beginPath(); C.arc(0.4625, 0.281, 0.17, 0, Math.PI * 2); C.stroke(); // barra circular: só encosta por dentro nos três canos
       line([[0.85, 0.56], [0.92, 0.33]], 0.06, F);
       line([[0.92, 0.33], [L, 0]], 0.04, F);
       line([[-0.2, 0.47], [0.25, 0.48]], 0.03, F);
