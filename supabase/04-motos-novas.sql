@@ -33,7 +33,7 @@ begin
     return 'valores_invalidos';
   end if;
   -- média máxima possível: a Titan chega perto de 24 m/s, as outras perto de 20 m/s
-  vmax := case p_bike when 'bruno' then 25 when 'pop2' then 27 when 'gs' then 31 else 21 end; -- máxima no jogo + folga: Titânica ~22,4, Pó-pop ~25, Robozão ~28,3 m/s
+  vmax := case p_bike when 'bruno' then 25 when 'pop2' then 27 when 'gs' then 36 else 21 end; -- máxima no jogo + folga: Titânica ~22,4, Pó-pop ~25, Robozão ~33,5 m/s
   if p_metros > p_segundos * vmax then return 'rapido_demais'; end if;
   -- a empinada não pode ter durado mais do que o tempo real desde que a partida começou
   if p_segundos > decorrido + 3 then return 'tempo_impossivel'; end if;

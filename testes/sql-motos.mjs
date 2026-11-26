@@ -35,8 +35,8 @@ console.log('\nB. Depois do 04');
 await db.exec(rd('04-motos-novas.sql'));
 ok(await envia('pop2', 260, 10) === 'ok_teste', 'Pó-pop aceita a 26 m/s de média (máxima no jogo ~25)');
 ok(await envia('pop2', 280, 10) === 'rapido_demais', 'Pó-pop acima de 27 m/s é recusada');
-ok(await envia('gs', 300, 10) === 'ok_teste', 'Robozão aceita a 30 m/s de média (máxima no jogo ~28,3)');
-ok(await envia('gs', 320, 10) === 'rapido_demais', 'Robozão acima de 31 m/s é recusada');
+ok(await envia('gs', 350, 10) === 'ok_teste', 'Robozão aceita a 35 m/s de média (máxima no jogo ~33,5)');
+ok(await envia('gs', 370, 10) === 'rapido_demais', 'Robozão acima de 36 m/s é recusada');
 let iguais = true;
 for (const b of Object.keys(antes)) { const agora = [await envia(b, 210, 10), await envia(b, 250, 10), await envia(b, 260, 10)]; if (JSON.stringify(agora) !== JSON.stringify(antes[b])) { iguais = false; console.log('   ', b, antes[b], agora); } }
 ok(iguais, 'as 5 bikes antigas respondem igual a antes (mesmos limites)', antes.bruno.concat(antes.caicara));
