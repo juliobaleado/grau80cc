@@ -908,7 +908,7 @@ html.kid #grow-dog { display: none !important; }
   const PHI0 = 0.27;           // centro de massa à frente do eixo traseiro
   const BAL = Math.PI / 2 - PHI0; // ponto de equilíbrio (~74.5°)
   const STAND_PHI = 0.12;      // em pé com o quadril pra trás o peso vai pra trás: equilíbrio cai pra ~67.6°
-  const balNow = () => BAL - STAND_PHI * s.stand;
+  const balNow = () => BAL - STAND_PHI * MX('stand') * s.stand;
   const CRASH = 1.62;          // paralama encosta no chão (~93°)
   const SCRAPE = 1.48;         // a partir de ~85° o paralama traseiro raspa e segura de leve
   const RPM_MAX = 11000, IDLE = 1600;
@@ -923,8 +923,9 @@ html.kid #grow-dog { display: none !important; }
     pop2: { push: 8.9, g2: 170, snd: 2 },   // Pó-pop Bicilíndrica: dois cilindros, mais rápida que a 99
     // Robozão: boxer grande, a mais rápida do jogo (~120 km/h). Torquezão: rev = giro sobe mais rápido, lift = força de
     // levantar a frente, fade = velocidade em que essa força cai (maior = segura o torque lá em cima), damp = amortecimento
-    // do grau (menor = mais nervosa), brk = freio
-    gs: { push: 14.5, g2: 125, snd: 3, rev: 2.5, lift: 1.4, fade: 50, damp: 0.7, brk: 1.6 }
+    // do grau (menor = mais nervosa), brk = freio; pull/stand = força da puxada e do peso do piloto em pé (moto de
+    // 260 kg: o piloto mexe pouco nela)
+    gs: { push: 14.5, g2: 125, snd: 3, rev: 2.5, lift: 1.4, fade: 50, damp: 0.7, brk: 1.6, pull: 0.25, stand: 0.7 }
   };
   const MX = k => (MOTO[MODEL] && MOTO[MODEL][k]) || 1; // multiplicador da moto atual (1 = comportamento padrão)
   const powerNow = rpm => (MOTO[MODEL] ? power4 : power)(rpm);
@@ -1214,7 +1215,11 @@ html.kid #grow-dog { display: none !important; }
     standHeld = true; ui.btnPull.classList.add('held');
     if (s.mode !== 'ride' || paused || s.pullCd > 0) return;
     s.pull = 1; s.pullCd = 0.6;
-    s.om += 0.35 + Math.min(s.v, 18) * 0.08;
+    const kick = 0.35 + Math.min(s.v, 18) * 0.08;
+    // Robozão (moto pesada): a puxada só segura a queda (zera a velocidade de cair, como sente na 99), mas não joga pra trás;
+    // com a frente parada ou subindo, ela dá só um tranquinho (pull)
+    if (MOTO[MODEL] && MOTO[MODEL].pull) s.om = s.om < 0 ? Math.min(0, s.om + kick) : s.om + kick * MOTO[MODEL].pull;
+    else s.om += kick;
   }
   function endPull() { standHeld = false; ui.btnPull.classList.remove('held'); }
   ui.btnPull = $('btnPull');
@@ -2036,10 +2041,12 @@ html.kid #grow-dog { display: none !important; }
       s.x += dx; s.wheel += dx / R;
 
       const lift = drive * 14 * MX('lift') * (1 - Math.min(s.v, 22) / (M4 && M4.fade || 40));
-      const grav = 10 * Math.cos(s.th + PHI0 + STAND_PHI * s.stand);
+      const grav = 10 * Math.cos(s.th + PHI0 + STAND_PHI * MX('stand') * s.stand);
       // freio traseiro: quanto mais rápido, mais forte ele enterra a frente
       const brakeTq = s.th > 0 ? s.brk * (8 + s.v * 0.7) * MX('brk') : 0;
       let a = lift - grav - 0.9 * MX('damp') * s.om - brakeTq;
+      // Robozão: durante o tranco da puxada, se a frente está caindo, o piloto segura a queda (nunca empurra pra trás)
+      if (s.pull > 0 && s.om < 0 && M4 && M4.pull) a -= s.om * 16 * s.pull;
       // passou de ~85°: o paralama traseiro raspa no chão, solta faísca e segura a moto de leve
       s.scrape = s.th > SCRAPE ? (s.th - SCRAPE) / (CRASH - SCRAPE) : 0;
       if (s.scrape > 0) {
