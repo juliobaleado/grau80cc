@@ -3457,7 +3457,7 @@ html.kid #grow-dog { display: none !important; }
   // geometria do piloto em cada bike (quadril, mão, joelho, tornozelo) e o tipo de roda
   const GEO = {
     monark: { hip: [0.24, 0.66], hand: [0.63, 0.65], knee: [0.6, 0.42], ankle: [0.53, -0.07], wheel: 'bike' },
-    xr: { hip: [0.2, 0.7], hand: [0.66, 0.68], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
+    xr: { hip: [0.2, 0.7], hand: [0.81, 0.78], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
     bikelete: { hip: [0.22, 0.64], hand: [0.8, 0.86], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross', rv: 0.29 },
     bruno: { hip: [0.39, 0.64], hand: [0.91, 0.88], knee: [0.75, 0.44], ankle: [0.56, 0.05], wheel: 'pop', lv: 1.36, rv: 0.29 }, // banco, guidão e pedaleira do modelo
@@ -3559,7 +3559,10 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.66, 0.6, 0.15, 0.055, 0.08, 0, Math.PI * 2); C.fill();
       C.fillStyle = '#c3c9cd'; C.fillRect(0.6, 0.65, 0.04, 0.025);
-      bars([0.87, 0.6], 0.72, [0.68, 0.685], '#2b2e33', '#16181b');
+      // guidão reto pra cima no estilo da Pit Bike, com 2/3 da altura do dela
+      line([[0.88, 0.6], [0.89, 0.65]], 0.035, '#2b2e33');
+      line([[0.875, 0.64], [0.845, 0.775]], 0.028, '#2b2e33');
+      line([[0.845, 0.775], [0.805, 0.785]], 0.042, '#16181b');
     },
     // caiçara retrô de cestinha (motorizada): quadro rebaixado de dupla curva, paralamas e protetor creme, selim marrom
     caicara(F) {
