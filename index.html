@@ -1992,7 +1992,7 @@ html.kid #grow-dog { display: none !important; }
       : L.car && L.car.state === 'chase' ? 'car'
       : L.uno && L.uno.state === 'race' ? 'uno'
       : gangChasing() ? 'gang' : how;
-    s.mode = 'over'; s.reason = how;
+    s.mode = 'over'; s.reason = how; s.dieT = 0;
     recordWheelie();
     ui.endEyebrow.textContent = T(END_TEXT[msg][0]);
     ui.endTitle.textContent = T(END_TEXT[msg][1]);
@@ -2007,7 +2007,7 @@ html.kid #grow-dog { display: none !important; }
     const canSend = gameMode === 'motoca' && !cheat && !KID && s.runBest >= 3 && boardQualifies(s.runBest);
     $('gSend').hidden = !canSend;
     $('gBtn').disabled = false; $('gName').disabled = false; $('gMsg').textContent = '';
-    setTimeout(() => { if (s.mode === 'over') { ui.end.hidden = false; $('goAgain').focus(); } }, 900);
+    setTimeout(() => { if (s.mode === 'over' || s.mode === 'dog') { ui.end.hidden = false; $('goAgain').focus(); } }, 900);
   }
 
   // ---------- simulação ----------
@@ -2094,7 +2094,10 @@ html.kid #grow-dog { display: none !important; }
     } else if (s.mode === 'dog') {
       stepPet(h);
     } else {
-      if (gameMode === 'multi' && (s.dieT += h) > 1.6) becomeDog();
+      s.dieT += h;
+      if (gameMode === 'multi' && s.dieT > 1.6) becomeDog();
+      // fora da sala: virou pra trás, dá um puff de fumaça e o motoca vira o caramelo dele (fica ali latindo até a tela de fim)
+      else if (gameMode !== 'multi' && s.reason === 'flip' && s.dieT > 0.45) { poof(); becomeDog(); }
       if (s.reason === 'flip' && s.th < 1.92) { s.om += 7 * h; s.th = Math.min(1.92, s.th + s.om * h); }
       else if (s.reason === 'landed') { s.th = 0; }
       s.v = Math.max(0, s.v - (s.reason === 'flip' ? 7 : 3.5) * h);
@@ -4590,7 +4593,17 @@ html.kid #grow-dog { display: none !important; }
     s.pet = { x: s.x - 0.4, v: Math.min(s.v, 6), state: 'run', t: 0, leg: 0, say: 0, bark: 0.8, Y: '#e3b25a', Yd: '#b38535', sk: pick.dog !== 'normal' ? pick.dog : '' };
     s.th = 0; s.om = 0; s.thr = 0; s.active = false; s.flame = 0;
     s.dogLap = lapOf(s.x); s.dogLaps = {};
-    flash('Virou caramelo! Corre atrás da galera');
+    if (gameMode === 'multi') flash('Virou caramelo! Corre atrás da galera');
+    else { s.pet.x = s.x; s.pet.v = 0; s.pet.state = 'stop'; s.pet.bark = 0.25; }
+  }
+  // nuvem de fumaça da transformação, em volta da moto e do piloto
+  function poof() {
+    for (let i = 0; i < 22; i++) {
+      const a = Math.random() * Math.PI * 2, k = 0.4 + Math.random();
+      s.parts.push({ x: s.x + 0.3 + Math.cos(a) * 0.35, y: 0.55 + Math.sin(a) * 0.4, vx: Math.cos(a) * 1.6 * k, vy: Math.max(-0.2, Math.sin(a) * 1.2 * k) + 0.3,
+        age: 0, life: 0.7 + Math.random() * 0.5, r0: 0.16 + Math.random() * 0.14 });
+    }
+    s.flame = 0; s.sparks = [];
   }
   // caramelo que completa a volta (passa na pastelaria) ganha a moto de volta, ali mesmo, na mesma rodada
   function backToBike(lap) {
@@ -4619,7 +4632,10 @@ html.kid #grow-dog { display: none !important; }
     d.x += d.v * h; d.leg += Math.abs(d.v) * h * 5;
     if (Math.abs(d.v) > 0.3) d.dir = d.v < 0 ? -1 : 1;
     d.state = Math.abs(d.v) > 0.6 ? 'run' : lead ? 'stop' : 'rest';
-    if (d.state === 'run' && lead && Math.abs(lead.x - d.x) < 8 && d.v > 0) {
+    if (gameMode !== 'multi') { // fora da sala: fica parado onde virou caramelo, latindo
+      d.v = 0; d.state = 'stop'; d.dir = 1; d.bark -= h;
+      if (d.bark <= 0) { d.bark = 0.9 + Math.random() * 0.8; d.say = 0.32; barkSound(1.1, 1); }
+    } else if (d.state === 'run' && lead && Math.abs(lead.x - d.x) < 8 && d.v > 0) {
       d.bark -= h;
       if (d.bark <= 0) { d.bark = 0.5 + Math.random() * 0.7; d.say = 0.28; barkSound(1.1, 1); s.barked = true; }
     }
