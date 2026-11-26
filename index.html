@@ -927,7 +927,11 @@ html.kid #grow-dog { display: none !important; }
     // 260 kg: o piloto mexe pouco nela)
     gs: { push: 14.5, g2: 125, snd: 3, rev: 2.5, lift: 1.4, fade: 50, damp: 0.7, brk: 1.6, pull: 0.25, stand: 0.7 }
   };
-  const MX = k => (MOTO[MODEL] && MOTO[MODEL][k]) || 1; // multiplicador da moto atual (1 = comportamento padrão)
+  // bikes 2 tempos mais fortes que o padrão (o som de mosquito continua igual): push = força pra frente, rev = giro sobe
+  // mais rápido, hi = rpm a mais no corte de giro (estica mais a 1ª), lift = força de levantar a frente. Nórdica: acima das bikes, abaixo da Titânica
+  const BIKE2 = { bikelete: { push: 5.1, rev: 1.3, hi: 450, lift: 1.06 } };
+  const limitNow = () => LIMIT + (BIKE2[MODEL] ? BIKE2[MODEL].hi : 0);
+  const MX = k => { const M = MOTO[MODEL] || BIKE2[MODEL]; return (M && M[k]) || 1; }; // multiplicador da moto atual (1 = comportamento padrão)
   const powerNow = rpm => (MOTO[MODEL] ? power4 : power)(rpm);
 
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
@@ -1629,7 +1633,7 @@ html.kid #grow-dog { display: none !important; }
   function revTo(target, rate, h) {
     if (s.cut > 0) { s.cut -= h; s.rpm -= 6000 * h; return; }
     s.rpm += (target - s.rpm) * Math.min(1, h * rate);
-    if (s.thr > 0.5 && s.rpm >= LIMIT) { s.rpm = LIMIT; s.cut = 0.045; onCut(); }
+    if (s.thr > 0.5 && s.rpm >= limitNow()) { s.rpm = limitNow(); s.cut = 0.045; onCut(); }
   }
 
   // ---------- conquistas (salvas no navegador) ----------
@@ -2028,7 +2032,7 @@ html.kid #grow-dog { display: none !important; }
       const M4 = MOTO[MODEL];
       if (M4 && s.gearN === 2 && s.v < 9.5) s.gearN = 1;
       const gear = M4 && s.gearN === 2 ? M4.g2 : 330;
-      const on = Math.min(RPM_MAX, 5200 + s.v * gear);
+      const B2 = BIKE2[MODEL], on = Math.min(RPM_MAX, 5200 + s.v * gear);
       const off = Math.min(9000, IDLE + s.v * gear * 0.76);
       // soltou o acelerador: o 2 tempos perde giro devagar; voltou a acelerar, retoma de onde estava
       const target = off + (on - off) * s.thr;
@@ -2036,7 +2040,7 @@ html.kid #grow-dog { display: none !important; }
       const drive = s.cut > 0 ? 0 : s.thr * powerNow(s.rpm);
 
       // as 4 tempos têm mais força pra frente (Titânica ~81, Pó-pop ~90, Robozão ~120 km/h); as 2 tempos, ~48 a ~70
-      const push = M4 ? M4.push : 4.6;
+      const push = M4 ? M4.push : B2 ? B2.push : 4.6;
       s.v += (drive * push - 0.0115 * s.v * s.v - (s.v > 0 ? 0.12 : 0) - s.brk * 6 * MX('brk')) * h;
       if (s.v < 0) s.v = 0;
       const dx = s.v * h;
@@ -3223,6 +3227,24 @@ html.kid #grow-dog { display: none !important; }
   // estilo: 'bike' (aro fino), 'disc' (com disco de freio), 'cross' (pneu cravudo), 'moto' (pneu largo, aro preto)
   function wheel(cx, cy, style = 'bike', rr = R) {
     C.save(); C.translate(cx, cy);
+    if (style === 'nordica') {
+      const P = nordPaint(FRAME), turn = -s.wheel * R / rr;
+      // pneu slick: liso, largo, com um brilho leve na lateral
+      C.strokeStyle = '#121417'; C.lineWidth = rr * 0.2; C.beginPath(); C.arc(0, 0, rr * 0.9, 0, Math.PI * 2); C.stroke();
+      C.strokeStyle = '#2a2f35'; C.lineWidth = rr * 0.025; C.beginPath(); C.arc(0, 0, rr * 0.95, Math.PI * 0.6, Math.PI * 1.1); C.stroke();
+      C.strokeStyle = P.rim; C.lineWidth = rr * 0.13; C.beginPath(); C.arc(0, 0, rr * 0.73, 0, Math.PI * 2); C.stroke();
+      C.strokeStyle = P.rimInk; C.lineWidth = rr * 0.035;
+      for (let i = 0; i < 4; i++) { const a = turn + i * Math.PI / 2; C.beginPath(); C.arc(0, 0, rr * 0.73, a, a + 0.62); C.stroke(); }
+      C.rotate(turn);
+      C.strokeStyle = '#8f999e'; C.lineWidth = rr * 0.022; C.beginPath();
+      for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; C.moveTo(Math.cos(a) * rr * 0.1, Math.sin(a) * rr * 0.1); C.lineTo(Math.cos(a + 0.35) * rr * 0.67, Math.sin(a + 0.35) * rr * 0.67); }
+      C.stroke();
+      C.strokeStyle = '#b9c2c7'; C.lineWidth = rr * 0.07; C.beginPath(); C.arc(0, 0, rr * 0.3, 0, Math.PI * 2); C.stroke();
+      C.fillStyle = '#5d676c';
+      for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; C.beginPath(); C.arc(Math.cos(a) * rr * 0.3, Math.sin(a) * rr * 0.3, rr * 0.022, 0, Math.PI * 2); C.fill(); }
+      C.fillStyle = '#2b3034'; C.beginPath(); C.arc(0, 0, rr * 0.11, 0, Math.PI * 2); C.fill();
+      C.restore(); return;
+    }
     if (style === 'pop' || style === 'robo') { // pneu escuro com borda, aro, raios finos, cubo (e disco no Robozão)
       const g = style === 'robo', rim = g ? '#c59636' : '#a6afb2', spoke = g ? '#caa14b' : '#9aa3a6';
       C.strokeStyle = '#16191d'; C.lineWidth = rr * 0.28; C.beginPath(); C.arc(0, 0, rr * 0.86, 0, Math.PI * 2); C.stroke();
@@ -3308,7 +3330,7 @@ html.kid #grow-dog { display: none !important; }
       caicara: { name: 'Litorânea de cestinha', c: '#3fc1a8', def: 'agua' },
       monark: { name: 'Circuleira', c: '#d40000', def: 'ferrari', lock: 'grau30' },
       xr: { name: 'XRrôna', c: '#efe0b5', def: 'creme', lock: 'grau200' },
-      bikelete: { name: 'Pit Bike', c: '#6f7f78', def: 'militar', lock: 'grau500' },
+      bikelete: { name: 'Nórdica', c: '#262b3f', def: 'preta', lock: 'grau500' }, // id antigo da Pit Bike: recordes e conquista continuam valendo
       bruno: { name: 'Titânica 99', c: '#8a1020', def: 'vinho', lock: ['grau700', 'grau2000'] }, // 1.000 m (quem liberou com 2.000 m continua com ela)
       pop2: { name: 'Pó-pop Bicilíndrica', c: '#f0f0ec', def: 'branca', lock: ['grau2000', 'grau3000'] }, // 2.000 m
       gs: { name: 'Robozão', c: '#1f5fd6', def: 'azul', lock: ['grau3000', 'grau5000'] } } }, // 3.000 m
@@ -3459,7 +3481,7 @@ html.kid #grow-dog { display: none !important; }
     monark: { hip: [0.24, 0.66], hand: [0.63, 0.65], knee: [0.6, 0.42], ankle: [0.53, -0.07], wheel: 'bike' },
     xr: { hip: [0.2, 0.7], hand: [0.81, 0.78], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
-    bikelete: { hip: [0.22, 0.64], hand: [0.8, 0.86], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross', rv: 0.29 },
+    bikelete: { hip: [0.276, 0.5], hand: [0.886, 0.72], knee: [0.667, 0.31], ankle: [0.54, -0.07], wheel: 'nordica', rv: 0.32, lv: L * 1.15 }, // quadro esticado 15% no desenho,
     bruno: { hip: [0.39, 0.64], hand: [0.91, 0.88], knee: [0.75, 0.44], ankle: [0.56, 0.05], wheel: 'pop', lv: 1.36, rv: 0.29 }, // banco, guidão e pedaleira do modelo
     pop2: { hip: [0.33, 0.69], hand: [0.96, 0.85], knee: [0.78, 0.44], ankle: [0.65, 0.06], wheel: 'pop', lv: 1.36, rv: 0.28 }, // mesmo entre-eixos da Titânica, roda menor
     gs: { hip: [0.38, 0.7], hand: [1.03, 0.98], knee: [0.8, 0.44], ankle: [0.66, -0.02], wheel: 'robo', lv: 1.55 } // grande e longa: o piloto fica menor em cima
@@ -3503,6 +3525,24 @@ html.kid #grow-dog { display: none !important; }
     C.beginPath(); C.ellipse(x0 - 0.03, y0, 0.035, 0.016, -0.18, 0, Math.PI * 2); C.fill();
   }
 
+  // Nórdica: cada cor de quadro tem o seu kit. Nas cores vivas o aro sai na cor do quadro com adesivo preto; nas neutras
+  // entra uma cor de destaque (preta = azul-marinho fosco com aro e adesivo vermelhos, igual à da foto)
+  const NORD_PAINT = {
+    '#232528': { tube: '#262b3f', rim: '#e3261d', decal: '#e3261d', ink: '#f4f5f6' },
+    '#f0f0ec': { rim: '#e3261d', decal: '#e3261d', ink: '#1b1d20' },
+    '#cfd6db': { rim: '#ff6a00', decal: '#ff6a00', ink: '#1b1d20' },
+    '#efe0b5': { rim: '#7a3b1e', decal: '#7a3b1e', ink: '#1b1d20' },
+    '#6b3fb8': { rim: '#ff7a12', decal: '#ff7a12', ink: '#f4f5f6' },
+    '#6f7f78': { rim: '#ff7a12', decal: '#1b1d20', ink: '#f4f5f6' },
+    '#8a1020': { rim: '#d9a21b', decal: '#d9a21b', ink: '#f4f5f6' },
+    '#1f5fd6': { rim: '#1f5fd6', decal: '#ffcc00', ink: '#f4f5f6' }
+  };
+  function nordPaint(F) {
+    const k = String(F).toLowerCase(), p = NORD_PAINT[k] || {};
+    const n = parseInt(k.slice(1), 16), lum = ((n >> 16) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11) / 255;
+    const ink = p.ink || (lum > 0.6 ? '#1b1d20' : '#f4f5f6');
+    return { tube: p.tube || F, rim: p.rim || F, decal: p.decal || '#16181b', ink, rimInk: lum > 0.75 && !p.rim ? '#1b1d20' : '#f4f5f6' };
+  }
   const FRAMES = {
     // Circuleira: quadro simples (tubo do selim reto, tubo de cima horizontal, tubo de baixo inclinado) com a barra
     // circular no meio, encostando nos três canos e travando o quadro: a identidade da bike
@@ -3559,7 +3599,7 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       C.fillStyle = '#16181b'; C.beginPath(); C.ellipse(0.66, 0.6, 0.15, 0.055, 0.08, 0, Math.PI * 2); C.fill();
       C.fillStyle = '#c3c9cd'; C.fillRect(0.6, 0.65, 0.04, 0.025);
-      // guidão reto pra cima no estilo da Pit Bike, com 2/3 da altura do dela
+      // guidão reto pra cima (estilo BMX), baixo
       line([[0.88, 0.6], [0.89, 0.65]], 0.035, '#2b2e33');
       line([[0.875, 0.64], [0.845, 0.775]], 0.028, '#2b2e33');
       line([[0.845, 0.775], [0.805, 0.785]], 0.042, '#16181b');
@@ -3615,36 +3655,82 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       line([[0.92, 0.5], [0.94, 0.55]], 0.02, '#c3c9cd');
     },
-    // Pit Bike: quadro simples de BMX (um tubo de cima, barra reta no lugar do amortecedor), guidão reto pra cima,
-    // motor 4 tempos deitado, escape cromado baixo e pneu cravudo
+    // Nórdica: bike de grau aro 26, quadro compacto com a linha de cima totalmente reta da caixa de direção até o eixo
+    // traseiro (tubo de cima e tirante no mesmo cano), só o canote e o banco saem acima dela; caixa de direção curta, garfo
+    // de suspensão longo, guidão reto com riser, rodas slick, freio a disco, motor 2 tempos e adesivos (kit de pintura nordPaint)
     bikelete(F) {
-      line([[0.62, 0.1], [0.66, -0.02], [0.4, -0.06], [-0.12, 0.02]], 0.05, '#c9d0d5');
-      line([[0.2, -0.03], [-0.14, 0.03]], 0.075, '#dfe4e7');
-      flameFx(-0.16, 0.035);
-      // quadro BMX: balança, barra do eixo ao selim, tubo do selim, tubo de cima, tubo de baixo e caixa de direção
-      line([[0, 0], [0.4, 0.05]], 0.045, F);
-      line([[0, 0], [0.18, 0.44]], 0.04, F);
-      line([[0.18, 0.46], [0.4, 0.05]], 0.045, F);
-      line([[0.18, 0.44], [0.86, 0.54]], 0.045, F);
-      line([[0.86, 0.48], [0.4, 0.05]], 0.05, F);
-      line([[0.86, 0.62], [0.9, 0.42]], 0.06, F);
-      // motor 4T deitado: carcaça prata, cilindro pra frente e filtro azul
-      C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.42, 0.1, 0.13, 0.1, 0, 0, Math.PI * 2); C.fill();
-      C.fillStyle = '#9aa3a8'; C.fillRect(0.5, 0.14, 0.16, 0.09);
-      C.strokeStyle = '#6f777c'; C.lineWidth = 0.01; C.beginPath();
-      for (let i = 1; i < 5; i++) { C.moveTo(0.5 + i * 0.032, 0.13); C.lineTo(0.5 + i * 0.032, 0.24); }
+      C.save(); C.scale(1.15, 1); // entre-eixo 15% maior (o desenho é feito no entre-eixo padrão e esticado)
+      const P = nordPaint(F), T = P.tube;
+      const BB = [0.37, -0.03], HT = [0.78, 0.49], HB = [0.8, 0.41];
+      const ST = [0.333, 0.209], top = Math.atan2(HT[1], HT[0]), down = Math.atan2(HB[1] - BB[1], HB[0] - BB[0]);
+      // escape do motor por baixo, saindo atrás
+      line([[0.6, 0.12], [0.64, -0.02], [0.42, -0.08], [0.1, -0.02], [-0.12, 0.08]], 0.05, '#3d4448');
+      line([[0.5, -0.07], [0.2, -0.04]], 0.07, '#4f575c');
+      flameFx(-0.13, 0.085);
+      // corrente, coroa e câmbio
+      line([[0, 0.03], [BB[0], BB[1] + 0.07]], 0.012, '#5d676c'); line([[0, -0.03], [BB[0], BB[1] - 0.07]], 0.012, '#5d676c');
+      C.strokeStyle = '#7d878c'; C.lineWidth = 0.02; C.beginPath(); C.arc(BB[0], BB[1], 0.075, 0, Math.PI * 2); C.stroke();
+      line([[0.01, -0.02], [0.02, -0.09], [0.05, -0.1]], 0.022, '#2b3034');
+      // quadro: balança, linha de cima reta (eixo traseiro → caixa de direção), tubo do selim, tubo de baixo e caixa curta
+      line([[0, 0], BB], 0.04, T);
+      line([BB, ST], 0.05, T);
+      line([[0, 0], HT], 0.048, T);
+      line([BB, HB], 0.068, T);
+      line([[HT[0] - 0.004, HT[1] + 0.025], [HB[0] + 0.006, HB[1] - 0.03]], 0.07, T);
+      // reforço (gusset) entre os dois tubos, embaixo da caixa de direção
+      C.fillStyle = T; C.beginPath(); C.moveTo(0.67, 0.421); C.lineTo(0.775, 0.47); C.lineTo(0.73, 0.336); C.closePath(); C.fill();
+      // motor 2 tempos dentro do triângulo, cilindro em pé apontando pra frente, e tanque no tubo de cima
+      C.fillStyle = '#7b858a'; C.beginPath(); C.arc(0.5, 0.1, 0.085, 0, Math.PI * 2); C.fill();
+      C.fillStyle = '#5d676c'; C.beginPath(); C.arc(0.5, 0.1, 0.04, 0, Math.PI * 2); C.fill();
+      C.save(); C.translate(0.53, 0.14); C.rotate(-0.42);
+      C.fillStyle = '#a3acb1'; C.fillRect(-0.055, 0, 0.11, 0.16);
+      C.strokeStyle = '#596166'; C.lineWidth = 0.011; C.beginPath();
+      for (let i = 1; i < 6; i++) { C.moveTo(-0.07, i * 0.026); C.lineTo(0.07, i * 0.026); }
       C.stroke();
-      C.fillStyle = '#2f6fd6'; C.beginPath(); C.ellipse(0.4, 0.27, 0.06, 0.04, 0, 0, Math.PI * 2); C.fill();
-      // pedaleira no lugar do pedal
-      line([[0.4, 0.02], [0.5, 0.02]], 0.03, '#16181b');
-      // garfo telescópico prata
-      line([[0.9, 0.44], [0.96, 0.24]], 0.06, '#c3c9cd');
-      line([[0.96, 0.24], [L, 0]], 0.04, '#dfe4e7');
-      C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
-      // guidão de BMX reto pra cima: mesa curta e o guidão subindo quase vertical, manopla no alto
-      line([[0.87, 0.62], [0.88, 0.67]], 0.035, '#1b1d20');
-      line([[0.86, 0.66], [0.82, 0.86]], 0.028, '#1b1d20');
-      line([[0.82, 0.86], [0.78, 0.87]], 0.042, '#16181b');
+      C.fillStyle = '#2b2f33'; C.fillRect(-0.018, 0.16, 0.036, 0.025);
+      C.restore();
+      C.fillStyle = '#1b1d20'; C.beginPath(); C.ellipse(0.43, 0.19, 0.035, 0.026, 0, 0, Math.PI * 2); C.fill();
+      C.save(); C.translate(0.565, 0.355); C.rotate(top);
+      C.fillStyle = P.decal; rrect(-0.1, -0.005, 0.2, 0.065, 0.03); C.fill();
+      C.fillStyle = P.ink; C.fillRect(-0.065, 0.036, 0.11, 0.01);
+      C.restore();
+      // adesivos: NÓRDICA no tubo de baixo (com faixa na cor de destaque), setas na linha de cima, 80 na caixa de direção
+      C.save(); C.translate(0.665, 0.272); C.rotate(down);
+      C.fillStyle = P.decal; C.fillRect(-0.2, -0.034, 0.1, 0.068);
+      C.fillStyle = P.ink; C.beginPath(); C.moveTo(-0.18, -0.03); C.lineTo(-0.13, 0); C.lineTo(-0.18, 0.03); C.lineTo(-0.16, 0.03); C.lineTo(-0.11, 0); C.lineTo(-0.16, -0.03); C.closePath(); C.fill();
+      C.scale(0.0036, -0.0036);
+      C.fillStyle = P.ink; C.font = 'italic 800 16px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('NÓRDICA', 4, 1);
+      C.restore();
+      C.save(); C.translate(0.1, 0.063); C.rotate(top);
+      C.fillStyle = P.decal;
+      for (let i = 0; i < 3; i++) { const x = i * 0.035; C.beginPath(); C.moveTo(x, -0.02); C.lineTo(x + 0.018, 0); C.lineTo(x, 0.02); C.lineTo(x + 0.012, 0.02); C.lineTo(x + 0.03, 0); C.lineTo(x + 0.012, -0.02); C.closePath(); C.fill(); }
+      C.restore();
+      C.save(); C.translate(0.79, 0.45); C.rotate(Math.atan2(HT[1] - HB[1], HT[0] - HB[0]) - Math.PI);
+      C.fillStyle = P.decal; C.fillRect(-0.04, -0.022, 0.08, 0.044);
+      C.scale(0.0028, -0.0028); C.fillStyle = P.ink; C.font = 'italic 800 13px "Barlow Condensed", "Arial Narrow", sans-serif';
+      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('80', 0, 1);
+      C.restore();
+      // pedivela e pedal de plataforma
+      line([BB, [BB[0] + 0.06, BB[1] - 0.09]], 0.025, '#2b2f33');
+      line([[BB[0] + 0.01, BB[1] - 0.095], [BB[0] + 0.12, BB[1] - 0.095]], 0.035, '#16181b');
+      // suspensão dianteira mais longa: coroa e bengala preta, tubo cromado aparecendo, perna até o eixo; disco e pinça
+      line([[HB[0] + 0.01, HB[1] - 0.02], [0.905, 0.19]], 0.056, '#1b1d20');
+      line([[0.87, 0.265], [0.89, 0.225]], 0.03, '#cfd6db');
+      line([[0.885, 0.21], [L, 0]], 0.042, '#2b2e33');
+      C.fillStyle = P.decal; C.fillRect(0.93, 0.1, 0.03, 0.03);
+      C.fillStyle = '#c9a10f'; C.beginPath(); C.arc(L - 0.06, 0.05, 0.022, 0, Math.PI * 2); C.fill();
+      // canote saindo acima da linha do quadro e banco baixo
+      line([ST, [0.305, 0.385]], 0.026, '#b9c3c8');
+      C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(0.18, 0.41); C.quadraticCurveTo(0.26, 0.445, 0.38, 0.42); C.quadraticCurveTo(0.39, 0.395, 0.36, 0.39); C.lineTo(0.2, 0.385); C.closePath(); C.fill();
+      C.fillStyle = P.decal; C.fillRect(0.21, 0.407, 0.06, 0.012);
+      // guidão reto: mesa curta, riser subindo, manopla mais alta e manete
+      line([[HT[0] - 0.004, HT[1] + 0.025], [0.8, 0.56]], 0.035, '#1b1d20');
+      line([[0.8, 0.56], [0.78, 0.715]], 0.026, '#2b2e33');
+      line([[0.78, 0.715], [0.758, 0.72]], 0.045, '#16181b');
+      line([[0.795, 0.695], [0.855, 0.685]], 0.012, '#1b1d20');
+      C.fillStyle = P.decal; C.beginPath(); C.arc(0.788, 0.72, 0.012, 0, Math.PI * 2); C.fill();
+      C.restore();
     },
     // Titânica 99: modelo de referência (sem baú), na cor escolhida na garagem
     bruno() { drawCssBike('titanica', FRAME); },
@@ -3886,7 +3972,7 @@ html.kid #grow-dog { display: none !important; }
     C.fillText('KM/H', x, top - 7);
     C.fillStyle = 'rgba(243, 239, 230, .1)'; C.fillRect(x - w / 2, top, w, hgt);
     C.fillStyle = 'rgba(255, 181, 71, .3)'; C.fillRect(x - w / 2, fy(BAND_HI), w, fy(BAND_LO) - fy(BAND_HI));
-    C.fillStyle = 'rgba(255, 90, 74, .45)'; C.fillRect(x - w / 2, top, w, fy(LIMIT) - top);
+    C.fillStyle = 'rgba(255, 90, 74, .45)'; C.fillRect(x - w / 2, top, w, fy(limitNow()) - top);
     C.fillStyle = inBand ? '#ffb547' : '#f3efe6';
     C.fillRect(x - w / 2 + 2, fy(Math.min(RPM_MAX, s.rpm)), w - 4, top + hgt - fy(Math.min(RPM_MAX, s.rpm)));
     C.fillStyle = inBand ? '#ffb547' : '#f3efe6'; C.font = '700 12px "Barlow Condensed", "Arial Narrow", sans-serif';
