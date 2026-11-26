@@ -1641,8 +1641,8 @@ html.kid #grow-dog { display: none !important; }
     { id: 'grau500', why: '800 m de grau ganhando o racha do Uno', name: 'Nasce uma lenda!', test: () => s.law.unoBeaten },
     { id: 'grau700', why: '1.000 m de grau com os ladrão na cola', name: 'Rei do Pinote', test: () => s.law.thiefEscaped },
     { id: 'grau2000', why: '2.000 m de grau', name: 'Rei do Grau', test: () => s.active && s.wDist >= 2000 },
-    { id: 'grau3000', why: '3.000 m de grau', name: 'Ronco em dobro', test: () => s.active && s.wDist >= 3000 },
-    { id: 'grau5000', why: '5.000 m de grau', name: 'Rei da Quebrada', test: () => s.active && s.wDist >= 5000 }
+    { id: 'grau3000', why: '3.000 m de grau', name: 'Rei da Quebrada', test: () => s.active && s.wDist >= 3000 },
+    { id: 'grau5000', why: '5.000 m de grau', name: 'Ronco em dobro', test: () => s.active && s.wDist >= 5000 }
   ];
   let unlocked = {};
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
@@ -3277,7 +3277,7 @@ html.kid #grow-dog { display: none !important; }
       verde: { name: 'Verde limão', shell: '#9be22d', edge: '#6ea41c', dot: '#1b1d20', brim: '#1b1d20', lens: '#1fa34a', lensHi: '#b6ff8a', metal: '#2b2e33' },
       rosa: { name: 'Rosa', shell: '#ff6fae', edge: '#c74a83', dot: '#1b1d20', brim: '#f4f5f6', lens: '#ff4fa0', lensHi: '#ffd0e6', metal: '#cfd6db' },
       laranja: { name: 'Laranja', shell: '#ff7a12', edge: '#c95500', dot: '#1b1d20', brim: '#1b1d20', lens: '#ff6a00', lensHi: '#ffd23f', metal: '#2b2e33' } } },
-    // cabeça: o capacete de sempre ou o boné pra trás com juliete (Rei da Quebrada, 5.000 m); as cores vêm da linha Capacete
+    // cabeça: o capacete de sempre ou o boné pra trás com juliete (Ronco em dobro, 5.000 m); as cores vêm da linha Capacete
     cabeca: { label: 'Cabeça', opts: {
       capacete: { name: 'Capacete', c: '#f4f5f6' },
       bone: { name: 'Boné pra trás + juliete', c: '#ff5a1f', lock: 'grau5000' } } },
