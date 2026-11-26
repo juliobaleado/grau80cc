@@ -937,6 +937,7 @@ html.kid #grow-dog { display: none !important; }
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português (exceto as falas da D.U.R.O.)
   const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelho Foguete":["Rocket red","Rojo cohete"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde oliva":["Olive green","Verde oliva"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
+  Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
     'Esse nome já é de outro jogador. Escolhe outro.': ['That name belongs to another player. Pick another one.', 'Ese nombre ya es de otro jugador. Elige otro.'],
@@ -1938,10 +1939,14 @@ html.kid #grow-dog { display: none !important; }
   }
   // aviso de versão nova: o app consulta versao.json no site; se a versão dele for menor que o "minimo", pede pra
   // atualizar (é assim que dá pra aposentar uma versão antiga com segurança, ex.: antes de fechar o envio antigo do placar)
-  const APP_BUILD = 6; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
+  const APP_BUILD = 7; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
   if (NATIVE) {
     fetch('https://juliobaleado.github.io/grau80cc/versao.json?t=' + Date.now(), { cache: 'no-store' })
       .then(r => (r.ok ? r.json() : null)).then(v => {
+        if (v && v.teste === true && !TESTER) {
+          TESTER = true; try { localStorage.setItem('grau80-testador', '1'); } catch (e) {}
+          renderGarage(); flash(T('Valeu por testar! Liberou o Caramelo de patinete na garagem.'));
+        }
         if (!v || !(+v.minimo > APP_BUILD)) return;
         const b = document.createElement('button'); b.type = 'button'; b.className = 'updbar'; b.textContent = T('Tem versão nova do Grau 80cc. Toca pra atualizar na Play Store.');
         b.addEventListener('click', () => { location.href = 'https://play.google.com/store/apps/details?id=com.grau80cc.app'; });
@@ -3048,6 +3053,8 @@ html.kid #grow-dog { display: none !important; }
     C.save(); C.translate(x, sy(0)); C.scale(S * dir, -S);
     C.fillStyle = 'rgba(0, 0, 0, ' + (fly ? 0.15 : 0.3) + ')'; C.beginPath(); C.ellipse(0.02, 0.0, 0.36 * wide, 0.035, 0, 0, Math.PI * 2); C.fill();
     if (fly) C.translate(0, fly);
+    const pat = sk === 'patinete', up = pat ? 0.42 : 0; // de patinete: o caramelo vai de pezinho (o AU! sobe junto)
+    if (pat) drawPatinete(d, t, d.fc || FRAME);
     if (sk === 'vento') { // capa vermelha balançando pra trás
       const fl = Math.sin(t * 14) * 0.05;
       C.fillStyle = '#d81f26'; C.beginPath(); C.moveTo(0.22, 0.34); C.lineTo(0.12, 0.38);
@@ -3065,7 +3072,17 @@ html.kid #grow-dog { display: none !important; }
       }
       return;
     }
-    if (d.state === 'lie' || d.state === 'rest' || sleeping) {
+    if (pat) {
+      // de pezinho no patinete: patas de trás esticadas no deck, peito em cima do guidão, patas da frente dobradinhas nele
+      const wag = Math.sin(t * 10) * 0.08;
+      line([[-0.01, 0.43], [-0.05, 0.155]], 0.045, Yd);
+      line([[-0.1, 0.42], [-0.26, 0.47 + wag]], 0.04, Y);
+      C.fillStyle = Y; C.beginPath(); C.ellipse(0.11, 0.55, 0.22 * wide, 0.095 * fat, 0.7, 0, Math.PI * 2); C.fill();
+      line([[0.26, 0.64], [0.32, 0.57], [0.41, 0.67]], 0.045, Yd);
+      line([[-0.06, 0.42], [-0.11, 0.155]], 0.045, Y);
+      line([[0.23, 0.62], [0.29, 0.55], [0.4, 0.66]], 0.045, Y);
+      C.save(); C.translate(0.33, 0.8); C.rotate(d.v > 1 ? -0.1 : Math.sin(t * 1.3) * 0.08);
+    } else if (d.state === 'lie' || d.state === 'rest' || sleeping) {
       C.save(); C.translate(-0.24, 0.13); C.rotate(sleeping ? 0.15 : 0.5 + Math.sin(t * 9) * 0.45);
       line([[0, 0], [0.12, 0.03], [0.2, 0.09]], 0.04, Y);
       C.restore();
@@ -3100,7 +3117,7 @@ html.kid #grow-dog { display: none !important; }
       line([[0.03, 0.08], [0.13, 0.2]], 0.03, '#c9b6ff');
       C.fillStyle = '#7ed957'; C.beginPath(); C.ellipse(0.11, -0.055, 0.06, 0.022, 0, 0, Math.PI * 2); C.fill();
     }
-    if (fat > 1.2 || sk === 'vento') { // coleirinha vermelha com plaquinha (o Super caramelo também usa)
+    if (fat > 1.2 || sk === 'vento' || pat) { // coleirinha vermelha com plaquinha (o Super caramelo também usa)
       const sup = sk === 'vento'; // o do Super caramelo é dourado com plaquinha vermelha, pra não sumir na capa
       line([[-0.1, -0.04], [0.02, -0.1]], 0.035, sup ? '#ffd21f' : '#d81f26');
       C.fillStyle = sup ? '#d81f26' : '#ffd21f'; C.beginPath(); C.arc(-0.025, -0.125, 0.022, 0, Math.PI * 2); C.fill();
@@ -3118,7 +3135,7 @@ html.kid #grow-dog { display: none !important; }
     if (d.say > 0) {
       C.fillStyle = '#f3efe6'; C.textAlign = 'center'; C.textBaseline = 'alphabetic';
       C.font = `700 ${Math.max(13, Math.round(0.24 * S))}px "Barlow Condensed", "Arial Narrow", sans-serif`;
-      C.fillText('AU!', x + 0.35 * S * dir, sy(0.62 + fly));
+      C.fillText('AU!', x + 0.35 * S * dir, sy(0.62 + fly + up));
     }
     if (sleeping) {
       const k = (t * 0.6 + d.leg * 0.1) % 1;
@@ -3128,6 +3145,29 @@ html.kid #grow-dog { display: none !important; }
     }
   }
 
+  // patinete motorizado (coordenadas do cachorro): rodinhas, motor no cubo traseiro, deck e coluna na cor da bike (F)
+  function drawPatinete(d, t, F) {
+    const spin = -(d.leg || 0) * 0.9, FX = 0.5;
+    if (d.v > 1) for (let i = 0; i < 3; i++) { // fumacinha do motor
+      const k = (t * 1.6 + i / 3) % 1;
+      C.fillStyle = 'rgba(188, 208, 219, ' + (0.35 * (1 - k)).toFixed(3) + ')';
+      C.beginPath(); C.arc(-0.46 - k * 0.35, 0.09 + k * 0.12, 0.03 + k * 0.05, 0, Math.PI * 2); C.fill();
+    }
+    const wheelP = cx => {
+      C.fillStyle = '#16181b'; C.beginPath(); C.arc(cx, 0.065, 0.065, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#b9c3c8'; C.lineWidth = 0.012; C.beginPath(); C.arc(cx, 0.065, 0.032, 0, Math.PI * 2); C.stroke();
+      line([[cx, 0.065], [cx + Math.cos(spin) * 0.032, 0.065 + Math.sin(spin) * 0.032]], 0.012, '#b9c3c8');
+    };
+    wheelP(-0.3); wheelP(FX);
+    C.fillStyle = '#6c757a'; C.beginPath(); C.arc(-0.3, 0.065, 0.042, 0, Math.PI * 2); C.fill();
+    line([[-0.27, 0.1], [-0.44, 0.085]], 0.022, '#3d4448');
+    C.strokeStyle = F; C.lineWidth = 0.026; C.beginPath(); C.arc(-0.3, 0.065, 0.088, 0.35, Math.PI - 0.1); C.stroke();
+    C.fillStyle = F; rrect(-0.36, 0.1, 0.84, 0.042, 0.02); C.fill();
+    C.fillStyle = '#16181b'; C.fillRect(-0.22, 0.142, 0.5, 0.01);
+    line([[FX, 0.065], [0.44, 0.66]], 0.036, F);
+    line([[0.39, 0.66], [0.5, 0.67]], 0.032, '#16181b');
+    C.fillStyle = '#ffd23f'; C.beginPath(); C.arc(0.475, 0.54, 0.022, 0, Math.PI * 2); C.fill(); // farolzinho
+  }
   // o mecha é desenhado em coordenadas do cachorro (x pra frente, y pra cima, a escala já aplicada)
   function drawMecha(d, t) {
     const P = '#4b2f7a', Pl = '#7650b5', Pd = '#2c1b4a', G = '#7ed957', O = '#ff8a3d', Ln = '#c9b6ff';
@@ -3360,13 +3400,19 @@ html.kid #grow-dog { display: none !important; }
       gordo: { name: 'Caramelo gordo', c: '#c98b35', lock: 'doa_pastel_duplo' },
       gordaco: { name: 'Caramelo gordaço', c: '#b9772a', lock: 'doa_pastel_xtudo' },
       meca: { name: 'Caramelo mecha', c: '#6b3fb8', lock: 'doa_sushi_pastel' },
-      vento: { name: 'Super caramelo', c: '#d81f26', lock: 'doa_pastel_vento' } } }
+      vento: { name: 'Super caramelo', c: '#d81f26', lock: 'doa_pastel_vento' },
+      // presente do teste fechado: o caramelo pilotando um patinete motorizado na cor da bike escolhida
+      patinete: { name: 'Caramelo de patinete', c: '#ffb547', lock: 'teste' } } }
   };
   // pastéis comprados no app (a Google Play guarda; aqui fica uma cópia pra abrir rápido)
   const owned = new Set();
   // só o app confia na lista guardada (e ela é conferida com a Google Play ao abrir); no site não existe compra,
   // então editar o localStorage não libera caramelo pago
   if (NATIVE) try { for (const x of JSON.parse(localStorage.getItem('grau80-doa') || '[]')) if (typeof x === 'string') owned.add(x.slice(0, 24)); } catch (e) {}
+  // caramelo de patinete: quem abre o app enquanto o versao.json diz "teste": true (fase de teste fechado) ganha e guarda
+  // pra sempre. Só o app confia nessa marca (no site ninguém é testador; o modo teste libera tudo como sempre)
+  let TESTER = false;
+  if (NATIVE) try { TESTER = localStorage.getItem('grau80-testador') === '1'; } catch (e) {}
   const saveOwned = () => { try { localStorage.setItem('grau80-doa', JSON.stringify([...owned])); } catch (e) {} };
   const pick = { helmet: 'branco', cabeca: 'capacete', jersey: 'azul', shorts: 'azul', bag: 'keetute', model: 'caicara', frame: 'agua' };
   try { Object.assign(pick, JSON.parse(localStorage.getItem('grau80-look') || '{}')); } catch (e) {}
@@ -3375,7 +3421,7 @@ html.kid #grow-dog { display: none !important; }
   const shadeHex = (hex, k) => '#' + [1, 3, 5].map(i => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k).toString(16).padStart(2, '0'); }).join('');
   // lock: uma conquista, uma lista (libera com qualquer uma; a 1ª é a exigida) ou 'doa_…' (caramelo comprado)
   const lockMain = o => (Array.isArray(o.lock) ? o.lock[0] : o.lock);
-  const isLocked = (k, o) => o.lock && !cheat && (typeof o.lock === 'string' && o.lock.startsWith('doa_') ? !owned.has(o.lock.slice(4)) : ![].concat(o.lock).some(id => unlocked[id])); // modo teste libera tudo
+  const isLocked = (k, o) => o.lock && !cheat && (o.lock === 'teste' ? !TESTER : typeof o.lock === 'string' && o.lock.startsWith('doa_') ? !owned.has(o.lock.slice(4)) : ![].concat(o.lock).some(id => unlocked[id])); // modo teste libera tudo
   function applyLook() {
     const m = LOOKS.model.opts[pick.model];
     if (!m || isLocked('model', m)) { pick.model = 'caicara'; pick.frame = 'agua'; }
@@ -3431,6 +3477,7 @@ html.kid #grow-dog { display: none !important; }
           b.title = T('Libera com o') + ' ' + T(ps.nome) + (NATIVE ? '' : ' · ' + T('só no app da Play Store'));
           if (!NATIVE) b.disabled = true;
           else { b.addEventListener('click', e => { e.stopImmediatePropagation(); openPix(); }, true); }
+        } else if (locked && o.lock === 'teste') { b.disabled = true; b.title = T('Presente pra quem joga o teste fechado do app');
         } else if (locked) { const ach = ACHS.find(a => a.id === lockMain(o)); b.disabled = true; b.title = T('Libera com a conquista') + ' ' + ach.name + ' (' + ach.why + ')'; }
         b.setAttribute('aria-pressed', String(pick[k] === id));
         b.addEventListener('click', () => {
@@ -4533,7 +4580,8 @@ html.kid #grow-dog { display: none !important; }
       if (r.m === 'dog') {
         if (Math.abs(r.v) > 0.3) r.dir = r.v < 0 ? -1 : 1;
         const lk = room.members[id] && room.members[id].look, sk = lk && own(LOOKS.dog.opts, lk.dog) && lk.dog !== 'normal' ? lk.dog : '';
-        drawDog(sx, wy => gy - wy * S, S, t, { x: rx, v: Math.abs(r.v), dir: r.dir || 1, state: Math.abs(r.v) > 0.6 ? 'run' : 'rest', leg: r.leg, say: r.say, Y: REMOTE_FUR[0], Yd: REMOTE_FUR[1], sk });
+        const fc = lk && own(LOOKS.frame.opts, lk.frame) ? LOOKS.frame.opts[lk.frame].c : '';
+        drawDog(sx, wy => gy - wy * S, S, t, { x: rx, v: Math.abs(r.v), dir: r.dir || 1, state: Math.abs(r.v) > 0.6 ? 'run' : 'rest', leg: r.leg, say: r.say, Y: REMOTE_FUR[0], Yd: REMOTE_FUR[1], sk, fc });
         return;
       }
       C.fillStyle = 'rgba(0, 0, 0, .35)';
