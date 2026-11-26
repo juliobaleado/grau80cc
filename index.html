@@ -1310,12 +1310,23 @@ html.kid #grow-dog { display: none !important; }
   $('goHome').addEventListener('click', toStart);
   $('goResume').addEventListener('click', () => setPause(false));
   $('pauseBtn').addEventListener('click', () => setPause(!paused));
-  // sozinho, sair da aba pausa; na sala o jogo continua rodando (Alt+Tab não pausa, a galera segue vendo a gente)
-  document.addEventListener('visibilitychange', () => {
+  // minimizou o app / trocou de aba: sozinho, pausa a corrida e o processamento; na sala o jogo continua rodando
+  // (a galera segue vendo a gente), mas em silêncio. Som e música calam sempre e voltam quando a gente volta.
+  // O app Android também avisa direto (window.grauAway), porque o WebView nem sempre marca a página como escondida.
+  let away = false;
+  function setAway(a) {
+    if (a === away) return;
+    away = a;
     const inRoom = gameMode === 'multi' && room.code;
-    if (document.hidden && !inRoom) setPause(true);
-    bgClock(document.hidden && inRoom);
-  });
+    if (a && !inRoom) setPause(true);
+    bgClock(a && inRoom);
+    if (ac) { if (a) ac.suspend().catch(() => {}); else if (!muted) ac.resume().catch(() => {}); }
+    if (sfx) updateMusic();
+  }
+  window.grauAway = a => setAway(!!a);
+  document.addEventListener('visibilitychange', () => setAway(document.hidden));
+  addEventListener('pagehide', () => setAway(true));
+  addEventListener('pageshow', () => { if (!document.hidden) setAway(false); });
 
   let paused = false;
   function setPause(p) {
@@ -1331,7 +1342,7 @@ html.kid #grow-dog { display: none !important; }
   try { muted = localStorage.getItem('grau80-mute') === '1'; } catch (e) {}
   ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
   function wakeAudio() {
-    if (ac) { if (ac.state === 'suspended' && !muted) ac.resume(); return; }
+    if (ac) { if (ac.state === 'suspended' && !muted && !away) ac.resume(); return; }
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
       sfx = ac.createGain(); sfx.connect(ac.destination);
@@ -1389,7 +1400,7 @@ html.kid #grow-dog { display: none !important; }
       out4.connect(sfx);
       p4.start(); sub4.start();
       nodes = { o1, o2, filt, out, ng, noiseBuf: buf, scrapeG, siren: so, sirenG, p4, sub4, lp4, honk, honkG, out4, plfo, plfoG, whine, whBP, whG, airBP, airG };
-      if (muted) ac.suspend();
+      if (muted || away) ac.suspend();
       startMusic();
     } catch (e) { ac = null; }
   }
@@ -1485,7 +1496,7 @@ html.kid #grow-dog { display: none !important; }
   }
   function updateMusic() { // a música toca só na tela inicial (o motor segue audível pra ouvir o corte de giro); no jogo ela some num fade
     if (!sfx) return;
-    const on = !ui.start.hidden && !document.hidden && !musicOff;
+    const on = !ui.start.hidden && !document.hidden && !away && !musicOff;
     if (on === music.on) return;
     music.on = on; const t = ac.currentTime;
     if (music.g) music.g.gain.setTargetAtTime(on ? 0.8 : 0, t, on ? 0.4 : 0.15);
@@ -1498,13 +1509,13 @@ html.kid #grow-dog { display: none !important; }
     if (ac && (ac.state === 'running' || muted)) UNLOCK.forEach(ev => removeEventListener(ev, unlockAudio, true));
   }
   UNLOCK.forEach(ev => addEventListener(ev, unlockAudio, true));
-  setTimeout(() => { wakeAudio(); if (ac && ac.state === 'suspended' && !muted) ac.resume().catch(() => {}); }, 0);
+  setTimeout(() => { wakeAudio(); if (ac && ac.state === 'suspended' && !muted && !away) ac.resume().catch(() => {}); }, 0);
   ui.mute.addEventListener('click', () => {
     muted = !muted;
     ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
     try { localStorage.setItem('grau80-mute', muted ? '1' : '0'); } catch (e) {}
     wakeAudio();
-    if (ac) muted ? ac.suspend() : ac.resume();
+    if (ac) muted || away ? ac.suspend() : ac.resume();
   });
   function updateAudio() {
     updateMusic();
@@ -1939,7 +1950,7 @@ html.kid #grow-dog { display: none !important; }
   }
   // aviso de versão nova: o app consulta versao.json no site; se a versão dele for menor que o "minimo", pede pra
   // atualizar (é assim que dá pra aposentar uma versão antiga com segurança, ex.: antes de fechar o envio antigo do placar)
-  const APP_BUILD = 7; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
+  const APP_BUILD = 8; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
   if (NATIVE) {
     fetch('https://juliobaleado.github.io/grau80cc/versao.json?t=' + Date.now(), { cache: 'no-store' })
       .then(r => (r.ok ? r.json() : null)).then(v => {
@@ -5027,7 +5038,7 @@ html.kid #grow-dog { display: none !important; }
     pollPad(); stepRemotes(dt); mpTick(dt);
     render(); updateHud(); updateAudio();
   }
-  function frame(t) { if (!bgW) tick(t, false); requestAnimationFrame(frame); }
+  function frame(t) { if (!bgW && !away) tick(t, false); else if (!bgW) last = t; requestAnimationFrame(frame); } // minimizado: não processa nem desenha
   // com a aba escondida o navegador para o requestAnimationFrame e segura os timers; o relógio de um worker não é segurado
   let bgW = null;
   function bgClock(on) {
