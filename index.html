@@ -3477,11 +3477,12 @@ html.kid #grow-dog { display: none !important; }
   }
 
   // geometria do piloto em cada bike (quadril, mão, joelho, tornozelo) e o tipo de roda
+  const NORD_FX = 0.98; // Nórdica: eixo da roda da frente no desenho (antes do esticão de 15%), na linha da caixa de direção
   const GEO = {
     monark: { hip: [0.24, 0.66], hand: [0.63, 0.65], knee: [0.6, 0.42], ankle: [0.53, -0.07], wheel: 'bike' },
     xr: { hip: [0.2, 0.7], hand: [0.81, 0.78], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
-    bikelete: { hip: [0.276, 0.5], hand: [0.886, 0.72], knee: [0.667, 0.31], ankle: [0.54, -0.07], wheel: 'nordica', rv: 0.32, lv: L * 1.15 }, // quadro esticado 15% no desenho,
+    bikelete: { hip: [0.276, 0.5], hand: [0.862, 0.695], knee: [0.667, 0.31], ankle: [0.54, -0.07], wheel: 'nordica', rv: 0.32, lv: NORD_FX * 1.15 }, // quadro esticado 15% no desenho,
     bruno: { hip: [0.39, 0.64], hand: [0.91, 0.88], knee: [0.75, 0.44], ankle: [0.56, 0.05], wheel: 'pop', lv: 1.36, rv: 0.29 }, // banco, guidão e pedaleira do modelo
     pop2: { hip: [0.33, 0.69], hand: [0.96, 0.85], knee: [0.78, 0.44], ankle: [0.65, 0.06], wheel: 'pop', lv: 1.36, rv: 0.28 }, // mesmo entre-eixos da Titânica, roda menor
     gs: { hip: [0.38, 0.7], hand: [1.03, 0.98], knee: [0.8, 0.44], ankle: [0.66, -0.02], wheel: 'robo', lv: 1.55 } // grande e longa: o piloto fica menor em cima
@@ -3661,8 +3662,9 @@ html.kid #grow-dog { display: none !important; }
     bikelete(F) {
       C.save(); C.scale(1.15, 1); // entre-eixo 15% maior (o desenho é feito no entre-eixo padrão e esticado)
       const P = nordPaint(F), T = P.tube;
-      const BB = [0.37, -0.03], HT = [0.78, 0.49], HB = [0.8, 0.41];
-      const ST = [0.333, 0.209], top = Math.atan2(HT[1], HT[0]), down = Math.atan2(HB[1] - BB[1], HB[0] - BB[0]);
+      // caixa de direção e garfo no mesmo eixo (garfo reto, alinhado com a caixa), roda da frente em FX
+      const BB = [0.37, -0.03], HT = [0.756, 0.53], HB = [0.79, 0.45], FX = NORD_FX;
+      const ST = [0.329, 0.231], top = Math.atan2(HT[1], HT[0]), down = Math.atan2(HB[1] - BB[1], HB[0] - BB[0]);
       // escape do motor por baixo, saindo atrás
       line([[0.6, 0.12], [0.64, -0.02], [0.42, -0.08], [0.1, -0.02], [-0.12, 0.08]], 0.05, '#3d4448');
       line([[0.5, -0.07], [0.2, -0.04]], 0.07, '#4f575c');
@@ -3676,9 +3678,9 @@ html.kid #grow-dog { display: none !important; }
       line([BB, ST], 0.05, T);
       line([[0, 0], HT], 0.048, T);
       line([BB, HB], 0.068, T);
-      line([[HT[0] - 0.004, HT[1] + 0.025], [HB[0] + 0.006, HB[1] - 0.03]], 0.07, T);
+      line([[HT[0] - 0.01, HT[1] + 0.023], [HB[0] + 0.013, HB[1] - 0.03]], 0.07, T);
       // reforço (gusset) entre os dois tubos, embaixo da caixa de direção
-      C.fillStyle = T; C.beginPath(); C.moveTo(0.67, 0.421); C.lineTo(0.775, 0.47); C.lineTo(0.73, 0.336); C.closePath(); C.fill();
+      C.fillStyle = T; C.beginPath(); C.moveTo(0.66, 0.463); C.lineTo(0.755, 0.51); C.lineTo(0.71, 0.359); C.closePath(); C.fill();
       // motor 2 tempos dentro do triângulo, cilindro em pé apontando pra frente, e tanque no tubo de cima
       C.fillStyle = '#7b858a'; C.beginPath(); C.arc(0.5, 0.1, 0.085, 0, Math.PI * 2); C.fill();
       C.fillStyle = '#5d676c'; C.beginPath(); C.arc(0.5, 0.1, 0.04, 0, Math.PI * 2); C.fill();
@@ -3690,23 +3692,23 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#2b2f33'; C.fillRect(-0.018, 0.16, 0.036, 0.025);
       C.restore();
       C.fillStyle = '#1b1d20'; C.beginPath(); C.ellipse(0.43, 0.19, 0.035, 0.026, 0, 0, Math.PI * 2); C.fill();
-      C.save(); C.translate(0.565, 0.355); C.rotate(top);
+      C.save(); C.translate(0.565, 0.396); C.rotate(top);
       C.fillStyle = P.decal; rrect(-0.1, -0.005, 0.2, 0.065, 0.03); C.fill();
       C.fillStyle = P.ink; C.fillRect(-0.065, 0.036, 0.11, 0.01);
       C.restore();
       // adesivos: NÓRDICA no tubo de baixo (com faixa na cor de destaque), setas na linha de cima, 80 na caixa de direção
-      C.save(); C.translate(0.665, 0.272); C.rotate(down);
+      C.save(); C.translate(0.665, 0.307); C.rotate(down);
       C.fillStyle = P.decal; C.fillRect(-0.2, -0.034, 0.1, 0.068);
       C.fillStyle = P.ink; C.beginPath(); C.moveTo(-0.18, -0.03); C.lineTo(-0.13, 0); C.lineTo(-0.18, 0.03); C.lineTo(-0.16, 0.03); C.lineTo(-0.11, 0); C.lineTo(-0.16, -0.03); C.closePath(); C.fill();
       C.scale(0.0036, -0.0036);
       C.fillStyle = P.ink; C.font = 'italic 800 16px "Barlow Condensed", "Arial Narrow", sans-serif';
       C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('NÓRDICA', 4, 1);
       C.restore();
-      C.save(); C.translate(0.1, 0.063); C.rotate(top);
+      C.save(); C.translate(0.1, 0.07); C.rotate(top);
       C.fillStyle = P.decal;
       for (let i = 0; i < 3; i++) { const x = i * 0.035; C.beginPath(); C.moveTo(x, -0.02); C.lineTo(x + 0.018, 0); C.lineTo(x, 0.02); C.lineTo(x + 0.012, 0.02); C.lineTo(x + 0.03, 0); C.lineTo(x + 0.012, -0.02); C.closePath(); C.fill(); }
       C.restore();
-      C.save(); C.translate(0.79, 0.45); C.rotate(Math.atan2(HT[1] - HB[1], HT[0] - HB[0]) - Math.PI);
+      C.save(); C.translate(0.773, 0.49); C.rotate(Math.atan2(HT[1] - HB[1], HT[0] - HB[0]) - Math.PI);
       C.fillStyle = P.decal; C.fillRect(-0.04, -0.022, 0.08, 0.044);
       C.scale(0.0028, -0.0028); C.fillStyle = P.ink; C.font = 'italic 800 13px "Barlow Condensed", "Arial Narrow", sans-serif';
       C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('80', 0, 1);
@@ -3714,22 +3716,23 @@ html.kid #grow-dog { display: none !important; }
       // pedivela e pedal de plataforma
       line([BB, [BB[0] + 0.06, BB[1] - 0.09]], 0.025, '#2b2f33');
       line([[BB[0] + 0.01, BB[1] - 0.095], [BB[0] + 0.12, BB[1] - 0.095]], 0.035, '#16181b');
-      // suspensão dianteira mais longa: coroa e bengala preta, tubo cromado aparecendo, perna até o eixo; disco e pinça
-      line([[HB[0] + 0.01, HB[1] - 0.02], [0.905, 0.19]], 0.056, '#1b1d20');
-      line([[0.87, 0.265], [0.89, 0.225]], 0.03, '#cfd6db');
-      line([[0.885, 0.21], [L, 0]], 0.042, '#2b2e33');
-      C.fillStyle = P.decal; C.fillRect(0.93, 0.1, 0.03, 0.03);
-      C.fillStyle = '#c9a10f'; C.beginPath(); C.arc(L - 0.06, 0.05, 0.022, 0, Math.PI * 2); C.fill();
+      // suspensão dianteira reta, no eixo da caixa de direção: bengala preta, tubo cromado aparecendo, perna até o eixo
+      const fk = t => [HB[0] + (FX - HB[0]) * t, HB[1] * (1 - t)];
+      line([fk(0.02), fk(0.55)], 0.056, '#1b1d20');
+      line([fk(0.42), fk(0.5)], 0.03, '#cfd6db');
+      line([fk(0.5), [FX, 0]], 0.042, '#2b2e33');
+      C.fillStyle = P.decal; C.fillRect(fk(0.72)[0] - 0.015, fk(0.72)[1] - 0.015, 0.03, 0.03);
+      C.fillStyle = '#c9a10f'; C.beginPath(); C.arc(FX - 0.06, 0.05, 0.022, 0, Math.PI * 2); C.fill();
       // canote saindo acima da linha do quadro e banco baixo
       line([ST, [0.305, 0.385]], 0.026, '#b9c3c8');
       C.fillStyle = '#16181b'; C.beginPath(); C.moveTo(0.18, 0.41); C.quadraticCurveTo(0.26, 0.445, 0.38, 0.42); C.quadraticCurveTo(0.39, 0.395, 0.36, 0.39); C.lineTo(0.2, 0.385); C.closePath(); C.fill();
       C.fillStyle = P.decal; C.fillRect(0.21, 0.407, 0.06, 0.012);
       // guidão reto: mesa curta, riser subindo, manopla mais alta e manete
-      line([[HT[0] - 0.004, HT[1] + 0.025], [0.8, 0.56]], 0.035, '#1b1d20');
-      line([[0.8, 0.56], [0.78, 0.715]], 0.026, '#2b2e33');
-      line([[0.78, 0.715], [0.758, 0.72]], 0.045, '#16181b');
-      line([[0.795, 0.695], [0.855, 0.685]], 0.012, '#1b1d20');
-      C.fillStyle = P.decal; C.beginPath(); C.arc(0.788, 0.72, 0.012, 0, Math.PI * 2); C.fill();
+      line([[HT[0] - 0.01, HT[1] + 0.023], [0.775, 0.59]], 0.035, '#1b1d20');
+      line([[0.775, 0.59], [0.76, 0.69]], 0.026, '#2b2e33');
+      line([[0.76, 0.69], [0.738, 0.695]], 0.045, '#16181b');
+      line([[0.775, 0.67], [0.835, 0.66]], 0.012, '#1b1d20');
+      C.fillStyle = P.decal; C.beginPath(); C.arc(0.768, 0.695, 0.012, 0, Math.PI * 2); C.fill();
       C.restore();
     },
     // Titânica 99: modelo de referência (sem baú), na cor escolhida na garagem
