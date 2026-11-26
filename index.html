@@ -1504,7 +1504,7 @@ html.kid #grow-dog { display: none !important; }
     //  Robozão (3): boxer grande, resposta rápida, escape mais aberto, pulsação do boxer, assovio crescente e admissão de ar.
     const jit = 1 + (s.rpm < 2600 ? (Math.random() - 0.5) * 0.06 : 0);
     const tc = snd === 3 ? 0.012 : 0.03;
-    const ff = s.rpm * jit * (snd === 2 ? 0.62 / 60 : snd === 3 ? 0.46 / 60 : 1 / 120);
+    const ff = s.rpm * jit * (snd === 2 ? 0.62 / 60 : snd === 3 ? 0.92 / 60 : 1 / 120);
     nodes.p4.frequency.setTargetAtTime(ff, t, tc);
     nodes.sub4.frequency.setTargetAtTime(snd >= 2 ? ff / 2 : ff, t, tc);
     nodes.lp4.frequency.setTargetAtTime(snd === 2 ? 190 + s.rpm * 0.07 + s.thr * 420 : snd === 3 ? 260 + s.rpm * 0.06 + s.thr * 560 : 260 + s.rpm * 0.11 + s.thr * 500, t, snd === 3 ? 0.02 : 0.04);
@@ -3211,9 +3211,8 @@ html.kid #grow-dog { display: none !important; }
     C.save(); C.translate(cx, cy);
     if (style === 'pop' || style === 'robo') { // pneu escuro com borda, aro, raios finos, cubo (e disco no Robozão)
       const g = style === 'robo', rim = g ? '#c59636' : '#a6afb2', spoke = g ? '#caa14b' : '#9aa3a6';
-      C.fillStyle = '#16191d'; C.beginPath(); C.arc(0, 0, rr, 0, Math.PI * 2); C.fill();
+      C.strokeStyle = '#16191d'; C.lineWidth = rr * 0.28; C.beginPath(); C.arc(0, 0, rr * 0.86, 0, Math.PI * 2); C.stroke();
       C.strokeStyle = '#252a2e'; C.lineWidth = rr * 0.12; C.beginPath(); C.arc(0, 0, rr * 0.9, 0, Math.PI * 2); C.stroke();
-      C.fillStyle = '#272e34'; C.beginPath(); C.arc(0, 0, rr * 0.72, 0, Math.PI * 2); C.fill();
       C.strokeStyle = rim; C.lineWidth = rr * 0.05; C.beginPath(); C.arc(0, 0, rr * 0.72, 0, Math.PI * 2); C.stroke();
       C.rotate(-s.wheel * R / rr);
       C.strokeStyle = spoke; C.lineWidth = rr * 0.03; C.beginPath();
@@ -3442,7 +3441,7 @@ html.kid #grow-dog { display: none !important; }
     xr: { hip: [0.2, 0.7], hand: [0.66, 0.68], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
     bikelete: { hip: [0.22, 0.64], hand: [0.68, 0.74], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross' },
-    bruno: { hip: [0.32, 0.69], hand: [0.75, 0.94], knee: [0.62, 0.48], ankle: [0.46, 0.06], wheel: 'pop', lv: 1.12 }, // banco, guidão e pedaleira do modelo
+    bruno: { hip: [0.39, 0.64], hand: [0.91, 0.88], knee: [0.75, 0.44], ankle: [0.56, 0.05], wheel: 'pop', lv: 1.36, rv: 0.29 }, // banco, guidão e pedaleira do modelo
     pop2: { hip: [0.29, 0.69], hand: [0.83, 0.85], knee: [0.68, 0.44], ankle: [0.56, 0.06], wheel: 'pop', lv: 1.18, rv: 0.28 }, // mais longa e de roda menor
     gs: { hip: [0.45, 0.68], hand: [0.93, 0.98], knee: [0.84, 0.42], ankle: [0.64, 0.01], wheel: 'robo', lv: 1.4 } // grande e longa: o piloto fica menor em cima
   };
@@ -3654,7 +3653,7 @@ html.kid #grow-dog { display: none !important; }
   const CSSMAP = {
     pop: { rx: 105, ry: 222, fx: 386, lv: 1.18, sy: 1.35, main: ['#eceeea', '#f5f4ed', '#ecebe5', '#e8ebe7'], shade: { '#c2c9c8': -0.18, '#737d81': -0.45, '#535d62': -0.55 } },
     robo: { rx: 96, ry: 215, fx: 406, lv: 1.4, sy: 1.4, main: ['#24559d', '#22559f'], shade: { '#18354e': -0.45 } },
-    titanica: { rx: 112, ry: 222, fx: 388, lv: 1.12, sy: 1.6, main: ['#b72735'], shade: {}, light: { '#e45559': 0.28 } }
+    titanica: { rx: 112, ry: 222, fx: 388, lv: 1.36, sy: 1.25, main: ['#b72735'], shade: {}, light: { '#e45559': 0.28 } }
   };
   // desenha as peças de um modelo; X/Y levam da prancha (y pra baixo) pro referencial do veículo (metros, y pra cima)
   function drawCssParts(id, X, Y, km, col, live) {
