@@ -920,7 +920,7 @@ html.kid #grow-dog { display: none !important; }
   const power4 = rpm => 0.3 + 0.7 * Math.exp(-(((rpm - 8200) / 3000) ** 2));
   const MOTO = {
     bruno: { push: 6.9, g2: 188, snd: 1 },  // Titânica 99: 160 4 tempos
-    pop2: { push: 8.9, g2: 170, snd: 2 },   // Pó-pop Bicilíndrica: dois cilindros, mais rápida que a 99
+    pop2: { push: 8.9, g2: 170, snd: 2, rev: 1.3, lift: 1.12, fade: 44, brk: 1.1 },   // Pó-pop Bicilíndrica: dois cilindros, mais rápida que a 99
     // Robozão: boxer grande, a mais rápida do jogo (~120 km/h). Torquezão: rev = giro sobe mais rápido, lift = força de
     // levantar a frente, fade = velocidade em que essa força cai (maior = segura o torque lá em cima), damp = amortecimento
     // do grau (menor = mais nervosa), brk = freio; pull/stand = força da puxada e do peso do piloto em pé (moto de
@@ -3452,10 +3452,10 @@ html.kid #grow-dog { display: none !important; }
     monark: { hip: [0.24, 0.66], hand: [0.63, 0.65], knee: [0.6, 0.42], ankle: [0.53, -0.07], wheel: 'bike' },
     xr: { hip: [0.2, 0.7], hand: [0.66, 0.68], knee: [0.58, 0.44], ankle: [0.53, -0.07], wheel: 'disc' },
     caicara: { hip: [0.24, 0.68], hand: [0.66, 0.72], knee: [0.6, 0.43], ankle: [0.53, -0.07], wheel: 'bike' },
-    bikelete: { hip: [0.22, 0.64], hand: [0.68, 0.74], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross' },
+    bikelete: { hip: [0.22, 0.64], hand: [0.8, 0.86], knee: [0.6, 0.42], ankle: [0.45, 0.02], wheel: 'cross', rv: 0.29 },
     bruno: { hip: [0.39, 0.64], hand: [0.91, 0.88], knee: [0.75, 0.44], ankle: [0.56, 0.05], wheel: 'pop', lv: 1.36, rv: 0.29 }, // banco, guidão e pedaleira do modelo
     pop2: { hip: [0.33, 0.69], hand: [0.96, 0.85], knee: [0.78, 0.44], ankle: [0.65, 0.06], wheel: 'pop', lv: 1.36, rv: 0.28 }, // mesmo entre-eixos da Titânica, roda menor
-    gs: { hip: [0.5, 0.68], hand: [1.03, 0.98], knee: [0.93, 0.42], ankle: [0.71, 0.01], wheel: 'robo', lv: 1.55 } // grande e longa: o piloto fica menor em cima
+    gs: { hip: [0.38, 0.7], hand: [1.03, 0.98], knee: [0.8, 0.44], ankle: [0.66, -0.02], wheel: 'robo', lv: 1.55 } // grande e longa: o piloto fica menor em cima
   };
   // motor 2 tempos de bicicleta motorizada (cilindro inclinado, escape com câmara de expansão)
   function motor2T() {
@@ -3537,6 +3537,9 @@ html.kid #grow-dog { display: none !important; }
       // garfo com suspensão: bengala preta em cima, tubo prata embaixo
       line([[0.91, 0.42], [0.96, 0.22]], 0.06, '#1b1d20');
       line([[0.96, 0.24], [L, 0]], 0.036, '#c3c9cd');
+      // paralama dianteiro de trilha: pequeno, preso logo acima do pneu e com a ponta virada pra cima
+      C.fillStyle = '#f3efe6'; C.beginPath(); C.moveTo(0.9, 0.39); C.quadraticCurveTo(1.08, 0.41, 1.26, 0.48); C.lineTo(1.25, 0.445); C.quadraticCurveTo(1.08, 0.375, 0.92, 0.365); C.closePath(); C.fill();
+      line([[0.94, 0.36], [0.95, 0.385]], 0.02, '#1b1d20');
       // bagageiro e banco comprido
       line([[-0.22, 0.52], [0.12, 0.52]], 0.022, '#1b1d20');
       line([[-0.2, 0.52], [-0.02, 0.03]], 0.016, '#1b1d20');
@@ -3602,35 +3605,19 @@ html.kid #grow-dog { display: none !important; }
       C.restore();
       line([[0.92, 0.5], [0.94, 0.55]], 0.02, '#c3c9cd');
     },
-    // Pit Bike: quadro duplo, amortecedor traseiro, motor 4 tempos deitado, escape cromado baixo e pneu cravudo
+    // Pit Bike: quadro simples de BMX (um tubo de cima, barra reta no lugar do amortecedor), guidão reto pra cima,
+    // motor 4 tempos deitado, escape cromado baixo e pneu cravudo
     bikelete(F) {
       line([[0.62, 0.1], [0.66, -0.02], [0.4, -0.06], [-0.12, 0.02]], 0.05, '#c9d0d5');
       line([[0.2, -0.03], [-0.14, 0.03]], 0.075, '#dfe4e7');
       flameFx(-0.16, 0.035);
+      // quadro BMX: balança, barra do eixo ao selim, tubo do selim, tubo de cima, tubo de baixo e caixa de direção
       line([[0, 0], [0.4, 0.05]], 0.045, F);
-      // amortecedor com mola vermelha
-      line([[0.08, 0.06], [0.2, 0.42]], 0.03, '#2b2e33');
-      C.strokeStyle = '#d0202a'; C.lineWidth = 0.012; C.beginPath();
-      for (let i = 0; i < 7; i++) { const t = 0.15 + i * 0.1, px = 0.08 + 0.12 * t, py = 0.06 + 0.36 * t; C.moveTo(px - 0.03, py + 0.01); C.lineTo(px + 0.03, py - 0.01); }
-      C.stroke();
-      // quadro duplo
-      line([[0.18, 0.44], [0.86, 0.58]], 0.04, F);
-      line([[0.2, 0.32], [0.86, 0.46]], 0.04, F);
-      line([[0.18, 0.44], [0.3, 0.06]], 0.045, F);
-      line([[0.86, 0.46], [0.62, 0.12], [0.4, 0.05]], 0.045, F);
+      line([[0, 0], [0.18, 0.44]], 0.04, F);
+      line([[0.18, 0.46], [0.4, 0.05]], 0.045, F);
+      line([[0.18, 0.44], [0.86, 0.54]], 0.045, F);
+      line([[0.86, 0.48], [0.4, 0.05]], 0.05, F);
       line([[0.86, 0.62], [0.9, 0.42]], 0.06, F);
-      // a nuvenzinha da Pit Bike, pintada entre os dois tubos de cima
-      C.save(); C.translate(0.55, 0.45); C.rotate(0.2);
-      C.fillStyle = '#f3efe6';
-      for (const [cx, cy, r] of [[-0.045, -0.005, 0.03], [-0.012, 0.012, 0.036], [0.025, 0.0, 0.03], [0.05, -0.01, 0.022]]) { C.beginPath(); C.arc(cx, cy, r, 0, Math.PI * 2); C.fill(); }
-      C.scale(0.0032, -0.0032); C.fillStyle = '#2b2e33'; C.font = '700 14px "Barlow Condensed", "Arial Narrow", sans-serif';
-      C.textAlign = 'center'; C.textBaseline = 'middle'; C.fillText('4T', 0, 1);
-      C.restore();
-      // garrafinha de combustível entre os tubos
-      C.save(); C.translate(0.55, 0.42); C.rotate(0.2);
-      C.fillStyle = '#d9dde0'; rrect(-0.1, -0.03, 0.18, 0.06, 0.02); C.fill();
-      C.fillStyle = '#2b2e33'; C.fillRect(0.08, -0.015, 0.04, 0.03);
-      C.restore();
       // motor 4T deitado: carcaça prata, cilindro pra frente e filtro azul
       C.fillStyle = '#b8bfc4'; C.beginPath(); C.ellipse(0.42, 0.1, 0.13, 0.1, 0, 0, Math.PI * 2); C.fill();
       C.fillStyle = '#9aa3a8'; C.fillRect(0.5, 0.14, 0.16, 0.09);
@@ -3640,11 +3627,14 @@ html.kid #grow-dog { display: none !important; }
       C.fillStyle = '#2f6fd6'; C.beginPath(); C.ellipse(0.4, 0.27, 0.06, 0.04, 0, 0, Math.PI * 2); C.fill();
       // pedaleira no lugar do pedal
       line([[0.4, 0.02], [0.5, 0.02]], 0.03, '#16181b');
-      // garfo telescópico prata e guidão alto de trilha
+      // garfo telescópico prata
       line([[0.9, 0.44], [0.96, 0.24]], 0.06, '#c3c9cd');
       line([[0.96, 0.24], [L, 0]], 0.04, '#dfe4e7');
       C.fillStyle = '#16181b'; rrect(0.1, 0.48, 0.24, 0.08, 0.035); C.fill();
-      bars([0.86, 0.62], 0.8, [0.7, 0.75], '#1b1d20', '#16181b');
+      // guidão de BMX reto pra cima: mesa curta e o guidão subindo quase vertical, manopla no alto
+      line([[0.87, 0.62], [0.88, 0.67]], 0.035, '#1b1d20');
+      line([[0.86, 0.66], [0.82, 0.86]], 0.028, '#1b1d20');
+      line([[0.82, 0.86], [0.78, 0.87]], 0.042, '#16181b');
     },
     // Titânica 99: modelo de referência (sem baú), na cor escolhida na garagem
     bruno() { drawCssBike('titanica', FRAME); },
