@@ -679,6 +679,17 @@ html.kid #grow-dog { display: none !important; }
 .tip .label { color: var(--sodium); }
 .tip #tipText { font-size: 15px; line-height: 1.3; color: var(--ink); }
 .tipoff { align-self: flex-start; background: none; border: 0; padding: 4px 0; min-height: 28px; font: 600 12px var(--hud); letter-spacing: .06em; color: var(--muted); text-decoration: underline; cursor: pointer; }
+/* novidades e feedback */
+.pixm-card.newscard, .pixm-card.fbcard { width: min(100%, 480px); align-items: stretch; text-align: left; max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; }
+.newscard ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 5px; font-size: 16px; line-height: 1.3; }
+.newscard li::marker { color: var(--sodium); }
+.newscard .label { color: var(--ok); }
+.fbcard select, .fbcard textarea { width: 100%; box-sizing: border-box; font: 500 16px var(--hud); color: var(--ink); background: rgba(243, 239, 230, .08); border: 1px solid rgba(243, 239, 230, .3); border-radius: 2px; padding: 8px; }
+.fbcard select option { color: #111; }
+.fbcard textarea { min-height: 110px; resize: vertical; }
+.fbcard .fbtech { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--muted); }
+.fbcard .fbtech input { margin-top: 2px; width: 18px; height: 18px; }
+@media (max-height: 500px) { .pixm-card.newscard, .pixm-card.fbcard { display: flex; flex-direction: column; gap: 6px; width: min(100%, 640px); } .newscard ul { font-size: 14px; gap: 2px; } .fbcard textarea { min-height: 70px; } }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -814,7 +825,7 @@ html.kid #grow-dog { display: none !important; }
         <button class="go alt" id="goAch" type="button" data-i>Minhas conquistas</button>
       </div>
       <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
-      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button><button class="go alt" id="tipToggle" type="button"></button></div>
+      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button><button class="go alt" id="tipToggle" type="button"></button><button class="go alt" id="newsBtn" type="button" data-i>Últimas novidades</button><button class="go alt" id="fbBtn" type="button" data-i>Dê teu feedback</button></div>
       <ul class="how" id="howList">
         <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
         <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
@@ -935,6 +946,36 @@ html.kid #grow-dog { display: none !important; }
     </div>
     <span class="pixm-msg" id="shMsg" aria-live="polite"></span>
   </div>
+</div>
+<div class="pixm" id="newsModal" role="dialog" aria-modal="true" aria-labelledby="newsTitle" hidden>
+  <div class="pixm-card newscard">
+    <button class="pixm-x" id="newsClose" type="button" aria-label="Fechar">×</button>
+    <span class="label" id="newsVer"></span>
+    <h2 id="newsTitle">Grau 80cc — Welcome Update</h2>
+    <p data-i>O Grau 80cc ficou ainda melhor!</p>
+    <ul id="newsList"></ul>
+    <span class="label" data-i>Correções</span>
+    <ul id="newsFix"></ul>
+    <button class="go" id="newsOk" type="button" data-i>Bora jogar!</button>
+  </div>
+</div>
+<div class="pixm" id="fbModal" role="dialog" aria-modal="true" aria-labelledby="fbTitle" hidden>
+  <form class="pixm-card fbcard" id="fbForm">
+    <button class="pixm-x" id="fbClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="fbTitle" data-i>Dê teu feedback</h2>
+    <p data-i>O Grau 80cc está evoluindo contigo! Achou um problema? Tem ideia de moto, personagem ou novidade? Conta pra gente!</p>
+    <label class="mpfield"><span class="label" data-i>Assunto</span>
+      <select id="fbCat">
+        <option value="bug" data-i>Reportar um bug</option><option value="melhoria" data-i>Sugerir uma melhoria</option>
+        <option value="moto" data-i>Sugerir uma moto ou personagem</option><option value="opiniao" data-i>Mandar uma opinião</option><option value="outro" data-i>Outro assunto</option>
+      </select></label>
+    <label class="mpfield"><span class="label" data-i>Mensagem</span>
+      <textarea id="fbMsg" maxlength="1000" placeholder="Escreve aqui…" data-ip="Escreve aqui…"></textarea></label>
+    <label class="fbtech"><input type="checkbox" id="fbTech" checked> <span><span data-i>Mandar junto as informações técnicas:</span> <span id="fbTechTxt"></span></span></label>
+    <span class="pixm-msg" data-i>Não precisa de e-mail. Não coloca dado pessoal (nome completo, telefone, endereço). Nada é publicado.</span>
+    <button class="go" id="fbSend" type="submit" data-i>Enviar</button>
+    <span class="pixm-msg" id="fbOut" aria-live="polite"></span>
+  </form>
 </div>
 <div class="pixm agem" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle" hidden>
   <form class="pixm-card mpcard" id="ageForm">
@@ -1356,6 +1397,42 @@ html.kid #grow-dog { display: none !important; }
     'Dicas do Agenor: desligadas': ['Agenor\'s tips: off', 'Consejos de Agenor: no'],
     'Dicas desligadas. Dá pra ligar de novo embaixo de Como jogar.': ['Tips off. Turn them back on under How to play.', 'Consejos apagados. Puedes prenderlos debajo de Cómo jugar.']
   });
+  Object.assign(I18N, {
+    'Últimas novidades': ['What\'s new', 'Novedades'],
+    'Dê teu feedback': ['Send feedback', 'Envía tu opinión'],
+    'O Grau 80cc ficou ainda melhor!': ['Grau 80cc just got even better!', '¡Grau 80cc quedó todavía mejor!'],
+    'Correções': ['Fixes', 'Correcciones'],
+    'Versão': ['Version', 'Versión'],
+    'Aprende a jogar com os tutoriais novos (embaixo de Como jogar).': ['Learn to play with the new tutorials (under How to play).', 'Aprende a jugar con los nuevos tutoriales (debajo de Cómo jugar).'],
+    'Conhece o Caramelo de patinete, presente de quem testa o app.': ['Meet the Scooter stray, a gift for app testers.', 'Conoce al Perro en patinete, regalo para quien prueba la app.'],
+    'Teu recorde pessoal agora aparece na tela inicial e no fim da volta.': ['Your personal best now shows on the start screen and at the end of each run.', 'Tu récord personal ahora aparece en la pantalla de inicio y al final de la vuelta.'],
+    'Conquistas novas em Minhas conquistas.': ['New achievements in My achievements.', 'Nuevos logros en Mis logros.'],
+    'Compartilha recorde, conquista e coleção com imagem.': ['Share your record, achievements and collection as an image.', 'Comparte récord, logros y colección con imagen.'],
+    'Convida a galera pro multiplayer com um link.': ['Invite friends to multiplayer with a link.', 'Invita a la banda al multijugador con un enlace.'],
+    'Frases novas e dicas do Agenor no fim da volta.': ['New lines and Agenor\'s tips at the end of each run.', 'Frases nuevas y consejos de Agenor al final de la vuelta.'],
+    'Manda teu feedback direto pelo jogo.': ['Send feedback right from the game.', 'Envía tu opinión desde el juego.'],
+    'Minimizou o app: o jogo pausa e a música para.': ['Minimizing the app now pauses the game and the music.', 'Al minimizar la app, el juego se pausa y la música para.'],
+    'O Grau 80cc está evoluindo contigo! Achou um problema? Tem ideia de moto, personagem ou novidade? Conta pra gente!': ['Grau 80cc grows with you! Found a problem? Got an idea for a bike, character or feature? Tell us!', '¡Grau 80cc evoluciona contigo! ¿Encontraste un problema? ¿Tienes una idea de moto, personaje o novedad? ¡Cuéntanos!'],
+    'Assunto': ['Topic', 'Asunto'],
+    'Reportar um bug': ['Report a bug', 'Reportar un error'],
+    'Sugerir uma melhoria': ['Suggest an improvement', 'Sugerir una mejora'],
+    'Sugerir uma moto ou personagem': ['Suggest a bike or character', 'Sugerir una moto o personaje'],
+    'Mandar uma opinião': ['Share an opinion', 'Dar una opinión'],
+    'Outro assunto': ['Something else', 'Otro asunto'],
+    'Mensagem': ['Message', 'Mensaje'],
+    'Escreve aqui…': ['Write here…', 'Escribe aquí…'],
+    'Mandar junto as informações técnicas:': ['Include technical info:', 'Enviar la información técnica:'],
+    'Não precisa de e-mail. Não coloca dado pessoal (nome completo, telefone, endereço). Nada é publicado.': ['No email needed. Don\'t include personal data (full name, phone, address). Nothing is published.', 'No hace falta email. No pongas datos personales (nombre completo, teléfono, dirección). Nada se publica.'],
+    'celular': ['phone', 'celular'],
+    'computador': ['computer', 'computadora'],
+    'Enviando…': ['Sending…', 'Enviando…'],
+    'Muito envio seguido. Tenta daqui a pouco.': ['Too many sends in a row. Try again in a bit.', 'Demasiados envíos seguidos. Intenta en un rato.'],
+    'Escreve pelo menos 3 letras (até 1.000).': ['Write at least 3 characters (up to 1,000).', 'Escribe al menos 3 letras (hasta 1.000).'],
+    'Escolhe um assunto.': ['Pick a topic.', 'Elige un asunto.'],
+    'O feedback ainda não está no ar. Tenta mais tarde.': ['Feedback isn\'t live yet. Try again later.', 'El envío de opiniones todavía no está activo. Intenta más tarde.'],
+    'Não deu pra enviar. Tenta de novo.': ['Couldn\'t send. Try again.', 'No se pudo enviar. Intenta de nuevo.'],
+    'Valeu! Teu feedback chegou.': ['Thanks! We got your feedback.', '¡Gracias! Tu opinión llegó.']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1448,7 +1525,8 @@ html.kid #grow-dog { display: none !important; }
   const near = x => { if (gameMode !== 'multi') return x; const d = x - s.x; return s.x + d - LAP * Math.round(d / LAP); };
   let micOn = false, micTrack = null, mpRound = 0;
   // idade: o ano de nascimento fica só no aparelho; menor de 13 (contando pra menos) joga sem chat, voz, nome, placar nem doação
-  let KID = false, birthYear = 0;
+  let KID = false, birthYear = 0, VETERANO = false;
+  try { VETERANO = !!(localStorage.getItem('grau80-nasc') || localStorage.getItem('grau80-best') || localStorage.getItem('grau80-look')); } catch (e) {}
   try { birthYear = +localStorage.getItem('grau80-nasc') || 0; } catch (e) {}
   const setKid = () => { KID = !!birthYear && new Date().getFullYear() - birthYear - 1 < 13; document.documentElement.classList.toggle('kid', KID); };
   setKid();
@@ -1604,11 +1682,13 @@ html.kid #grow-dog { display: none !important; }
       if (!['Tab', 'Enter', 'NumpadEnter', 'Space'].includes(e.code)) e.preventDefault();
       return;
     }
-    if (e.target.tagName === 'INPUT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
     if (!$('ctlModal').hidden) { if (e.code === 'Escape') { e.preventDefault(); closeCtl(); } return; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
+    if (e.code === 'Escape' && !$('newsModal').hidden) { e.preventDefault(); closeNews(); return; }
+    if (e.code === 'Escape' && !$('fbModal').hidden) { e.preventDefault(); closeFb(); return; }
     if (e.code === 'Escape' && !$('shModal').hidden) { e.preventDefault(); closeShare(); return; }
     if (e.code === 'Escape' && !$('achModal').hidden) { e.preventDefault(); closeAch(); return; }
     if (e.code === 'Escape' && !$('pixModal').hidden) { e.preventDefault(); closePix(); return; }
@@ -1629,7 +1709,7 @@ html.kid #grow-dog { display: none !important; }
   // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
   // tela inicial; só na tela inicial ele devolve false e o Android sai do app
   window.grauBack = () => {
-    for (const [id, close] of [['shModal', closeShare], ['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
+    for (const [id, close] of [['newsModal', closeNews], ['fbModal', closeFb], ['shModal', closeShare], ['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
       if (!$(id).hidden) { close(); return true; }
     }
     if (!$('ageModal').hidden) return false;
@@ -5216,6 +5296,8 @@ html.kid #grow-dog { display: none !important; }
   // ordem do que aparece sozinho ao abrir (nunca dois por cima um do outro): idade/apelido → convite → tour
   function introNext() {
     if (!$('ageModal').hidden) return;
+    if ([...document.querySelectorAll('.pixm')].some(m => !m.hidden)) return; // um de cada vez
+    if (newsPending()) { openNews(true); return; }
     if (pendingSala) {
       const c = pendingSala; pendingSala = '';
       if (room.code) return;
@@ -5225,6 +5307,62 @@ html.kid #grow-dog { display: none !important; }
     }
     maybeMenuTut();
   }
+
+  // ---------- novidades da versão ----------
+  // Mostra sozinho uma vez por versão, só pra quem já jogava antes (quem chega agora começa pelo tutorial, sem notícia
+  // de versão que nunca conheceu). "Últimas novidades" reabre quando quiser. Pra próxima versão: troca NEWS.
+  const NEWS = {
+    id: 'welcome-1', ver: '1.8', title: 'Grau 80cc — Welcome Update',
+    items: () => ['Aprende a jogar com os tutoriais novos (embaixo de Como jogar).', TESTER ? 'Conhece o Caramelo de patinete, presente de quem testa o app.' : '',
+      'Teu recorde pessoal agora aparece na tela inicial e no fim da volta.', 'Conquistas novas em Minhas conquistas.', 'Compartilha recorde, conquista e coleção com imagem.',
+      'Convida a galera pro multiplayer com um link.', 'Frases novas e dicas do Agenor no fim da volta.', 'Manda teu feedback direto pelo jogo.'].filter(Boolean),
+    fixes: ['Minimizou o app: o jogo pausa e a música para.']
+  };
+  let newsSeen = ''; try { newsSeen = localStorage.getItem('grau80-novidades') || ''; } catch (e) {}
+  const markNews = () => { newsSeen = NEWS.id; try { localStorage.setItem('grau80-novidades', NEWS.id); } catch (e) {} };
+  if (!VETERANO && newsSeen !== NEWS.id) markNews(); // jogador novo não recebe a tela de novidades
+  const newsPending = () => newsSeen !== NEWS.id;
+  function openNews(auto) {
+    $('newsVer').textContent = T('Versão') + ' ' + NEWS.ver; $('newsTitle').textContent = NEWS.title;
+    const fill = (id, L) => { const ul = $(id); ul.textContent = ''; for (const t of L) ul.append(Object.assign(document.createElement('li'), { textContent: T(t) })); };
+    fill('newsList', NEWS.items()); fill('newsFix', NEWS.fixes);
+    $('newsModal').hidden = false; $('newsOk').focus();
+    markNews(); track(auto ? 'whats_new_viewed' : 'whats_new_reopened');
+  }
+  function closeNews() { const was = !$('newsModal').hidden; $('newsModal').hidden = true; if (was) setTimeout(introNext, 300); }
+  $('newsBtn').addEventListener('click', () => openNews(false));
+  $('newsOk').addEventListener('click', closeNews); $('newsClose').addEventListener('click', closeNews);
+  $('newsModal').addEventListener('click', e => { if (e.target === $('newsModal')) closeNews(); });
+
+  // ---------- feedback ----------
+  // Vai pro Supabase pela função grau_feedback (supabase/05-feedback.sql): valida, limita envio e guarda só o hash do IP.
+  // Confirma só quando o servidor responde 'ok'. Sem e-mail, sem idade, sem id do aparelho.
+  const FB_ERR = { muitos_envios: 'Muito envio seguido. Tenta daqui a pouco.', servidor_ocupado: 'Muito envio seguido. Tenta daqui a pouco.',
+    mensagem_invalida: 'Escreve pelo menos 3 letras (até 1.000).', categoria_invalida: 'Escolhe um assunto.' };
+  const fbTech = () => ['v' + APP_BUILD, NATIVE ? 'app Android' : 'navegador', touchDev ? T('celular') : T('computador'), LANG, gameMode].join(' · ');
+  function openFb() { $('fbTechTxt').textContent = fbTech(); $('fbOut').textContent = ''; $('fbModal').hidden = false; $('fbCat').focus(); track('feedback_opened'); }
+  function closeFb() { $('fbModal').hidden = true; }
+  $('fbBtn').addEventListener('click', openFb); $('fbClose').addEventListener('click', closeFb);
+  $('fbModal').addEventListener('click', e => { if (e.target === $('fbModal')) closeFb(); });
+  $('fbForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const msg = clean($('fbMsg').value.replace(/\r/g, ''), 1000).replace(/[\u0000-\u0009\u000b-\u001f]/g, ''), out = $('fbOut');
+    if (msg.length < 3) { out.textContent = T(FB_ERR.mensagem_invalida); $('fbMsg').focus(); return; }
+    let last = 0; try { last = +localStorage.getItem('grau80-fb-ultimo') || 0; } catch (er) {}
+    if (Date.now() - last < 60000) { out.textContent = T(FB_ERR.muitos_envios); return; }
+    $('fbSend').disabled = true; out.textContent = T('Enviando…');
+    try {
+      const r = await fetch(RPC + 'grau_feedback', { method: 'POST', headers: SBH,
+        body: JSON.stringify({ p_categoria: $('fbCat').value, p_mensagem: msg, p_info: $('fbTech').checked ? fbTech() : null }) });
+      if (r.status === 404) { out.textContent = T('O feedback ainda não está no ar. Tenta mais tarde.'); track('feedback_submission_failed'); return; }
+      if (!r.ok) throw new Error(r.status);
+      const res = await r.json();
+      if (res !== 'ok') { out.textContent = T(FB_ERR[res] || 'Não deu pra enviar. Tenta de novo.'); track('feedback_submission_failed'); return; }
+      try { localStorage.setItem('grau80-fb-ultimo', String(Date.now())); } catch (er) {}
+      $('fbMsg').value = ''; out.textContent = T('Valeu! Teu feedback chegou.'); track('feedback_submitted');
+    } catch (er) { out.textContent = T('Não deu pra enviar. Confere a internet e tenta de novo.'); track('feedback_submission_failed'); }
+    finally { $('fbSend').disabled = false; }
+  });
 
   // ---------- onboarding: tutorial de menus e tutorial de como jogar ----------
   // Versão de cada tutorial: subir o número faz todo mundo (novo e antigo) ver de novo. Visto ou pulado grava a versão;

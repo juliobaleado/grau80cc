@@ -16,7 +16,7 @@ let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const DONE = '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}';
-const OLD = { 'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instrucoes': 'fechado', 'grau80-best': '412.30', 'grau80-best-livre': '88.10',
+const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instrucoes': 'fechado', 'grau80-best': '412.30', 'grau80-best-livre': '88.10',
   'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1 }), 'grau80-look': JSON.stringify({ model: 'monark', frame: 'ferrari', dog: 'patinete' }), 'grau80-testador': '1' };
 
 (async () => {
@@ -110,7 +110,7 @@ const OLD = { 'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instruco
   // 4. antigo sem apelido: só o campo de apelido; vazio é permitido (continua convidado)
   {
     console.log('— jogador antigo sem apelido');
-    const { p } = await session({ 'grau80-nasc': '1990', 'grau80-instrucoes': 'fechado' });
+    const { p } = await session({ 'grau80-nasc': '1990', 'grau80-instrucoes': 'fechado', 'grau80-novidades': 'welcome-1' });
     let s = await st(p);
     ok(s.age && !s.yearF && s.nameF, 'pergunta só o apelido (o ano já está salvo)', s);
     await p.click('#ageOk'); await wait(900);

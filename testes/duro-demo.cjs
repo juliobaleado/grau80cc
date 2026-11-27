@@ -24,7 +24,7 @@ const srv = http.createServer((q, r) => {
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const PRE = () => {
   window.WebSocket = class { constructor() { this.readyState = 0; } send() {} close() {} };
-  try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-musica', 'off'); localStorage.setItem('grau80-lang', 'pt'); } catch (e) {}
+  try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-musica', 'off'); localStorage.setItem('grau80-lang', 'pt'); } catch (e) {}
 };
 
 (async () => {
