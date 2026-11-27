@@ -19,7 +19,7 @@ async function until(p, fn, arg, ms = 15000) { const t0 = Date.now(); while (Dat
     const p = await (await b.createBrowserContext()).newPage();
     const errs = []; p.on('pageerror', e => errs.push(e.message));
     await isolar(p, RUN);
-    await p.evaluateOnNewDocument(n => { try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', n); localStorage.setItem('grau80-instrucoes', 'fechado'); } catch (e) {} }, nome);
+    await p.evaluateOnNewDocument(n => { try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', n); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); } catch (e) {} }, nome);
     await p.goto('http://127.0.0.1:8818/', { waitUntil: 'load' });
     P.push({ p, errs, nome });
   }

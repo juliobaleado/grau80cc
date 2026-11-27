@@ -24,7 +24,7 @@ async function until(p, fn, arg, ms = 20000) { const t0 = Date.now(); while (Dat
       await p.setViewport({ width: 480, height: 270 });
       await isolar(p, RUN);
       await p.evaluateOnNewDocument((noRtc, i) => {
-        try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', 'Medidor' + i); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-musica', 'off'); } catch (e) {}
+        try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', 'Medidor' + i); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-musica', 'off'); } catch (e) {}
         if (noRtc) { delete window.RTCPeerConnection; window.RTCPeerConnection = undefined; }
         const C = window.__cnt = { out: {}, in: {}, on: false };
         const add = (o, k) => { if (C.on) o[k] = (o[k] || 0) + 1; };

@@ -9,7 +9,7 @@ let pass = 0, fail = 0; const ok = (c, n, x) => { c ? pass++ : fail++; console.l
 (async () => {
   const b = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new', args: ['--mute-audio', '--host-resolver-rules=MAP *.supabase.co 0.0.0.0'] });
   const p = await b.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message));
-  await p.evaluateOnNewDocument(() => { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); });
+  await p.evaluateOnNewDocument(() => { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); });
   await p.goto('http://127.0.0.1:8828/', { waitUntil: 'load' });
   await new Promise(r => setTimeout(r, 2500));
   ok(/Sem conexão/.test(await p.$eval('#boardList', e => e.textContent)), 'placar avisa "Sem conexão com o placar."');

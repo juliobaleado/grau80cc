@@ -25,7 +25,7 @@ async function page(b, mock) {
     q.respond({ status: res[0], contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify(res[1]) });
   });
   await p.evaluateOnNewDocument(() => {
-    try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-doa', '["pastel_vento","mini_pastel"]'); } catch (e) {}
+    try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-doa', '["pastel_vento","mini_pastel"]'); } catch (e) {}
     window.WebSocket = class { constructor() { this.readyState = 0; } send() {} close() {} };
   });
   await p.goto('http://127.0.0.1:8817/', { waitUntil: 'load' });

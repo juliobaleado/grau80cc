@@ -619,6 +619,51 @@ html.kid #grow-dog { display: none !important; }
   .mpfeed { font-size: 12px; }
   .mpchat { bottom: 8px; padding: 5px; }
 }
+/* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
+.tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
+.tut[hidden] { display: none; }
+.tut.jogo { pointer-events: none; }
+.game:has(#pauseScreen:not([hidden])) ~ .tut, .game:has(#endScreen:not([hidden])) ~ .tut { display: none; }
+.tut-hole { position: fixed; border-radius: 6px; pointer-events: none; box-shadow: 0 0 0 200vmax rgba(4, 10, 14, .76); outline: 2px solid var(--sodium); outline-offset: 3px;
+  transition: left .25s, top .25s, width .25s, height .25s; }
+.tut-hole.none { left: 50% !important; top: 50% !important; width: 0 !important; height: 0 !important; outline: 0; }
+.tut-hole.ring { box-shadow: 0 0 0 4px rgba(255, 181, 71, .35); animation: tutRing 1.1s ease-in-out infinite; }
+.tut.jogo .tut-hole.none { box-shadow: none; }
+@keyframes tutRing { 50% { outline-offset: 7px; } }
+.tut-card { position: fixed; left: 16px; top: 16px; pointer-events: auto; width: min(380px, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 8px;
+  padding: 14px 16px 12px; background: rgba(11, 26, 34, .96); border: 1px solid var(--sodium); border-radius: 4px; box-shadow: 0 14px 40px rgba(0, 0, 0, .55); }
+.tut.jogo .tut-card { width: min(520px, 48vw, calc(100vw - 32px)); }
+.tut-card h3 { margin: 0; font: 400 24px/1.02 var(--display); color: var(--sodium); text-wrap: balance; }
+.tut-card p { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 500; }
+.tut-bot { align-self: flex-start; font: 700 11px/1 var(--hud); letter-spacing: .14em; text-transform: uppercase; color: var(--night); background: var(--ok); padding: 4px 7px; border-radius: 2px; }
+.tut-bot[hidden], .tut-keys[hidden] { display: none; }
+.tut-keys { display: flex; gap: 6px; flex-wrap: wrap; }
+.tut-keys span { font: 600 14px/1 var(--hud); letter-spacing: .04em; padding: 6px 9px; border: 1px solid rgba(243, 239, 230, .3); border-radius: 3px; color: var(--muted); transition: background .08s, color .08s; }
+.tut-keys span.on { color: var(--night); background: var(--sodium); border-color: var(--sodium); }
+.tut-keys #tkBrake.on { background: var(--danger); border-color: var(--danger); }
+.tut-keys #tkPull.on { background: var(--ok); border-color: var(--ok); }
+.tut-row { display: flex; gap: 8px; align-items: center; }
+.tut-row .go { font-size: 17px; padding: 8px 16px 10px; min-height: 44px; }
+.tut-row .go[hidden] { display: none; }
+.tut-dots { display: flex; gap: 5px; flex: 1; }
+.tut-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(243, 239, 230, .25); }
+.tut-dots i.on { background: var(--sodium); }
+.tut-skip { margin-left: auto; min-height: 40px; padding: 6px 4px; background: none; border: 0; color: var(--muted); font: 600 13px var(--hud); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.tut-skip:hover, .tut-skip:focus-visible { color: var(--ink); }
+.tut-glow { animation: tutGlow 1s ease-in-out infinite; }
+@keyframes tutGlow { 50% { filter: brightness(1.35) drop-shadow(0 0 8px rgba(255, 181, 71, .9)); } }
+.tutrow { display: flex; gap: 8px; flex-wrap: wrap; }
+#startScreen .tutrow .go { font-size: 15px; padding: 6px 12px 8px; }
+@media (max-height: 460px) {
+  .tut-card { gap: 5px; padding: 9px 12px 8px; }
+  .tut-card h3 { font-size: 19px; }
+  .tut-card p { font-size: 14px; line-height: 1.22; }
+  .tut-keys span { font-size: 12px; padding: 4px 7px; }
+  .tut-row .go { font-size: 15px; padding: 5px 12px 7px; min-height: 38px; }
+  .tut-skip { min-height: 34px; }
+  .tut-dots { display: none; }
+  .tut-row:first-of-type { justify-content: flex-end; }
+}
 </style>
 
 <div class="game" id="game">
@@ -707,6 +752,7 @@ html.kid #grow-dog { display: none !important; }
         <button class="go alt" id="goCtl" type="button" data-i>Controles</button>
       </div>
       <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
+      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button></div>
       <ul class="how" id="howList">
         <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
         <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
@@ -801,10 +847,14 @@ html.kid #grow-dog { display: none !important; }
 <div class="pixm agem" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle" hidden>
   <form class="pixm-card mpcard" id="ageForm">
     <h2 id="ageTitle" data-i>Antes de jogar</h2>
-    <label class="mpfield"><span class="label" data-i>Em que ano tu nasceu?</span>
-      <select id="ageYear" required><option value="" data-i>Escolhe o ano</option></select></label>
+    <label class="mpfield" id="ageYearF"><span class="label" data-i>Em que ano tu nasceu?</span>
+      <select id="ageYear"><option value="" data-i>Escolhe o ano</option></select></label>
+    <label class="mpfield" id="ageNameF" hidden><span class="label" data-i>Como podemos te chamar?</span>
+      <input id="ageName" maxlength="16" placeholder="Teu apelido" data-ip="Teu apelido" autocomplete="nickname" enterkeyhint="done"></label>
+    <span class="pixm-msg" id="ageNameTip" hidden data-i>Esse nome aparece nas salas do multiplayer e no placar mundial. Dá pra trocar depois no Multiplayer.</span>
+    <span class="pixm-msg" id="ageNameErr" aria-live="polite"></span>
     <button class="go" id="ageOk" type="submit" disabled data-i>Confirmar</button>
-    <span class="pixm-msg" data-i>O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.</span>
+    <span class="pixm-msg" id="ageYearTip" data-i>O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.</span>
   </form>
 </div>
 <div class="pixm" id="mpModal" role="dialog" aria-modal="true" aria-labelledby="mpTitle" hidden>
@@ -888,6 +938,18 @@ html.kid #grow-dog { display: none !important; }
   <span data-i>O grau é na horizontal.</span>
   <button type="button" class="go" id="goLand" data-i>Tela cheia</button>
 </div>
+<!-- onboarding: tour dos menus e demonstração de como jogar (o mesmo cartão serve os dois) -->
+<div class="tut" id="tut" hidden>
+  <div class="tut-hole none" id="tutHole"></div>
+  <div class="tut-card" id="tutCard" role="dialog" aria-labelledby="tutTitle" aria-describedby="tutText">
+    <span class="tut-bot" id="tutBot" hidden data-i>Demonstração automática · o jogo está pilotando</span>
+    <h3 id="tutTitle"></h3>
+    <p id="tutText" aria-live="polite"></p>
+    <div class="tut-keys" id="tutKeys" hidden><span id="tkGas"></span><span id="tkBrake"></span><span id="tkPull"></span></div>
+    <div class="tut-row"><span class="tut-dots" id="tutDots" aria-hidden="true"></span><span class="label" id="tutCount"></span><button class="tut-skip" id="tutSkip" type="button" data-i>Pular tutorial</button></div>
+    <div class="tut-row"><button class="go alt" id="tutBack" type="button" data-i>Voltar</button><button class="go" id="tutNext" type="button" data-i>Próximo</button></div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -937,6 +999,93 @@ html.kid #grow-dog { display: none !important; }
   // dois modos: 'motoca' (conquistas e desafios, frente no chão acaba a volta) e 'livre' (só recorde)
   // idioma: só os textos informativos mudam; frases, mensagens do jogo e conquistas ficam em português (exceto as falas da D.U.R.O.)
   const I18N = {"Última":["Last","Última"],"Recorde":["Best","Récord"],"Pausa":["Pause","Pausa"],"Som: ligado":["Sound: on","Sonido: sí"],"Música: on":["Music: on","Música: sí"],"Música: off":["Music: off","Música: no"],"Som: desligado":["Sound: off","Sonido: no"],"Grau · motoca":["Wheelie · motoca","Caballito · motoca"],"Grau · livre":["Wheelie · free","Caballito · libre"]," · teste":[" · test"," · prueba"],"‹ Freio":["‹ Brake","‹ Freno"],"toca na esquerda · ↓ / S":["tap left · ↓ / S","toca a la izquierda · ↓ / S"],"Puxa":["Pull","Tirón"],"Acelera ›":["Throttle ›","Acelera ›"],"toca na direita · Espaço / ↑":["tap right · Space / ↑","toca a la derecha · Espacio / ↑"],"Placar global · top 10":["Global leaderboard · top 10","Ranking global · top 10"],"Carregando…":["Loading…","Cargando…"],"Bate o primeiro pra tomar a coroa 👑":["Beat #1 to take the crown 👑","Supera al primero y quédate con la corona 👑"],"Sem conexão com o placar.":["No connection to the leaderboard.","Sin conexión con el ranking."],"Ninguém ainda. Bora ser o primeiro!":["Nobody yet. Be the first!","Nadie todavía. ¡Sé el primero!"],"Pix · toca pra ver o QR":["Pix · tap to see the QR","Pix · toca para ver el QR"],"Motor 2 tempos · 80 cc":["2-stroke engine · 80 cc","Motor 2 tiempos · 80 cc"],"Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.":["Leaving Pastel do Agenor on a motorized bike with the delivery backpack on. Earn achievements to unlock new bikes in the garage. Keep the front wheel up for as many meters as you can.","Saliendo del Pastel do Agenor en bici motorizada con la mochila de reparto a la espalda. Gana logros para desbloquear bicis nuevas en el garaje. Mantén la rueda delantera arriba todos los metros que puedas."],"A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.":["The engine is already running: hold Space or click and hold on the street to rev it and hit the limiter.","El motor ya está encendido: mantén Espacio o haz clic y mantén en la calle para acelerar y cortar el giro."],"Conquistas":["Achievements","Logros"],"Conquistas · modo teste (todas)":["Achievements · test mode (all)","Logros · modo prueba (todos)"],"Modo Motoca":["Motoca Mode","Modo Motoca"],"Modo Livre":["Free Mode","Modo Libre"],"Acelera":["Throttle","Acelera"],"Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.":["Hold your finger on the right half of the screen, Space, ↑ or click.","Mantén el dedo en la mitad derecha de la pantalla, Espacio, ↑ o clic."],"Giro":["Revs","Giro"],"O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.":["The 2-stroke only pulls in the orange band of the tachometer. Get in the band and the front comes up.","El 2 tiempos solo tiene fuerza en la franja naranja del cuentarrevoluciones. Entra en la franja y la rueda sube."],"Ponto":["Balance","Punto"],"Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.":["Around 75° the bike balances by itself (the gauge over the rider turns green). Go past it and you flip over.","Cerca de 75° la moto se equilibra sola (el medidor sobre la cabeza se pone verde). Si te pasas, se da vuelta."],"Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.":["Let go of the throttle and the revs drop slowly. Get back on it and the power comes right back.","Suelta el acelerador y el motor pierde giro despacio. Vuelve a acelerar y la fuerza vuelve al instante."],"Freio":["Brake","Freno"],"Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.":["Rear brake: finger on the left half of the screen, ↓, S or right mouse button. Brings the front down, stronger the faster you go.","Freno trasero: dedo en la mitad izquierda de la pantalla, ↓, S o botón derecho del ratón. Baja la rueda, y cuanto más rápido, más fuerte."],"Motoca":["Motoca","Motoca"],"Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.":["Achievements and challenges. Front wheel touches down or you flip over and the run is over. Wheelies under 3 m don't count, you can lift again.","Logros y desafíos. Si la rueda delantera toca el suelo o te das vuelta, se acaba. Caballitos de menos de 3 m no cuentan, puedes subir de nuevo."],"Livre":["Free","Libre"],"Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.":["No achievements or challenges, just your best. Drop the front and lift again as often as you like; it only ends if you flip over.","Sin logros ni desafíos, solo el récord. Baja la rueda y sube de nuevo las veces que quieras; solo se acaba si te das vuelta."],"A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.":["A or the Pull button: the rider stands up and throws his hips back, giving the front a little kick. Hold it and he stays standing, so the wheelie balances lower, around 67°.","A o el botón Tirón: el piloto se levanta y tira la cadera hacia atrás, la rueda recibe un pequeño empujón. Si lo mantienes, sigue de pie y el caballito se equilibra más bajo, cerca de 67°."],"Botão Pausa. Esc volta pra esta tela, pra trocar o visual.":["Pause button. Esc returns to this screen to change your look.","Botón Pausa. Esc vuelve a esta pantalla para cambiar el look."],"Distância empinando":["Wheelie distance","Distancia en caballito"],"Maior empinada da volta":["Longest wheelie this run","Caballito más largo de la vuelta"],"Novo recorde":["New record","Nuevo récord"],"Novo recorde!":["New record!","¡Nuevo récord!"],"Entrou no top 10 global! Bota teu nome":["You made the global top 10! Enter your name","¡Entraste al top 10 global! Pon tu nombre"],"Teu nome":["Your name","Tu nombre"],"Enviar":["Send","Enviar"],"Bota um nome aí.":["Type a name.","Escribe un nombre."],"Enviando…":["Sending…","Enviando…"],"Tá no placar global!":["You're on the global leaderboard!","¡Estás en el ranking global!"],"Não deu pra enviar. Confere a internet e tenta de novo.":["Couldn't send it. Check your connection and try again.","No se pudo enviar. Revisa tu conexión e inténtalo de nuevo."],"Empinadas":["Wheelies","Caballitos"],"Velocidade máx.":["Top speed","Velocidad máx."],"De novo":["Again","Otra vez"],"Tela inicial":["Home","Inicio"],"Esc volta pra tela inicial":["Esc goes back home","Esc vuelve al inicio"],"Pausado":["Paused","En pausa"],"Continuar":["Resume","Continuar"],"Curtiu o grau? Manda um Pix de qualquer valor pro Julio e ajuda o projeto a crescer.":["Enjoying the wheelies? Send Julio any amount by Pix (Brazilian instant payment) and help the project grow.","¿Te gustó? Mándale a Julio un Pix (pago instantáneo de Brasil) de cualquier valor y ayuda al proyecto a crecer."],"Copiar código Pix":["Copy Pix code","Copiar código Pix"],"Ou abre o app do banco, escolhe Pix copia e cola e cola o código.":["Or open your bank app, choose Pix copy and paste, and paste the code.","O abre la app de tu banco, elige Pix copia y pega, y pega el código."],"Copiado! Agora é só colar no Pix copia e cola do teu banco. Valeu demais!":["Copied! Now paste it into Pix copy and paste in your bank app. Thanks a lot!","¡Copiado! Ahora pégalo en Pix copia y pega de tu banco. ¡Muchas gracias!"],"Não deu pra copiar sozinho. Usa o QR code aí em cima.":["Couldn't copy automatically. Use the QR code above.","No se pudo copiar solo. Usa el código QR de arriba."],"Deita o celular":["Turn your phone sideways","Gira el celular"],"O grau é na horizontal.":["Wheelies are played in landscape.","El caballito se juega en horizontal."],"Tela cheia":["Full screen","Pantalla completa"],"Modo teste ligado: tudo liberado":["Test mode on: everything unlocked","Modo prueba activado: todo desbloqueado"],"Modo teste desligado":["Test mode off","Modo prueba desactivado"],"Conquista desbloqueada · ":["Achievement unlocked · ","Logro desbloqueado · "],"Modo teste · ":["Test mode · ","Modo prueba · "]," · liberou a ":[" · unlocked: "," · desbloqueaste: "],"Libera com a conquista":["Unlocks with the achievement","Se desbloquea con el logro"],"Anterior":["Previous","Anterior"],"Próximo":["Next","Siguiente"],"FREIA":["BRAKE","FRENA"],"recorde":["best","récord"],"PIX · TOCA PRA AMPLIAR":["PIX · TAP TO ENLARGE","PIX · TOCA PARA AMPLIAR"],"Capacete":["Helmet","Casco"],"Camisa":["Shirt","Camiseta"],"Bermuda":["Shorts","Bermuda"],"Mochila":["Backpack","Mochila"],"Bike":["Bike","Bici"],"Cor da bike":["Bike color","Color de la bici"],"Branco":["White","Blanco"],"Preto":["Black","Negro"],"Vermelho":["Red","Rojo"],"Amarelo":["Yellow","Amarillo"],"Azul":["Blue","Azul"],"Verde limão":["Lime green","Verde lima"],"Rosa":["Pink","Rosa"],"Laranja":["Orange","Naranja"],"Seleção amarela":["Brazil yellow","Brasil amarilla"],"Seleção azul":["Brazil blue","Brasil azul"],"Seleção vermelha":["Brazil red","Brasil roja"],"Seleção verde":["Brazil green","Brasil verde"],"Seleção preta":["Brazil black","Brasil negra"],"Seleção branca":["Brazil white","Brasil blanca"],"Listrada":["Striped","A rayas"],"Branca":["White","Blanca"],"Verde":["Green","Verde"],"Preta":["Black","Negra"],"Vermelha":["Red","Roja"],"Jeans":["Denim","Vaquero"],"Cinza":["Gray","Gris"],"Amarela":["Yellow","Amarilla"],"Vermelho Foguete":["Rocket red","Rojo cohete"],"Azul calcinha":["Baby blue","Celeste"],"Creme":["Cream","Crema"],"Verde água":["Aqua green","Verde agua"],"Verde oliva":["Olive green","Verde oliva"],"Preta fosca":["Matte black","Negro mate"],"Rosa chiclete":["Bubblegum pink","Rosa chicle"],"Roxa":["Purple","Morado"],"Vinho":["Wine","Vino"],"Caramelo (multiplayer)":["Stray dog (multiplayer)","Perro (multijugador)"],"Caramelo raiz":["Classic stray","Perro clásico"],"Caramelo magrelo":["Skinny stray","Perro flaquito"],"Caramelo gordinho de coleira":["Chubby stray with collar","Perro gordito con collar"],"Caramelo gordo":["Fat stray","Perro gordo"],"Caramelo gordaço":["Super fat stray","Perro gordísimo"],"Caramelo mecha":["Mecha stray","Perro mecha"],"Super caramelo":["Super stray","Super perro"],"Libera com o":["Unlocks with the","Se desbloquea con el"],"só no app da Play Store":["Play Store app only","solo en la app de Play Store"],"✓ Já é teu":["✓ Yours","✓ Ya es tuyo"],"Caramelo":["Stray","Perro"],"Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.":["Thanks a lot for the pastel! Your new stray is in the garage.","¡Muchas gracias por el pastel! Tu perro nuevo ya está en el garaje."],"Cada pastel é uma doação pro desenvolvedor e libera um caramelo especial pra quando tu vira cachorro no multiplayer. Não muda nada na disputa: é só visual. Compra única, fica guardada na tua conta Google.":["Each pastel is a donation to the developer and unlocks a special stray for when you turn into a dog in multiplayer. It doesn't change the competition: it's just cosmetic. One-time purchase, saved to your Google account.","Cada pastel es una donación al desarrollador y desbloquea un perro especial para cuando te conviertes en perro en el multijugador. No cambia nada en la competencia: es solo visual. Compra única, queda guardada en tu cuenta de Google."],"Mini pastel":["Mini pastel","Mini pastel"],"Pastel de feira":["Market pastel","Pastel de feria"],"Pastel duplo":["Double pastel","Pastel doble"],"Pastel X-tudo":["Loaded pastel","Pastel completo"],"Sushi pastel":["Sushi pastel","Sushi pastel"],"Pastel de vento":["Wind pastel","Pastel de viento"],"Antes de jogar":["Before you play","Antes de jugar"],"Em que ano tu nasceu?":["What year were you born?","¿En qué año naciste?"],"Escolhe o ano":["Pick the year","Elige el año"],"Confirmar":["Confirm","Confirmar"],"O ano fica só no teu aparelho. Ele serve pra decidir se o chat e a voz ficam ligados.":["The year stays on your device. It decides whether chat and voice are turned on.","El año se queda solo en tu dispositivo. Sirve para decidir si el chat y la voz están activados."],"Modo sem chat: pra menores de 13, o chat, a voz e o nome ficam desligados. Dá pra jogar junto, só não dá pra conversar.":["No-chat mode: for players under 13, chat, voice and names are turned off. You can still play together, just not talk.","Modo sin chat: para menores de 13, el chat, la voz y el nombre están desactivados. Se puede jugar juntos, pero no hablar."],"É só uma doação: o pastel é de mentirinha e não libera nada no jogo. É um jeito de dizer valeu pro desenvolvedor.":["It's just a donation: the pastel is pretend and unlocks nothing in the game. It's a way to say thanks to the developer.","Es solo una donación: el pastel es de mentira y no desbloquea nada en el juego. Es una forma de dar las gracias al desarrollador."],"Silenciar":["Mute","Silenciar"],"Denunciar e silenciar":["Report and mute","Denunciar y silenciar"],"Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.":["Muted players disappear from your chat and voice. Reports go to the game's moderation.","Los silenciados desaparecen de tu chat y de la voz. La denuncia va a la moderación del juego."],"Tirar o silêncio de todos":["Unmute everyone","Quitar el silencio a todos"],"Silenciado.":["Muted.","Silenciado."],"Denúncia enviada e jogador silenciado. Valeu!":["Report sent and player muted. Thanks!","Denuncia enviada y jugador silenciado. ¡Gracias!"],"Silenciado, mas a denúncia não foi. Confere a internet.":["Muted, but the report didn't go through. Check your connection.","Silenciado, pero la denuncia no se envió. Revisa tu conexión."],"Ninguém mais silenciado.":["Nobody muted anymore.","Ya nadie silenciado."],"Doação pela Google Play":["Donate via Google Play","Donación por Google Play"],"Curtiu o grau? Escolhe um pastel e ajuda o projeto a crescer. O pagamento é pela Google Play.":["Enjoying the wheelies? Pick a pastel and help the project grow. Payment goes through Google Play.","¿Te gusta? Elige un pastel y ayuda al proyecto a crecer. El pago es por Google Play."],"A loja não está disponível agora.":["The store isn't available right now.","La tienda no está disponible ahora."],"Abrindo a Google Play…":["Opening Google Play…","Abriendo Google Play…"],"Valeu demais pelo pastel! Isso ajuda muito o projeto.":["Thanks a lot for the pastel! It really helps the project.","¡Muchas gracias por el pastel! Ayuda mucho al proyecto."],"Valeu pelo pastel!":["Thanks for the pastel!","¡Gracias por el pastel!"],"Compra cancelada.":["Purchase canceled.","Compra cancelada."],"Não deu pra concluir. Tenta de novo mais tarde.":["Couldn't finish it. Try again later.","No se pudo completar. Inténtalo más tarde."],"TOCA PRA DOAR":["TAP TO DONATE","TOCA PARA DONAR"],"Fechar instruções":["Hide instructions","Ocultar instrucciones"],"Como jogar":["How to play","Cómo jugar"],"No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início":["On iPhone, for full screen: Share › Add to Home Screen","En iPhone, para pantalla completa: Compartir › Agregar a inicio"],"Toca na tela pra ouvir a voz da galera.":["Tap the screen to hear the voice chat.","Toca la pantalla para oír el chat de voz."]};
+  Object.assign(I18N, {
+    'Como podemos te chamar?': ['What should we call you?', '¿Cómo te llamamos?'],
+    'Teu apelido': ['Your nickname', 'Tu apodo'],
+    'Esse nome aparece nas salas do multiplayer e no placar mundial. Dá pra trocar depois no Multiplayer.':
+      ['This name shows up in multiplayer rooms and on the world leaderboard. You can change it later in Multiplayer.',
+       'Este nombre aparece en las salas multijugador y en el ranking mundial. Puedes cambiarlo después en Multijugador.'],
+    'Tutorial de menus': ['Menu tutorial', 'Tutorial de menús'], 'Tutorial de como jogar': ['How to play tutorial', 'Tutorial de cómo jugar'],
+    'Demonstração automática · o jogo está pilotando': ['Automatic demo · the game is riding', 'Demostración automática · el juego está manejando'],
+    'Pular tutorial': ['Skip tutorial', 'Saltar tutorial'], 'Voltar': ['Back', 'Atrás'], 'Próximo': ['Next', 'Siguiente'],
+    'Bora jogar!': ["Let's ride!", '¡A jugar!'], 'Vamos dar grau!': ["Let's pop a wheelie!", '¡A hacer caballito!'],
+    'Tutorial · demonstração': ['Tutorial · demo', 'Tutorial · demo'], 'Sai da sala pra ver o tutorial': ['Leave the room to watch the tutorial', 'Sal de la sala para ver el tutorial'],
+    'botão': ['button', 'botón'], 'esquerda da tela': ['left side of the screen', 'lado izquierdo'], 'direita da tela': ['right side of the screen', 'lado derecho'],
+    'Bem-vindo ao Grau 80cc!': ['Welcome to Grau 80cc!', '¡Bienvenido a Grau 80cc!'],
+    'Domina a motoca, monta teu visual, desafia a galera e disputa um lugar entre os melhores graus do mundo!':
+      ['Master your bike, build your look, challenge your friends and fight for a spot among the best wheelies in the world!',
+       '¡Domina tu moto, arma tu estilo, desafía a tus amigos y pelea por un lugar entre los mejores caballitos del mundo!'],
+    'Deixa a motoca do teu jeito!': ['Make the bike yours!', '¡Deja la moto a tu manera!'],
+    'Aqui tu escolhe a bike, a cor, o capacete, a roupa, a mochila e o caramelo. Bike nova libera com as conquistas.':
+      ['Pick your bike, color, helmet, clothes, backpack and stray dog here. New bikes unlock with achievements.',
+       'Aquí eliges la bici, el color, el casco, la ropa, la mochila y el perrito. Las bicis nuevas se desbloquean con logros.'],
+    'Até onde tu consegue ir?': ['How far can you go?', '¿Hasta dónde llegas?'],
+    'Modo Motoca: sozinho e com desafios na rua. Segura a frente no alto o máximo de metros e tenta entrar no placar mundial.':
+      ['Motoca Mode: solo, with street challenges. Keep the front up as many meters as you can and try to make the world leaderboard.',
+       'Modo Motoca: solo y con desafíos en la calle. Mantén la rueda arriba la mayor cantidad de metros e intenta entrar al ranking mundial.'],
+    'Treina sem pressão!': ['Practice with no pressure!', '¡Practica sin presión!'],
+    'Modo Livre: sem desafios. Encostou a frente, sobe de novo quantas vezes quiser. Bom pra testar as motos e pegar o jeito.':
+      ['Free Mode: no challenges. Front wheel down? Pop it up again as often as you like. Great for trying bikes and getting the hang of it.',
+       'Modo Libre: sin desafíos. ¿Bajó la rueda? Súbela de nuevo cuantas veces quieras. Ideal para probar motos y agarrarle la mano.'],
+    'Chama a galera!': ['Call your friends!', '¡Llama a la banda!'],
+    'Cria uma sala, manda o código e joga com até 7 na mesma rua.': ['Create a room, share the code and ride with up to 7 on the same street.', 'Crea una sala, comparte el código y juega con hasta 7 en la misma calle.'],
+    'Teu nome entre os melhores!': ['Your name among the best!', '¡Tu nombre entre los mejores!'],
+    'O placar mostra os 10 maiores graus do mundo. Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.':
+      ['The leaderboard shows the 10 longest wheelies in the world. Made the top 10 in Motoca Mode? Enter your name at the end of the run.',
+       'El ranking muestra los 10 caballitos más largos del mundo. ¿Entraste al top 10 en el Modo Motoca? Al final de la vuelta puedes registrar tu nombre.'],
+    'O placar mostra os 10 maiores graus do mundo. Treina e tenta chegar lá!': ['The leaderboard shows the 10 longest wheelies in the world. Practice and try to get there!', 'El ranking muestra los 10 caballitos más largos del mundo. ¡Practica e intenta llegar!'],
+    'Joga do teu jeito!': ['Play your way!', '¡Juega a tu manera!'],
+    'Em Controles: tela toda ou botões, lado do acelerador, tamanho e lugar do botão Puxa, teclas do teclado e controle de videogame.':
+      ['In Controls: whole screen or buttons, throttle side, size and spot of the Pull button, keyboard keys and gamepad.',
+       'En Controles: pantalla completa o botones, lado del acelerador, tamaño y lugar del botón Tirón, teclas del teclado y mando.'],
+    'Tuas preferências!': ['Your preferences!', '¡Tus preferencias!'],
+    'Aqui liga e desliga a música e troca o idioma. Na partida, o botão Pausa para tudo e o Som liga ou desliga os efeitos.':
+      ['Turn the music on or off and change the language here. During a run, Pause stops everything and Sound turns the effects on or off.',
+       'Aquí prendes o apagas la música y cambias el idioma. En la partida, Pausa detiene todo y Sonido prende o apaga los efectos.'],
+    'Curtiu? Apoia o projeto!': ['Enjoying it? Support the project!', '¿Te gusta? ¡Apoya el proyecto!'],
+    'Escolhe um pastel na Google Play: libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.':
+      ['Pick a pastel on Google Play: it unlocks a special stray dog and helps Grau 80cc grow. Cosmetic only and optional.',
+       'Elige un pastel en Google Play: desbloquea un perrito especial y ayuda a que Grau 80cc crezca. Es solo visual y opcional.'],
+    'Me paga um pastel com um Pix de qualquer valor e ajuda o Grau 80cc a evoluir. É opcional: o jogo é todo liberado.':
+      ['Buy me a pastel with a Pix of any amount and help Grau 80cc grow. Optional: the whole game is free.',
+       'Invítame un pastel con un Pix de cualquier valor y ayuda a que Grau 80cc crezca. Es opcional: el juego es todo gratis.'],
+    'Agora é contigo!': ["Now it's up to you!", '¡Ahora te toca!'],
+    'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver de novo? Tá aqui embaixo de Como jogar.':
+      ['Pick your bike, find the balance and show you are a wheelie master! Want to see it again? It is right here under How to play.',
+       '¡Elige tu moto, encuentra el equilibrio y demuestra que eres un crack del caballito! ¿Quieres verlo de nuevo? Está aquí debajo de Cómo jugar.'],
+    'Acelera e puxa!': ['Throttle and pull!', '¡Acelera y tira!'],
+    'Acelera até o giro entrar na faixa laranja: a frente sobe. Um toque no Puxa dá um tranco a mais.':
+      ['Throttle until the revs hit the orange band: the front comes up. A tap on Pull gives an extra kick.',
+       'Acelera hasta que las vueltas entren en la franja naranja: la rueda sube. Un toque en Tirón da un empujón extra.'],
+    'Acha o ponto de equilíbrio!': ['Find the balance point!', '¡Encuentra el punto de equilibrio!'],
+    'Perto de 75° a moto quase se equilibra sozinha (o medidor fica verde). Segurar o grau é ajustar o tempo todo: acelera pra subir, solta pra descer.':
+      ['Near 75° the bike almost balances itself (the meter turns green). Holding a wheelie means constant tweaks: throttle to go up, let go to come down.',
+       'Cerca de 75° la moto casi se equilibra sola (el medidor se pone verde). Mantener el caballito es ajustar todo el tiempo: acelera para subir, suelta para bajar.'],
+    'Inclinou demais? Freia!': ['Leaning too far? Brake!', '¿Te pasaste? ¡Frena!'],
+    'Passou do ponto, ela vira pra trás. Um toque no freio baixa a frente: o freio serve pra equilibrar, não só pra parar.':
+      ['Go past the point and it flips. A touch of brake lowers the front: the brake is for balance, not just for stopping.',
+       'Si te pasas del punto, se da vuelta. Un toque de freno baja la rueda: el freno sirve para equilibrar, no solo para parar.'],
+    'A frente tá caindo? Dá um puxão!': ['Front dropping? Give it a pull!', '¿Se cae la rueda? ¡Dale un tirón!'],
+    'A roda da frente começou a baixar? O Puxa dá um tranco pra cima e o acelerador segura o grau de novo.':
+      ['Front wheel starting to drop? Pull gives a kick upward and the throttle holds the wheelie again.',
+       '¿La rueda empezó a bajar? Tirón da un empujón hacia arriba y el acelerador vuelve a sostener el caballito.'],
+    'Freou demais? Corrige com um puxão!': ['Braked too hard? Fix it with a pull!', '¿Frenaste de más? ¡Corrige con un tirón!'],
+    'Freada forte derruba a frente rápido. Um puxão segura a queda e dá tempo de acelerar de novo.':
+      ['Hard braking drops the front fast. A pull slows the fall and buys time to throttle again.',
+       'Una frenada fuerte baja la rueda rápido. Un tirón frena la caída y te da tiempo de acelerar otra vez.'],
+    'Quanto mais longe, melhor!': ['The farther, the better!', '¡Cuanto más lejos, mejor!'],
+    'O número grande conta os metros do grau. No Modo Motoca, entrou no top 10 mundial, bota teu nome no placar. O Modo Livre guarda só o teu recorde.':
+      ['The big number counts your wheelie meters. In Motoca Mode, make the world top 10 and put your name on the board. Free Mode only keeps your own record.',
+       'El número grande cuenta los metros del caballito. En el Modo Motoca, si entras al top 10 mundial, pones tu nombre en el ranking. El Modo Libre solo guarda tu récord.'],
+    'Precisa de uma pausa?': ['Need a break?', '¿Necesitas una pausa?'],
+    'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial. No teclado, Esc volta direto pro início.':
+      ['The Pause button stops the run: from there you can resume, change controls or go back to the start screen. On a keyboard, Esc goes straight back.',
+       'El botón Pausa detiene la partida: desde ahí sigues, cambias los controles o vuelves al inicio. En el teclado, Esc vuelve directo al inicio.'],
+    'Agora é tua vez!': ['Your turn!', '¡Te toca!'],
+    'Acelera, puxa, acha o equilíbrio e segura a roda no alto o máximo de metros que der.':
+      ['Throttle, pull, find the balance and keep the wheel up for as many meters as you can.',
+       'Acelera, tira, encuentra el equilibrio y mantén la rueda arriba la mayor cantidad de metros posible.']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1046,6 +1195,8 @@ html.kid #grow-dog { display: none !important; }
   const ptrs = new Map();
   let mouseBtns = 0; // bit 1 = esquerdo (acelera), bit 2 = direito (freio)
   let s;
+  // tutorial em andamento ('menu' ou 'jogo'); na demonstração, gas/brake são os comandos do piloto automático
+  const TUT = { on: false, kind: '', i: 0, steps: [], after: 'motoca', auto: false, gas: false, brake: false };
 
   function fresh() {
     return {
@@ -1144,6 +1295,7 @@ html.kid #grow-dog { display: none !important; }
     const mg = ctl.mouse === 'inv' ? 2 : 1, mb = ctl.mouse === 'inv' ? 1 : 2;
     let gas = keys.has('gas') || !!(mouseBtns & mg) || padHeld.gas, brake = keys.has('brake') || !!(mouseBtns & mb) || padHeld.brake;
     for (const v of ptrs.values()) { if (v === 'gas') gas = true; if (v === 'brake') brake = true; }
+    if (TUT.on && TUT.kind === 'jogo') { gas = TUT.gas; brake = TUT.brake; } // demonstração: só o piloto automático comanda
     input.gas = gas; input.brake = brake;
     ui.btnGas.classList.toggle('held', gas);
     ui.btnBrake.classList.toggle('held', brake);
@@ -1168,6 +1320,11 @@ html.kid #grow-dog { display: none !important; }
   });
   addEventListener('keydown', e => {
     if (bindWait && bindWait.kind === 'key') { e.preventDefault(); keyBind(e.code); return; } // trocando uma tecla no painel de controles
+    if (TUT.on && TUT.kind === 'menu') { // tour dos menus: setas navegam, Esc pula; Tab/Enter/Espaço ficam com os botões do cartão
+      if (e.code === 'Escape') tutSkip(); else if (e.code === 'ArrowRight') tutNext(); else if (e.code === 'ArrowLeft') tutGo(-1);
+      if (!['Tab', 'Enter', 'NumpadEnter', 'Space'].includes(e.code)) e.preventDefault();
+      return;
+    }
     if (e.target.tagName === 'INPUT') return;
     if (!$('ctlModal').hidden) { if (e.code === 'Escape') { e.preventDefault(); closeCtl(); } return; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
@@ -1185,7 +1342,7 @@ html.kid #grow-dog { display: none !important; }
     if ((e.code === 'Enter' || e.code === 'KeyR') && s.mode !== 'ride') {
       if (gameMode === 'multi' && (s.mode === 'dog' || s.mode === 'over')) return; // na sala a rodada recomeça junto
       if (e.code === 'Enter' && e.target.tagName === 'BUTTON') return; // Enter num botão da garagem só escolhe
-      e.preventDefault(); begin(); return;
+      e.preventDefault(); play(); return;
     }
   });
   // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
@@ -1195,6 +1352,7 @@ html.kid #grow-dog { display: none !important; }
       if (!$(id).hidden) { close(); return true; }
     }
     if (!$('ageModal').hidden) return false;
+    if (TUT.on && TUT.kind === 'menu') { tutSkip(); return true; }
     if (s.mode === 'ride' && !paused && !(gameMode === 'multi' && room.code)) { setPause(true); return true; }
     if (s.mode !== 'ready') { toStart(); return true; }
     return false;
@@ -1217,7 +1375,8 @@ html.kid #grow-dog { display: none !important; }
   // puxada: o piloto levanta e joga o quadril pra trás; a frente ganha um tranco leve pra cima.
   // segurando (botão ou A), ele fica em pé e o grau se equilibra mais baixo
   let standHeld = false;
-  function doPull() {
+  function doPull(bot) {
+    if (TUT.on && TUT.kind === 'jogo' && !bot) return; // na demonstração o Puxa do jogador fica desligado
     standHeld = true; ui.btnPull.classList.add('held');
     if (s.mode !== 'ride' || paused || s.pullCd > 0) return;
     s.pull = 1; s.pullCd = 0.6;
@@ -1227,7 +1386,7 @@ html.kid #grow-dog { display: none !important; }
     if (MOTO[MODEL] && MOTO[MODEL].pull) s.om = s.om < 0 ? Math.min(0, s.om + kick) : s.om + kick * MOTO[MODEL].pull;
     else s.om += kick;
   }
-  function endPull() { standHeld = false; ui.btnPull.classList.remove('held'); }
+  function endPull(bot) { if (TUT.on && TUT.kind === 'jogo' && !bot) return; standHeld = false; ui.btnPull.classList.remove('held'); }
   ui.btnPull = $('btnPull');
   ui.btnPull.addEventListener('pointerdown', e => {
     e.preventDefault(); wakeAudio();
@@ -1284,7 +1443,7 @@ html.kid #grow-dog { display: none !important; }
   cv.addEventListener('pointercancel', cvUp);
   cv.addEventListener('lostpointercapture', cvUp);
 
-  $('goStart').addEventListener('click', () => begin('motoca'));
+  $('goStart').addEventListener('click', () => play('motoca'));
   // botão Jogar flutuante: só aparece enquanto os botões de modo estão fora da tela
   $('quickPlay').addEventListener('click', () => ($('goStart').hidden ? $('goBora') : $('goStart')).click());
   if (window.IntersectionObserver) {
@@ -1292,10 +1451,11 @@ html.kid #grow-dog { display: none !important; }
     const io = new IntersectionObserver(es => { for (const e of es) seen.set(e.target, e.isIntersecting); $('quickPlay').hidden = [...seen.values()].some(Boolean); }, { root: $('startScreen'), threshold: 0.3 });
     io.observe($('startScreen').querySelector('.actions')); io.observe($('lobbyForm'));
   }
-  $('goFree').addEventListener('click', () => begin('livre'));
+  $('goFree').addEventListener('click', () => play('livre'));
   $('goAgain').addEventListener('click', () => begin());
   // volta pra tela inicial (garagem); a empinada em andamento ainda é anotada
   function toStart() {
+    if (TUT.on && TUT.kind === 'jogo') tutEnd(); // saiu no meio da demonstração: não conta como vista
     if (s.mode === 'ride' && s.active) recordWheelie();
     const last = s.last;
     s = fresh(); s.last = last; paused = false;
@@ -1733,7 +1893,7 @@ html.kid #grow-dog { display: none !important; }
       if (cheat) toggleCheat(); closeMp(); mpRound = 0; rtTrack(room.ch, roomMeta());
       room.rnd = rnd > 0 ? rnd : Math.max(room.rnd, ...[...remotes.values()].map(r => r.rn || 0)) + 1;
     }
-    else try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
+    else if (!TUT.on) try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
     best = gameMode === 'multi' ? room.best : bests[gameMode];
     $('hudMode').textContent = modeLabel();
     wakeAudio();
@@ -1750,6 +1910,7 @@ html.kid #grow-dog { display: none !important; }
   // anota a empinada atual e zera o contador; o recorde só sobe
   function recordWheelie() {
     const d = s.wDist;
+    if (TUT.on) { s.active = false; s.wDist = 0; return null; } // demonstração: nada vira recorde, placar ou conquista
     s.active = false; s.wDist = 0;
     if (d < 1) return null;
     s.count++; s.last = d;
@@ -1950,7 +2111,7 @@ html.kid #grow-dog { display: none !important; }
   }
   // aviso de versão nova: o app consulta versao.json no site; se a versão dele for menor que o "minimo", pede pra
   // atualizar (é assim que dá pra aposentar uma versão antiga com segurança, ex.: antes de fechar o envio antigo do placar)
-  const APP_BUILD = 8; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
+  const APP_BUILD = 9; // versionCode do APK que leva este arquivo (subir junto com o build.gradle)
   if (NATIVE) {
     fetch('https://juliobaleado.github.io/grau80cc/versao.json?t=' + Date.now(), { cache: 'no-store' })
       .then(r => (r.ok ? r.json() : null)).then(v => {
@@ -2029,6 +2190,7 @@ html.kid #grow-dog { display: none !important; }
   // ---------- simulação ----------
   function step(h) {
     const riding = s.mode === 'ride';
+    if (riding && TUT.on && TUT.kind === 'jogo') tutBot(h);
     const gasT = (riding || s.mode === 'ready') && input.gas ? 1 : 0;
     const brkT = riding && input.brake ? 1 : 0;
     s.thr += (gasT - s.thr) * Math.min(1, h * 14);
@@ -2105,7 +2267,7 @@ html.kid #grow-dog { display: none !important; }
       if (riding && s.mode === 'ride') {
         if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; if (gameMode === 'multi') rearm(); }
         if (s.active) { s.wTime += h; s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
-        if (s.th > CRASH) finish('flip');
+        if (s.th > CRASH) { if (TUT.on) tutCrash(); else finish('flip'); }
       }
     } else if (s.mode === 'dog') {
       stepPet(h);
@@ -3528,6 +3690,7 @@ html.kid #grow-dog { display: none !important; }
     }
     renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl();
     if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
+    if (TUT.on) tutRender();
   }
   applyLang();
 
@@ -4274,20 +4437,44 @@ html.kid #grow-dog { display: none !important; }
   $("howX").addEventListener("click", () => { const open = $("howList").hidden; setHow(open); try { localStorage.setItem("grau80-instrucoes", open ? "" : "fechado"); } catch (e) {} });
   try { if (localStorage.getItem("grau80-instrucoes")) setHow(false); } catch (e) {}
   // tela de idade (pergunta neutra, sem ano pré-escolhido; responde uma vez e fica guardado no aparelho)
+  // + apelido: o mesmo nome do placar global e do multiplayer (grau80-nome). Só pergunta o que falta: quem já tem o ano
+  // não vê o ano de novo; quem já tem nome vê o campo preenchido só se ainda faltar o ano. Menor de 13 não usa nome
+  // (joga como MotocaNNN), então o campo some. O apelido é opcional: vazio, continua o nome de convidado.
   {
-    const sel = $('ageYear'), now = new Date().getFullYear();
+    const sel = $('ageYear'), now = new Date().getFullYear(), nameIn = $('ageName');
+    let asked = false; try { asked = localStorage.getItem('grau80-nome-pedido') === '1'; } catch (e) {}
     for (let y = now; y >= now - 100; y--) { const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o); }
-    sel.addEventListener('change', () => { $('ageOk').disabled = !sel.value; });
+    const needYear = !birthYear;
+    const kidFor = y => !!y && now - y - 1 < 13;
+    const showName = () => {
+      const kid = needYear ? kidFor(+sel.value) : KID;
+      const on = !kid && (needYear ? !!sel.value : true);
+      $('ageNameF').hidden = !on; $('ageNameTip').hidden = !on;
+      $('ageOk').disabled = needYear && !sel.value;
+    };
+    $('ageYearF').hidden = !needYear; $('ageYearTip').hidden = !needYear;
+    nameIn.value = myName; nameIn.placeholder = guest;
+    sel.addEventListener('change', showName);
+    nameIn.addEventListener('input', () => { $('ageNameErr').textContent = ''; });
     $('ageForm').addEventListener('submit', e => {
       e.preventDefault();
-      const y = +sel.value; if (!y) return;
-      birthYear = y; try { localStorage.setItem('grau80-nasc', String(y)); } catch (er) {}
-      setKid();
-      if (KID && micOn) toggleMic();
+      if (needYear) {
+        const y = +sel.value; if (!y) return;
+        birthYear = y; try { localStorage.setItem('grau80-nasc', String(y)); } catch (er) {}
+        setKid();
+        if (KID && micOn) toggleMic();
+      }
+      if (!KID && !$('ageNameF').hidden) {
+        const v = clean(nameIn.value, 16);
+        if (v && NOME_RUIM(v)) { $('ageNameErr').textContent = T('Esse nome não pode. Escolhe outro.'); nameIn.focus(); return; }
+        if (v) setName(v);
+        try { localStorage.setItem('grau80-nome-pedido', '1'); } catch (er) {}
+      }
       $('ageModal').hidden = true;
       mpHud();
+      setTimeout(maybeMenuTut, 350);
     });
-    if (!birthYear) $('ageModal').hidden = false;
+    if (needYear || (!KID && !myName && !asked)) { showName(); $('ageModal').hidden = false; }
   }
   // botão de esconder o placar global (fica lembrado no aparelho)
   function setBoardMin(min) {
@@ -4324,6 +4511,252 @@ html.kid #grow-dog { display: none !important; }
   }
   $('mpName').addEventListener('change', e => setName(e.target.value));
   $('mpName').placeholder = guest;
+
+  // ---------- onboarding: tutorial de menus e tutorial de como jogar ----------
+  // Versão de cada tutorial: subir o número faz todo mundo (novo e antigo) ver de novo. Visto ou pulado grava a versão;
+  // fechar o jogo no meio não grava. Os dois são independentes.
+  const TUT_V = { menu: 1, jogo: 1 }, TUT_KEY = 'grau80-tutorial';
+  const tutSeen = { menu: 0, jogo: 0 };
+  try { const o = JSON.parse(localStorage.getItem(TUT_KEY) || '{}') || {}; tutSeen.menu = +o.menuTutorialVersion || 0; tutSeen.jogo = +o.gameplayTutorialVersion || 0; } catch (e) {}
+  function tutMark(k) {
+    if (tutSeen[k] >= TUT_V[k]) return; // rever não mexe em nada
+    tutSeen[k] = TUT_V[k];
+    try { localStorage.setItem(TUT_KEY, JSON.stringify({ menuTutorialVersion: tutSeen.menu, gameplayTutorialVersion: tutSeen.jogo })); } catch (e) {}
+  }
+  const TUT_MENU = [
+    { t: 'Bem-vindo ao Grau 80cc!', d: 'Domina a motoca, monta teu visual, desafia a galera e disputa um lugar entre os melhores graus do mundo!' },
+    { el: '#garage', t: 'Deixa a motoca do teu jeito!', d: 'Aqui tu escolhe a bike, a cor, o capacete, a roupa, a mochila e o caramelo. Bike nova libera com as conquistas.' },
+    { el: '#goStart', t: 'Até onde tu consegue ir?', d: 'Modo Motoca: sozinho e com desafios na rua. Segura a frente no alto o máximo de metros e tenta entrar no placar mundial.' },
+    { el: '#goFree', t: 'Treina sem pressão!', d: 'Modo Livre: sem desafios. Encostou a frente, sobe de novo quantas vezes quiser. Bom pra testar as motos e pegar o jeito.' },
+    { el: '#goMulti', t: 'Chama a galera!', d: 'Cria uma sala, manda o código e joga com até 7 na mesma rua.' },
+    { el: '.leftcol .board', t: 'Teu nome entre os melhores!', d: () => KID ? 'O placar mostra os 10 maiores graus do mundo. Treina e tenta chegar lá!'
+      : 'O placar mostra os 10 maiores graus do mundo. Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.' },
+    { el: '#goCtl', t: 'Joga do teu jeito!', d: 'Em Controles: tela toda ou botões, lado do acelerador, tamanho e lugar do botão Puxa, teclas do teclado e controle de videogame.' },
+    { el: '.eyetools', t: 'Tuas preferências!', d: 'Aqui liga e desliga a música e troca o idioma. Na partida, o botão Pausa para tudo e o Som liga ou desliga os efeitos.' },
+    { el: '#pixOpen', t: 'Curtiu? Apoia o projeto!', d: () => NATIVE ? 'Escolhe um pastel na Google Play: libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.'
+      : 'Me paga um pastel com um Pix de qualquer valor e ajuda o Grau 80cc a evoluir. É opcional: o jogo é todo liberado.' },
+    { el: '#tutRow', t: 'Agora é contigo!', d: 'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver de novo? Tá aqui embaixo de Como jogar.', last: 'Bora jogar!' }
+  ];
+  // bot: o que o piloto automático demonstra em cada etapa (ver tutBot)
+  const TUT_JOGO = [
+    { bot: 'lift', t: 'Acelera e puxa!', d: 'Acelera até o giro entrar na faixa laranja: a frente sobe. Um toque no Puxa dá um tranco a mais.' },
+    { bot: 'hold', t: 'Acha o ponto de equilíbrio!', d: 'Perto de 75° a moto quase se equilibra sozinha (o medidor fica verde). Segurar o grau é ajustar o tempo todo: acelera pra subir, solta pra descer.' },
+    { bot: 'over', t: 'Inclinou demais? Freia!', d: 'Passou do ponto, ela vira pra trás. Um toque no freio baixa a frente: o freio serve pra equilibrar, não só pra parar.' },
+    { bot: 'drop', t: 'A frente tá caindo? Dá um puxão!', d: 'A roda da frente começou a baixar? O Puxa dá um tranco pra cima e o acelerador segura o grau de novo.' },
+    { bot: 'brk', t: 'Freou demais? Corrige com um puxão!', d: 'Freada forte derruba a frente rápido. Um puxão segura a queda e dá tempo de acelerar de novo.' },
+    { bot: 'hold', el: '#dist', t: 'Quanto mais longe, melhor!', d: 'O número grande conta os metros do grau. No Modo Motoca, entrou no top 10 mundial, bota teu nome no placar. O Modo Livre guarda só o teu recorde.' },
+    { bot: 'hold', el: '#pauseBtn', t: 'Precisa de uma pausa?', d: 'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial. No teclado, Esc volta direto pro início.' },
+    { bot: 'hold', t: 'Agora é tua vez!', d: 'Acelera, puxa, acha o equilíbrio e segura a roda no alto o máximo de metros que der.', last: 'Vamos dar grau!' }
+  ];
+  const tutVis = sel => { const e = document.querySelector(sel); return !!e && e.getClientRects().length > 0; };
+  function tutStartCommon(kind, steps) {
+    Object.assign(TUT, { on: true, kind, i: 0, steps, gas: false, brake: false });
+    addEventListener('resize', tutPlace);
+    $('startScreen').addEventListener('scroll', tutPlace, { passive: true });
+  }
+  // tour dos menus: por cima da tela inicial, pulando o que não aparece pra esse jogador (ex.: doação pra menor de 13)
+  function tutMenu() {
+    if (TUT.on || s.mode !== 'ready' || ui.start.hidden) return;
+    tutStartCommon('menu', TUT_MENU.filter(st => !st.el || tutVis(st.el)));
+    tutRender();
+  }
+  // abre sozinho na primeira vez (depois da tela de idade/apelido), se nada mais estiver na frente
+  function maybeMenuTut() {
+    if (TUT.on || tutSeen.menu >= TUT_V.menu || !$('ageModal').hidden || ui.start.hidden || s.mode !== 'ready' || room.code) return;
+    if ([...document.querySelectorAll('.pixm')].some(m => !m.hidden)) return;
+    tutMenu();
+  }
+  setTimeout(maybeMenuTut, 700);
+  // demonstração de como jogar: uma volta de verdade no modo livre (sem desafios, sem recorde, sem placar, sem conquista),
+  // com o piloto automático no lugar do jogador. No fim, a partida de verdade começa no modo que ele escolheu.
+  function tutJogo(mode, auto) {
+    if (TUT.on || room.code) return;
+    tutStartCommon('jogo', TUT_JOGO);
+    TUT.after = mode === 'motoca' ? 'motoca' : 'livre'; TUT.auto = auto;
+    begin('livre');
+    $('hudMode').textContent = T('Tutorial · demonstração');
+    BT.ph = 'lift'; BT.t = 0; BT.cyc = 0; BT.pulled = false; BT.pullT = 0;
+    tutRender();
+  }
+  // Modo Motoca / Modo Livre (botão, Enter ou R na tela inicial): na primeira vez passa antes pela demonstração
+  function play(mode) {
+    const m = mode || gameMode;
+    if (!TUT.on && !room.code && s.mode === 'ready' && (m === 'motoca' || m === 'livre') && tutSeen.jogo < TUT_V.jogo) { tutJogo(m, true); return; }
+    begin(mode);
+  }
+  // tira tudo que o tutorial pôs: cartão, destaque, ouvintes e os comandos do piloto automático
+  function tutEnd() {
+    if (!TUT.on) return;
+    const k = TUT.kind;
+    TUT.on = false;
+    removeEventListener('resize', tutPlace);
+    $('startScreen').removeEventListener('scroll', tutPlace);
+    document.querySelectorAll('.tut-glow').forEach(e => e.classList.remove('tut-glow'));
+    $('tut').hidden = true; $('tut').classList.remove('jogo');
+    if (k === 'jogo') {
+      TUT.gas = TUT.brake = false; BT.pullT = 0; endPull(true); syncInput();
+      gameMode = TUT.after; best = bests[gameMode]; $('hudMode').textContent = modeLabel();
+    }
+  }
+  function tutFinish() {
+    const k = TUT.kind, after = TUT.after;
+    tutMark(k); tutEnd();
+    if (k === 'jogo') begin(after); // entrega os controles: partida normal, do zero, no modo escolhido
+  }
+  function tutSkip() {
+    const k = TUT.kind, after = TUT.after, auto = TUT.auto;
+    tutMark(k); tutEnd();
+    if (k === 'jogo') { if (auto) begin(after); else toStart(); }
+  }
+  function tutGo(d) {
+    if (!TUT.on) return;
+    const i = Math.max(0, Math.min(TUT.steps.length - 1, TUT.i + d));
+    if (i === TUT.i) return;
+    TUT.i = i;
+    if (TUT.kind === 'jogo') { BT.cyc = 0; BT.t = 0; BT.ph = s.th > 0.3 ? 'hold' : 'lift'; }
+    tutRender();
+  }
+  function tutNext() { if (TUT.i >= TUT.steps.length - 1) tutFinish(); else tutGo(1); }
+  $('tutNext').addEventListener('click', tutNext);
+  $('tutBack').addEventListener('click', () => tutGo(-1));
+  $('tutSkip').addEventListener('click', tutSkip);
+  $('tutMenuBtn').addEventListener('click', () => { if (room.code) { flash(T('Sai da sala pra ver o tutorial')); return; } tutMenu(); });
+  $('tutJogoBtn').addEventListener('click', () => {
+    if (room.code) { flash(T('Sai da sala pra ver o tutorial')); return; }
+    tutJogo(gameMode === 'motoca' ? 'motoca' : 'livre', false);
+  });
+  // comandos como o jogador configurou: no celular, a área ou o botão; no computador, a tecla
+  function tutHints() {
+    const kn = a => ctl.keys[a].filter(Boolean).map(keyName)[0] || '';
+    if (touchDev) {
+      const btns = ctl.touch === 'botoes', flip = ctl.side === 'esq';
+      return { gas: btns ? T('botão') : T(flip ? 'esquerda da tela' : 'direita da tela'), brake: btns ? T('botão') : T(flip ? 'direita da tela' : 'esquerda da tela'), pull: T('botão') };
+    }
+    return { gas: kn('gas'), brake: kn('brake'), pull: kn('pull') };
+  }
+  function tutRender() {
+    const st = TUT.steps[TUT.i]; if (!st) return;
+    const jogo = TUT.kind === 'jogo', n = TUT.steps.length;
+    $('tut').hidden = false; $('tut').classList.toggle('jogo', jogo);
+    $('tutTitle').textContent = T(st.t);
+    $('tutText').textContent = T(typeof st.d === 'function' ? st.d() : st.d);
+    $('tutBot').hidden = !jogo; $('tutKeys').hidden = !jogo;
+    if (jogo) {
+      const k = tutHints(), lab = (a, b) => T(a) + (b ? ' · ' + b : '');
+      $('tkGas').textContent = lab('Acelera', k.gas); $('tkBrake').textContent = lab('Freio', k.brake); $('tkPull').textContent = lab('Puxa', k.pull);
+    }
+    const dots = $('tutDots'); dots.textContent = '';
+    for (let i = 0; i < n; i++) { const d = document.createElement('i'); if (i <= TUT.i) d.className = 'on'; dots.append(d); }
+    $('tutCount').textContent = (TUT.i + 1) + '/' + n;
+    $('tutBack').hidden = TUT.i === 0;
+    $('tutNext').textContent = T(st.last || 'Próximo');
+    document.querySelectorAll('.tut-glow').forEach(e => e.classList.remove('tut-glow'));
+    const el = st.el && document.querySelector(st.el);
+    if (el && !jogo) el.scrollIntoView({ block: 'center', inline: 'nearest' });
+    if (el && jogo) el.classList.add('tut-glow');
+    requestAnimationFrame(() => { tutPlace(); $('tutNext').focus({ preventScroll: true }); });
+  }
+  // posiciona o recorte (destaque) e o cartão sem sair da tela
+  function tutPlace() {
+    if (!TUT.on) return;
+    const st = TUT.steps[TUT.i], card = $('tutCard'), hole = $('tutHole');
+    const el = st && st.el && document.querySelector(st.el);
+    const W = innerWidth, H = innerHeight, m = 10, cw = card.offsetWidth, ch = card.offsetHeight;
+    const cl = (v, a, b) => Math.max(a, Math.min(b, v));
+    let x = (W - cw) / 2, y = (H - ch) / 2, r = null;
+    if (el) {
+      const b = el.getBoundingClientRect(), p = 6;
+      const L = cl(b.left - p, 4, W - 8), T0 = cl(b.top - p, 4, H - 8);
+      r = { left: L, top: T0, right: cl(b.right + p, L + 4, W - 4), bottom: cl(b.bottom + p, T0 + 4, H - 4) };
+      r.width = r.right - r.left; r.height = r.bottom - r.top;
+      Object.assign(hole.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+    }
+    hole.className = 'tut-hole ' + (!r ? 'none' : TUT.kind === 'jogo' ? 'ring' : '');
+    if (TUT.kind === 'jogo') {
+      // demonstração: o cartão fica à direita, abaixo dos botões do HUD; a moto anda do lado esquerdo e aparece inteira
+      x = W - cw - 16; y = H < 460 ? 84 : 96;
+      if (st.el === '#dist' && r) y = Math.max(y, r.bottom + 10);
+    } else if (r) {
+      const g = 14, fits = (cx, cy) => cx >= m && cx + cw <= W - m && cy >= m && cy + ch <= H - m;
+      const midY = cl(r.top + r.height / 2 - ch / 2, m, H - ch - m), midX = cl(r.left + r.width / 2 - cw / 2, m, W - cw - m);
+      const opts = [[r.left - g - cw, midY], [r.right + g, midY], [midX, r.bottom + g], [midX, r.top - g - ch]];
+      const ok = opts.find(([cx, cy]) => fits(cx, cy));
+      if (ok) [x, y] = ok;
+      else { x = midX; y = r.top > H - r.bottom ? m : H - ch - m; } // não coube do lado: vai pra faixa com mais espaço
+    }
+    card.style.left = cl(x, m, Math.max(m, W - cw - m)) + 'px';
+    card.style.top = cl(y, m, Math.max(m, H - ch - m)) + 'px';
+  }
+  // ---------- piloto automático da demonstração ----------
+  // Usa a física do jogo como ela é: só aperta os mesmos comandos do jogador (acelerador, freio e Puxa) olhando o ângulo
+  // e a velocidade de giro reais da moto. Cada etapa é uma pequena máquina de estados que repete a manobra em ciclo.
+  const BT = { ph: 'lift', t: 0, cyc: 0, pulled: false, pullT: 0 };
+  const AIM = () => balNow() - 0.13; // um pouco abaixo do ponto de equilíbrio: margem pros buracos da rua
+  function botTap() { doPull(true); BT.pullT = 0.16; }
+  function tutBot(h) {
+    const mode = (TUT.steps[TUT.i] || {}).bot || 'hold';
+    BT.t += h;
+    if (BT.pullT > 0 && (BT.pullT -= h) <= 0) endPull(true);
+    const th = s.th, om = s.om, aim = AIM(), p = th + om * 0.32;
+    let gas = false, brake = false;
+    // devagar demais o grau mira mais baixo: precisa de mais acelerador pra se segurar e a moto ganha velocidade de novo
+    const hold = tg => { tg = Math.min(balNow() - 0.08, tg - Math.max(-0.08, Math.min(0.22, (6.5 - s.v) * 0.06))); gas = p < tg; brake = p > tg + 0.16 || (th > tg + 0.12 && om > 0.15); };
+    const to = (ph) => { BT.ph = ph; BT.t = 0; };
+    // encostou a frente fora de uma manobra de descida: levanta de novo
+    if (th <= 0.001 && !['lift', 'land', 'wait'].includes(BT.ph)) to('lift');
+    switch (BT.ph) {
+      case 'lift': // acelera; rápido demais a frente não sobe, então segura um pouco antes
+        if (th < 0.05 && s.v > 7.5) BT.slow = true;
+        if (BT.slow) { if (s.v > 4) { brake = true; break; } BT.slow = false; }
+        gas = true;
+        if (th > 0.1 && om > 0 && !BT.pulled) { botTap(); BT.pulled = true; }
+        if (th > aim - 0.3) { BT.pulled = false; to('hold'); }
+        break;
+      case 'hold': {
+        hold(aim);
+        const dur = mode === 'hold' ? 1e9 : mode === 'lift' ? 2.6 : 2.2;
+        if (BT.t > dur) to(mode === 'lift' ? 'land' : mode === 'over' ? 'push' : mode === 'drop' ? 'fall' : mode === 'brk' ? 'slam' : 'hold');
+        break;
+      }
+      case 'land': // solta e deixa a frente descer, pra mostrar a subida de novo
+        if (th <= 0.001) to('wait');
+        else if (om < -1.6) gas = true;
+        else brake = th > aim - 0.1 && om > -0.8;
+        break;
+      case 'wait': if (BT.t > 0.9) to('lift'); break;
+      case 'push': // acelera demais de propósito até passar do ponto...
+        gas = true;
+        if (th + om * 0.3 > balNow() + 0.17 || BT.t > 2.5) to('save');
+        break;
+      case 'save': // ...e freia pra baixar a frente de volta
+        brake = om > -0.25 && th > aim - 0.05;
+        if (th < aim + 0.05 && om < 0.1) to('hold');
+        if (BT.t > 2) to('hold');
+        break;
+      case 'fall': // solta o acelerador (um toque de freio se estiver no ponto de equilíbrio): a frente começa a cair...
+        brake = th > balNow() - 0.2 && om > -0.3;
+        if (th < 0.85 && om < -0.2) { botTap(); to('rescue'); }
+        if (BT.t > 3) to('rescue');
+        break;
+      case 'slam': // freada forte: a frente despenca...
+        brake = true;
+        if (om < -1.25 || th < 0.8) { botTap(); to('rescue'); }
+        break;
+      case 'rescue': // ...puxão e acelerador pra recuperar
+        gas = p < aim - 0.15; brake = p > aim + 0.15;
+        if (th > aim - 0.12 || BT.t > 2.5) to('hold');
+        break;
+    }
+    if (gas !== TUT.gas || brake !== TUT.brake) { TUT.gas = gas; TUT.brake = brake; syncInput(); }
+    // os chips do cartão acendem junto com o comando que o piloto automático está usando
+    $('tkGas').classList.toggle('on', s.thr > 0.5); $('tkBrake').classList.toggle('on', s.brk > 0.3); $('tkPull').classList.toggle('on', s.pull > 0.2 || standHeld);
+    for (const [id, on] of [['btnGas', s.thr > 0.5], ['btnBrake', s.brk > 0.3], ['btnPull', s.pull > 0.2]]) $(id).classList.toggle('tut-glow', on);
+  }
+  // passou do ponto na demonstração (pode acontecer num buraco): sem fim de volta, a moto volta pro chão e tenta de novo
+  function tutCrash() {
+    s.th = 0; s.om = 0; s.active = false; s.wDist = 0; s.v = Math.min(s.v, 4);
+    BT.ph = 'wait'; BT.t = 0; poof();
+  }
 
   // --- sala ---
   const CODE_ABC = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // sem 0/O e 1/I pra não confundir
