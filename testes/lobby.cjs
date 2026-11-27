@@ -143,7 +143,7 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
     for (const [btn, modal] of [['navRank', 'rankModal'], ['goAch', 'achModal'], ['helpBtn', 'helpModal'], ['setBtn', 'setModal'], ['goMulti', 'mpModal'], ['agenorBtn', 'agModal']]) {
       await p.click('#' + btn); await wait(350);
       const r = await p.evaluate(m => {
-        const c = document.querySelector('#' + m + ' .pixm-card'), x = document.querySelector('#' + m + ' .pixm-x'); c.scrollTop = c.scrollHeight;
+        const c = document.querySelector('#' + m + ' .pixm-card'), x = document.querySelector('#' + m + ' .pixm-x'); c.scrollTop = c.scrollHeight; c.querySelectorAll('*').forEach(e => { if (e.scrollHeight > e.clientHeight + 2 && /auto|scroll/.test(getComputedStyle(e).overflowY)) e.scrollTop = e.scrollHeight; });
         const kids = [...c.querySelectorAll('*')].filter(e => e.offsetParent && !e.closest('.pixm-x') && e.children.length === 0); const last = kids[kids.length - 1];
         const cr = c.getBoundingClientRect(), lr = last.getBoundingClientRect(), xr = x.getBoundingClientRect();
         return { cabe: cr.top >= 0 && cr.bottom <= innerHeight + 1, fechar: xr.top >= cr.top - 1 && xr.bottom <= innerHeight && xr.right <= innerWidth, ultimo: lr.bottom <= cr.bottom + 1, horiz: c.scrollWidth <= c.clientWidth + 1 };
@@ -152,6 +152,20 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
       await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-${modal}.png`) });
       await p.keyboard.press('Escape'); await wait(150);
     }
+    // Pix centralizado; conquistas com lista ampla (botões de compartilhar pequenos no cabeçalho)
+    await p.evaluate(() => document.getElementById('agenorBtn').click()); await wait(250);
+    await p.evaluate(() => document.getElementById('agPix').click()); await wait(300);
+    const px = await p.evaluate(() => { const c = document.querySelector('#pixModal .pixm-card').getBoundingClientRect(), mid = c.left + c.width / 2;
+      return ['pixTitle', 'pixCopy'].map(id => { const r = document.getElementById(id).getBoundingClientRect(); return Math.abs(r.left + r.width / 2 - mid) < 6; })
+        .concat([document.querySelector('#pixModal .pixm-qr')].map(e => { const r = e.getBoundingClientRect(); return Math.abs(r.left + r.width / 2 - mid) < 6; })); });
+    ok(px.every(Boolean), `${w}x${hh}: Me paga um pastel com título, QR e botão centralizados`, px);
+    await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-pix.png`) });
+    await p.keyboard.press('Escape'); await wait(150);
+    await p.evaluate(() => document.getElementById('goAch').click()); await wait(300);
+    const ag = await p.evaluate(() => { const g = document.getElementById('achGrid'), b = document.getElementById('achShareAll').getBoundingClientRect(), hd = document.querySelector('.achhead').getBoundingClientRect();
+      return { lista: Math.round(g.clientHeight / innerHeight * 100), noCabecalho: b.top >= hd.top - 2 && b.bottom <= hd.bottom + 2, botaoPequeno: b.height <= 36 }; });
+    ok(ag.lista >= (hh < 500 ? 40 : 45) && ag.noCabecalho && ag.botaoPequeno, `${w}x${hh}: conquistas com lista ampla e compartilhar pequeno no cabeçalho`, ag);
+    await p.keyboard.press('Escape'); await wait(150);
     await p.evaluate(() => document.getElementById('goCtl').click()); await wait(300);
     const cr = await p.evaluate(() => { const c = document.querySelector('#ctlModal .pixm-card'); c.scrollTop = c.scrollHeight; const R = c.getBoundingClientRect(), a = document.getElementById('ctlOk').getBoundingClientRect();
       return { cabe: R.top >= 0 && R.bottom <= innerHeight + 1, pronto: a.bottom <= R.bottom + 1 && a.bottom <= innerHeight }; });

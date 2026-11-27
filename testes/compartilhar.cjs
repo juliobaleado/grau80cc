@@ -8,7 +8,7 @@ const OUT = process.argv[2] || path.join(ROOT, 'play-store', 'compartilhar');
 fs.mkdirSync(OUT, { recursive: true });
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
-html = html.slice(0, j) + 'window.__t={get s(){return s},begin,finish,room,TUT,get KID(){return KID}};\n' + html.slice(j);
+html = html.slice(0, j) + 'window.__t={get s(){return s},begin,finish,room,TUT,get KID(){return KID},get rideShot(){return rideShot},get shSnap(){return shSnap}};\n' + html.slice(j);
 const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); r.end(html); }).listen(8858);
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
@@ -65,6 +65,13 @@ const saveImg = (url, f) => fs.writeFileSync(path.join(OUT, f), Buffer.from(url.
   ok(await p.$eval('#shModal', e => e.hidden), 'Esc fecha');
   await p.click('#goGarage'); await wait(300);
 
+  // foto do recorde: o quadro guardado enquanto ainda empinava (não a queda)
+  const foto = await p.evaluate(async () => { __t.begin('livre'); __t.s.active = true; __t.s.th = 0.9; __t.s.om = 0;
+    await new Promise(r => setTimeout(r, 700)); const tinha = !!(__t.rideShot && __t.rideShot.ok);
+    __t.s.th = 1.7; __t.finish('flip'); await new Promise(r => setTimeout(r, 1300)); document.getElementById('goShare').click(); await new Promise(r => setTimeout(r, 500));
+    return { tinha, usou: __t.shSnap === __t.rideShot }; });
+  ok(foto.tinha && foto.usou, 'compartilhar recorde usa o quadro de quando ainda estava empinando', foto);
+  await p.keyboard.press('Escape'); await p.evaluate(() => document.getElementById('goGarage').click()); await wait(300);
   console.log('— conquista e coleção');
   await p.click('#goAch'); await wait(300);
   await p.click('.achc.got .ashare'); await wait(600);
