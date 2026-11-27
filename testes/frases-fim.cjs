@@ -13,7 +13,7 @@ const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'te
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}', 'grau80-stats': '{"runs":50}', 'grau80-best': '5000.00' };
+const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}', 'grau80-stats': '{"runs":50}', 'grau80-best': '5000.00', 'grau80-ach': '{"w_azeitona":true}' };
 
 (async () => {
   const b = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new', args: ['--mute-audio'] });
