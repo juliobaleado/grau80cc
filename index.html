@@ -801,13 +801,13 @@ html.kid .lagenor small { visibility: hidden; }
 html.kid #agPix { display: none; }
 .pixm-card.rankcard { width: min(100%, 440px); max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; }
 .rcrown { width: 170px; height: auto; margin: -4px auto -6px; }
-.rking { width: 100%; display: grid; gap: 2px; padding: 10px 14px; border-radius: var(--r-md); text-align: center; color: var(--night);
+.rking { width: 100%; box-sizing: border-box; display: grid; gap: 2px; padding: 10px 14px; border-radius: var(--r-md); text-align: center; color: var(--night);
   background: linear-gradient(115deg, #ffe7a0, var(--gold) 40%, var(--sodium)); box-shadow: 0 8px 22px rgba(255, 215, 99, .25); }
 .rking .label { color: rgba(18, 13, 25, .7); }
 .rking b { font: 400 24px/1.05 var(--display); overflow-wrap: anywhere; }
 .rking span { font: 700 18px var(--hud); font-variant-numeric: tabular-nums; }
 .rking:empty { display: none; }
-.rlist { width: 100%; margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.rlist { width: 100%; box-sizing: border-box; margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
 .rlist li { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); background: rgba(243, 239, 230, .05); text-align: left; font: 600 16px var(--hud); }
 .rlist li i { font-style: normal; font: 400 14px var(--display); color: var(--muted); }
 .rlist li:nth-child(1) i { color: #d9dde2; } .rlist li:nth-child(2) i { color: #e0a36a; }
@@ -829,7 +829,55 @@ html.kid #agPix { display: none; }
   .agdog { width: 70px; } .rcrown { width: 110px; }
   .pixm-card.agcard, .pixm-card.lmodal, .pixm-card.rankcard { display: flex; flex-direction: column; }
 }
-@media (prefers-reduced-motion: reduce) { .lpane, .ndot { animation: none; } .mode, .ibtn { transition: none; } }
+/* V1.1 · modais unificados: mesma superfície, cabeçalho, fechar fixo, campos e rolagem com indicação de continuidade */
+.pixm-card { border-radius: 14px; border: 1px solid var(--line); background: linear-gradient(180deg, #172830, #0d1b22); box-shadow: 0 18px 50px rgba(0, 0, 0, .5);
+  max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; }
+.pixm-card h2 { padding-right: 34px; }
+.pixm-x { position: sticky; top: 0; z-index: 3; flex: none; align-self: flex-end; width: 40px; height: 40px; margin: -4px -6px -36px auto; border-radius: 50%;
+  display: grid; place-items: center; font-size: 24px; line-height: 1; background: rgba(8, 18, 24, .92); border: 1px solid var(--line); color: var(--ink); }
+.pixm-x:hover { border-color: var(--sodium); color: var(--sodium); }
+.pixm-card input:not([type="checkbox"]):not([type="range"]), .pixm-card select, .pixm-card textarea {
+  font: 500 16px var(--hud); color: var(--ink); background: rgba(243, 239, 230, .07); border: 1px solid rgba(243, 239, 230, .28); border-radius: 6px; padding: 8px 10px; min-height: 40px; box-sizing: border-box; }
+.pixm-card input:focus-visible, .pixm-card select:focus-visible, .pixm-card textarea:focus-visible { outline: 2px solid var(--sodium); outline-offset: 1px; }
+.pixm-card .pixm-msg { font-size: 13px; line-height: 1.3; }
+.pixm-card.more::after { content: ""; position: sticky; bottom: -14px; display: block; flex: none; height: 30px; margin: -30px -16px -14px; pointer-events: none;
+  background: linear-gradient(rgba(13, 27, 34, 0), rgba(13, 27, 34, .97) 70%); }
+/* V1.1 · garagem como coleção: equipado, disponível, bloqueado, especial; cores em grade; rodapé Jogar reservado */
+#pGarage .garage { padding: 0 4px 6px 0; max-height: min(46vh, 320px); }
+#pGarage .sw:not(.dot) { min-height: 40px; padding: 6px 12px 6px 8px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--line); transition: transform .15s var(--ease), border-color .15s; }
+#pGarage .sw:not(.dot):hover { border-color: rgba(255, 181, 71, .55); }
+#pGarage .sw[aria-pressed="true"]:not(.dot) { background: rgba(255, 181, 71, .14); border-color: var(--sodium); box-shadow: 0 0 0 2px rgba(255, 181, 71, .25); }
+#pGarage .sw.special:not(.dot) { border-color: rgba(255, 215, 99, .55); background: linear-gradient(135deg, rgba(255, 215, 99, .12), var(--surface2) 60%); }
+#pGarage .sw.special:not(.dot)::before { content: "★"; color: var(--gold); font-size: 12px; margin-right: -2px; }
+#pGarage .sw.locked:not(.dot) { opacity: 1; color: var(--muted); border-style: dashed; background: rgba(0, 0, 0, .18); }
+#pGarage .chips-sel { gap: 8px; }
+#pGarage .sw.dot { width: 36px; height: 36px; }
+#pGarage .sw.dot i { width: 26px; height: 26px; }
+#pGarage .sw.dot[aria-pressed="true"] { border-color: var(--sodium); box-shadow: 0 0 0 3px rgba(255, 181, 71, .45); }
+.sw.pop { animation: equipPop .34s var(--ease); }
+@keyframes equipPop { 40% { transform: scale(1.12); } }
+.gfoot { position: sticky; bottom: 0; display: flex; gap: 8px; padding-top: 6px; }
+.gfoot .go { flex: 1; text-align: center; }
+#startScreen:has(#pGarage:not([hidden])) .quickplay { display: none !important; }
+.agdog { width: 230px; margin: -6px auto -2px; }
+@media (max-height: 500px) and (orientation: landscape) {
+  /* chat aberto em tela baixa: painel próprio na área livre à esquerda, nunca por cima do lobby */
+  #startScreen .lobby:not(.closed) { position: fixed; order: 0; top: auto; left: max(10px, env(safe-area-inset-left, 0px)); bottom: max(8px, env(safe-area-inset-bottom, 0px));
+    width: max(200px, min(360px, calc(100vw - var(--panelW, 420px) - 28px))); height: min(220px, calc(100dvh - 24px)); padding: 8px; gap: 4px; z-index: 6;
+    border-radius: 12px; background: rgba(8, 18, 24, .95); border: 1px solid var(--line); pointer-events: auto; }
+  #startScreen .lobby:not(.closed) .chattab { order: -1; align-self: stretch; justify-content: flex-start; }
+  #startScreen .lobby:not(.closed) .lobbylog { font-size: 13px; }
+  #startScreen:has(.lobby:not(.closed)) .leftcol { display: none; }
+  .pixm-card, .pixm-card.mpcard, .pixm-card.ctlcard { display: flex; flex-direction: column; align-items: stretch; text-align: left; }
+  .pixm-card h2 { font-size: 22px; }
+  .mode small { font-size: 12px; } .lagenor small { font-size: 11px; } .lnav button { font-size: 12px; }
+  #pGarage .garage { max-height: calc(100dvh - 228px); }
+  .lcard:has(#pGarage:not([hidden])) .lprofile { display: none; }
+  #pGarage .sw:not(.dot) { min-height: 34px; padding: 4px 10px 4px 6px; }
+  #pGarage .sw.dot { width: 32px; height: 32px; } #pGarage .sw.dot i { width: 22px; height: 22px; }
+  .agdog { width: 150px; }
+}
+@media (prefers-reduced-motion: reduce) { .lpane, .ndot, .sw.pop { animation: none; } .mode, .ibtn { transition: none; } }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -982,6 +1030,7 @@ html.kid #agPix { display: none; }
       <div class="lpane" id="pGarage" hidden>
         <div class="gcats" id="gCats" role="group" aria-label="Categorias da garagem"></div>
         <div class="garage" id="garage"></div>
+        <div class="gfoot"><button class="go" id="gPlay" type="button" data-i>▶ Jogar</button></div>
       </div>
       <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
     </div>
@@ -1161,7 +1210,7 @@ html.kid #agPix { display: none; }
   <div class="pixm-card agcard">
     <div class="awning" aria-hidden="true"></div>
     <button class="pixm-x" id="agClose" type="button" aria-label="Fechar">×</button>
-    <img class="agdog" src="img/caramelo.webp" alt="" width="360" height="455">
+    <img class="agdog" src="img/caramelo-pastel.webp" alt="" width="520" height="292">
     <h2 id="agTitle" data-i>Pastel do Agenor</h2>
     <p data-i>Chega mais, parceiro! Tá servido?</p>
     <div class="agacts">
@@ -1815,6 +1864,7 @@ html.kid #agPix { display: none; }
   const keys = new Set();
   const ptrs = new Map();
   let mouseBtns = 0; // bit 1 = esquerdo (acelera), bit 2 = direito (freio)
+  var LOBBY_CAM = null; // enquadramento do lobby (preenchido quando o lobby monta)
   let s;
   // tutorial em andamento ('menu' ou 'jogo'); na demonstração, gas/brake são os comandos do piloto automático
   const TUT = { on: false, kind: '', i: 0, steps: [], after: 'motoca', auto: false, gas: false, brake: false };
@@ -3481,7 +3531,12 @@ html.kid #agPix { display: none; }
     const S = Math.max(42, Math.min(120, H / 6.6, W / 5.2));
     const yC = Math.round(H * 0.78);
     const groundY = yC - 0.32 * S;
-    const BX = W * 0.36;
+    let BX = W * 0.36;
+    if (LOBBY_CAM && s.mode === 'ready' && !ui.start.hidden && LOBBY_CAM.l > 0) {
+      const want = Math.min(W * 0.36, LOBBY_CAM.l * 0.5);
+      LOBBY_CAM.x = LOBBY_CAM.x ? LOBBY_CAM.x + (want - LOBBY_CAM.x) * 0.15 : want;
+      BX = LOBBY_CAM.x; LOBBY_CAM.S = S;
+    } else if (LOBBY_CAM) LOBBY_CAM.x = 0;
     const sx = wx => BX + (wx - s.x) * S;
     const sy = wy => yC - wy * S;
 
@@ -4519,6 +4574,7 @@ html.kid #agPix { display: none; }
         } else if (locked && o.lock === 'teste') { b.classList.add('locked'); b.setAttribute('aria-disabled', 'true'); b.title = b.dataset.req = T('Presente pra quem joga o teste fechado do app');
         } else if (locked) { const ach = ACHS.find(a => a.id === lockMain(o)); b.classList.add('locked'); b.setAttribute('aria-disabled', 'true'); b.title = b.dataset.req = T('Libera com a conquista') + ' ' + ach.name + ' (' + ach.why + ')'; b.dataset.ach = '1'; }
         b.setAttribute('aria-pressed', String(pick[k] === id));
+        if (typeof o.lock === 'string' && (o.lock.startsWith('doa_') || o.lock === 'teste')) b.classList.add('special');
         b.addEventListener('click', () => {
           if (b.classList.contains('locked')) { showReq(r, b); return; } // bloqueado: mostra como libera, não equipa
           r.req.hidden = true;
@@ -4526,6 +4582,7 @@ html.kid #agPix { display: none; }
           if (k === 'model' && o.def) pick.frame = o.def; // cada modelo chega na cor de fábrica
           try { localStorage.setItem('grau80-look', JSON.stringify(pick)); } catch (e) {}
           renderGarage();
+          const nb = $('look-' + k + '-' + id); if (nb) nb.classList.add('pop');
         });
         r.box.appendChild(b);
       }
@@ -5733,6 +5790,24 @@ html.kid #agPix { display: none; }
     if (chatOpen) $('lobbyLog').scrollTop = $('lobbyLog').scrollHeight;
   });
   var LOBBY_OK = true;
+  // painel do lobby: posição pra câmera e largura pro chat em tela baixa (sem layout por quadro: só quando muda)
+  LOBBY_CAM = { x: 0, l: 0, S: 0 };
+  const lcard = document.querySelector('.lcard');
+  const updPanel = () => {
+    const r = lcard.getBoundingClientRect();
+    LOBBY_CAM.l = r.width && r.left > innerWidth * 0.3 ? r.left : 0;
+    document.documentElement.style.setProperty('--panelW', Math.round(Math.max(0, innerWidth - r.left)) + 'px');
+  };
+  if (window.ResizeObserver) new ResizeObserver(updPanel).observe(lcard);
+  addEventListener('resize', updPanel); updPanel();
+  $('gPlay').addEventListener('click', () => ($('goStart').hidden ? $('goBora') : $('goStart')).click());
+  // modais: indica que tem mais conteúdo embaixo enquanto der pra rolar
+  const updMore = c => c.classList.toggle('more', c.scrollHeight - c.scrollTop - c.clientHeight > 6);
+  document.addEventListener('scroll', e => { const t = e.target; if (t && t.classList && t.classList.contains('pixm-card')) updMore(t); }, true);
+  if (window.MutationObserver) {
+    const mo = new MutationObserver(ms => { for (const m of ms) if (!m.target.hidden) { const c = m.target.querySelector('.pixm-card'); if (c) requestAnimationFrame(() => updMore(c)); } });
+    document.querySelectorAll('.pixm').forEach(p => mo.observe(p, { attributes: true, attributeFilter: ['hidden'] }));
+  }
   try { renderAchModal(); } catch (e) {}
   renderNick(); renderChatTab(); track('lobby_opened');
 
