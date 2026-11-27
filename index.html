@@ -692,6 +692,144 @@ html.kid #grow-dog { display: none !important; }
 .fbcard .fbtech { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: var(--muted); }
 .fbcard .fbtech input { margin-top: 2px; width: 18px; height: 18px; }
 @media (max-height: 500px) { .pixm-card.newscard, .pixm-card.fbcard { display: flex; flex-direction: column; gap: 6px; width: min(100%, 640px); } .newscard ul { font-size: 14px; gap: 2px; } .fbcard textarea { min-height: 70px; } }
+/* ===== Lobby (UI/UX Evolution V1): arcade urbano, o Pastel do Agenor vivo atrás ===== */
+:root { --surface: #16252d; --surface2: #1d313b; --gold: #ffd763; --lilac: #913775; --racing: #f00020; --caramel: #ff9810; --line: rgba(243, 239, 230, .14);
+  --r-sm: 6px; --r-md: 10px; --ease: cubic-bezier(.2, .8, .2, 1); }
+#startScreen .card.lcard { max-width: 420px; gap: 10px; padding: 14px 16px 16px; border-radius: 14px; background: linear-gradient(180deg, rgba(22, 37, 45, .97), rgba(11, 23, 29, .97));
+  border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .04); position: relative; overflow: hidden; }
+.lcard::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--racing), var(--caramel), var(--gold), var(--lilac)); }
+.lhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.llogo { margin: 0; line-height: 0; }
+.llogo img { width: 196px; height: auto; display: block; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .45)); user-select: none; }
+.ltools { display: flex; gap: 6px; }
+.ibtn { position: relative; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); background: rgba(243, 239, 230, .05); color: var(--ink); cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s var(--ease); }
+.ibtn svg { width: 20px; height: 20px; fill: currentColor; }
+.ibtn:hover { border-color: var(--sodium); color: var(--sodium); }
+.ibtn:active { transform: scale(.94); }
+.ibtn:focus-visible, .lnav button:focus-visible, .mode:focus-visible, .gcats button:focus-visible, .lagenor:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.ndot { position: absolute; top: 4px; right: 4px; width: 9px; height: 9px; border-radius: 50%; background: var(--racing); box-shadow: 0 0 0 2px var(--surface); animation: pulse 1.6s ease-in-out infinite; }
+.ndot[hidden] { display: none; }
+@keyframes pulse { 50% { transform: scale(1.35); } }
+.lprofile { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; padding: 8px 10px; border-radius: var(--r-sm); background: rgba(243, 239, 230, .04); border: 1px solid var(--line); }
+.lwho { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.lwho b { font: 400 18px/1 var(--display); color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 210px; }
+.lwho b small { font: 600 12px var(--hud); color: var(--muted); letter-spacing: .04em; }
+.lprofile .pbline { font-size: 14px; }
+.lnav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 4px; border-radius: var(--r-md); background: rgba(0, 0, 0, .28); }
+.lnav button { min-height: 38px; padding: 4px 6px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer;
+  font: 700 13px/1.05 var(--hud); letter-spacing: .08em; text-transform: uppercase; transition: background .15s, color .15s; }
+.lnav button:hover { color: var(--ink); }
+.lnav button[aria-pressed="true"] { background: var(--sodium); color: var(--night); }
+.lpane[hidden] { display: none; }
+.lpane { display: flex; flex-direction: column; gap: 10px; animation: paneIn .22s var(--ease); }
+@keyframes paneIn { from { opacity: 0; transform: translateY(6px); } }
+.lmodes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.mode { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left; padding: 10px 12px 11px; min-height: 64px; cursor: pointer; overflow: hidden;
+  border-radius: var(--r-md); border: 1px solid var(--line); background: var(--surface2); color: var(--ink); transition: transform .15s var(--ease), border-color .15s, filter .15s; }
+.mode b { font: 400 19px/1 var(--display); }
+.mode small { font: 500 13px/1.2 var(--hud); color: var(--muted); }
+.mode:hover { transform: translateY(-2px); border-color: rgba(255, 181, 71, .6); }
+.mode:active { transform: scale(.98); }
+.mode[hidden] { display: none; }
+.mode.mmain { grid-column: 1 / -1; min-height: 86px; padding: 12px 14px; border: 0; color: var(--night);
+  background: linear-gradient(115deg, var(--gold) 0%, var(--sodium) 38%, var(--caramel) 100%); box-shadow: 0 8px 22px rgba(255, 152, 16, .28); }
+.mode.mmain::after { content: ""; position: absolute; right: -6px; top: 0; bottom: 0; width: 86px; opacity: .22; transform: skewX(-14deg);
+  background: repeating-conic-gradient(#120d19 0 25%, transparent 0 50%) 0 0 / 16px 16px; }
+.mode.mmain b { font-size: 28px; }
+.mode.mmain small { color: rgba(18, 13, 25, .78); font-size: 14px; font-weight: 600; max-width: 78%; }
+.mtag { font: 700 10px var(--hud); letter-spacing: .16em; text-transform: uppercase; color: var(--night); background: rgba(255, 255, 255, .45); padding: 2px 6px; border-radius: 3px; }
+.mode.mfree { box-shadow: inset 3px 0 0 var(--ok); }
+.mode.mmulti { box-shadow: inset 3px 0 0 #c86aa8; }
+.lmodes .go { grid-column: 1 / -1; }
+.lagenor { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--r-md); cursor: pointer; text-align: left; color: var(--ink);
+  border: 1px dashed rgba(255, 181, 71, .45); background: repeating-linear-gradient(90deg, rgba(240, 0, 32, .14) 0 14px, rgba(255, 255, 255, .04) 14px 28px); }
+.lagenor b { display: block; font: 400 15px/1.05 var(--display); color: var(--sodium); }
+.lagenor small { font: 500 12px var(--hud); color: var(--muted); }
+.lagenor:hover { border-style: solid; }
+html.kid .lagenor small { visibility: hidden; }
+#achList { display: none !important; }
+/* garagem: categorias e itens em grade (sem depender das setas) */
+.gcats { display: flex; gap: 6px; flex-wrap: wrap; }
+.gcats button { min-height: 34px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer;
+  font: 700 12px var(--hud); letter-spacing: .1em; text-transform: uppercase; }
+.gcats button[aria-pressed="true"] { color: var(--night); background: var(--ink); border-color: var(--ink); }
+#pGarage .garage { border: 0; padding: 0 4px 52px 0; gap: 10px; max-height: min(52vh, 360px); overflow-y: auto; padding-right: 4px; }
+#pGarage .grow { grid-template-columns: 1fr; gap: 6px; }
+#pGarage .grow[hidden] { display: none; }
+#pGarage .slider { grid-template-columns: 1fr; }
+#pGarage .slider .arr { display: none; }
+#pGarage .chips-sel { flex-wrap: wrap; overflow: visible; }
+#pGarage .sw:not(.dot) { position: relative; }
+#pGarage .sw[aria-pressed="true"]:not(.dot)::after { content: "✓"; margin-left: 2px; color: var(--sodium); font-weight: 700; }
+.sw.locked { opacity: .55; border-style: dashed; }
+.sw.dot.locked { opacity: .45; }
+.greq { font-size: 13px; line-height: 1.3; color: var(--gold); display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.greq[hidden] { display: none; }
+.greq button { font: 700 11px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium); background: none; border: 1px solid rgba(255, 181, 71, .5); border-radius: 3px; padding: 4px 8px; cursor: pointer; }
+/* placar compacto e chat recolhível */
+.boardall { justify-self: start; margin-top: 4px; font: 700 11px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium); background: none; border: 1px solid rgba(255, 181, 71, .45); border-radius: 3px; padding: 4px 8px; cursor: pointer; }
+.board.min .boardall { display: none; }
+#boardList li:nth-child(n+6) { display: none; }
+.lobby .chattab { pointer-events: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); background: rgba(8, 18, 24, .88); color: var(--ink); font: 700 13px var(--hud); letter-spacing: .06em; text-transform: uppercase; }
+.lobby .chattab b { color: var(--ok); }
+.lobby .chattab .cmuted { color: var(--muted); font-weight: 600; }
+.cdot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.lobby .badge { min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--racing); color: #fff; font: 700 11px/18px var(--hud); text-align: center; font-style: normal; }
+.lobby .badge[hidden] { display: none; }
+.lobbybody { display: contents; }
+.lobby.closed .lobbybody { display: none; }
+.lobby.closed { top: auto !important; bottom: max(12px, env(safe-area-inset-bottom, 0px)) !important; height: auto !important; width: auto !important; }
+.lobby .chattab { order: 10; }
+/* modais do lobby */
+.pixm-card.lmodal { width: min(100%, 460px); align-items: stretch; text-align: left; max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; gap: 10px; }
+.srow { display: grid; grid-template-columns: 96px 1fr; align-items: center; gap: 6px 10px; padding-top: 8px; border-top: 1px solid var(--line); }
+.srow .pixm-msg { grid-column: 2; }
+.srow .go, .lmodal .tutrow .go { justify-self: start; font-size: 15px; padding: 7px 14px 9px; min-height: 38px; }
+.lnav #goAch { font-size: 12px; }
+.stog { display: flex; gap: 6px; flex-wrap: wrap; }
+.helpcard .how { font-size: 15px; }
+.helpcard .ficcao { font-size: 12px; color: var(--muted); }
+.pixm-card.agcard { width: min(100%, 420px); padding-top: 34px; overflow: hidden; background: linear-gradient(180deg, #2a1712, #161012 70%); border-color: rgba(240, 0, 32, .5); }
+.awning { position: absolute; inset: 0 0 auto 0; height: 26px; background: repeating-linear-gradient(90deg, #d8211f 0 26px, #f3efe6 26px 52px);
+  -webkit-mask: radial-gradient(14px 10px at 13px 100%, transparent 98%, #000) 0 0 / 26px 100%; mask: radial-gradient(14px 10px at 13px 100%, transparent 98%, #000) 0 0 / 26px 100%; }
+.agdog { width: 120px; height: auto; margin: 0 auto -4px; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, .5)); }
+.agcard h2 { color: #ffd21f; }
+.agacts { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.agacts .go { width: 100%; text-align: center; }
+html.kid #agPix { display: none; }
+.pixm-card.rankcard { width: min(100%, 440px); max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; }
+.rcrown { width: 170px; height: auto; margin: -4px auto -6px; }
+.rking { width: 100%; display: grid; gap: 2px; padding: 10px 14px; border-radius: var(--r-md); text-align: center; color: var(--night);
+  background: linear-gradient(115deg, #ffe7a0, var(--gold) 40%, var(--sodium)); box-shadow: 0 8px 22px rgba(255, 215, 99, .25); }
+.rking .label { color: rgba(18, 13, 25, .7); }
+.rking b { font: 400 24px/1.05 var(--display); overflow-wrap: anywhere; }
+.rking span { font: 700 18px var(--hud); font-variant-numeric: tabular-nums; }
+.rking:empty { display: none; }
+.rlist { width: 100%; margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.rlist li { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); background: rgba(243, 239, 230, .05); text-align: left; font: 600 16px var(--hud); }
+.rlist li i { font-style: normal; font: 400 14px var(--display); color: var(--muted); }
+.rlist li:nth-child(1) i { color: #d9dde2; } .rlist li:nth-child(2) i { color: #e0a36a; }
+.rlist li b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.rlist li span { color: var(--sodium); font-variant-numeric: tabular-nums; }
+.rlist li.me { outline: 1px solid var(--sodium); background: rgba(255, 181, 71, .1); }
+.rlist li.msg { display: block; color: var(--muted); text-align: center; }
+@media (max-height: 500px) and (orientation: landscape) {
+  #startScreen .card.lcard { max-width: 380px; gap: 6px; padding: 8px 12px 10px; }
+  .llogo img { width: 132px; }
+  .ibtn { width: 34px; height: 34px; } .ibtn svg { width: 17px; height: 17px; }
+  .lprofile { padding: 4px 8px; } .lwho b { font-size: 15px; } .lprofile .pbline { font-size: 12px; }
+  .lnav button { min-height: 30px; font-size: 11px; }
+  .mode { min-height: 46px; padding: 6px 10px 7px; gap: 1px; } .mode b { font-size: 15px; } .mode small { font-size: 11px; }
+  .mode.mmain { min-height: 58px; padding: 7px 12px; } .mode.mmain b { font-size: 21px; } .mode.mmain small { font-size: 12px; }
+  .mtag { display: none; }
+  .lagenor { padding: 4px 10px; } .lagenor .pastel { width: 26px; height: 16px; } .lagenor b { font-size: 13px; } .lagenor small { font-size: 10px; }
+  #pGarage .garage { max-height: calc(100dvh - 190px); }
+  .agdog { width: 70px; } .rcrown { width: 110px; }
+  .pixm-card.agcard, .pixm-card.lmodal, .pixm-card.rankcard { display: flex; flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { .lpane, .ndot { animation: none; } .mode, .ibtn { transition: none; } }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -786,61 +924,66 @@ html.kid #grow-dog { display: none !important; }
   <div class="screen" id="startScreen">
     <!-- chat de todo mundo online: o lado esquerdo inteiro, sem moldura; as mensagens sobem e passam por trás do placar -->
     <button class="go quickplay" id="quickPlay" type="button" hidden><span data-i>▶ Jogar</span></button>
-    <section class="lobby" aria-label="Chat de todo mundo online">
+    <section class="lobby" id="lobby" aria-label="Chat de todo mundo online">
+      <button class="chattab" id="chatTab" type="button" aria-expanded="false" aria-controls="lobbyBody"><i class="cdot" aria-hidden="true"></i><span data-i>Chat</span> <b id="chatOnline">1</b> <span class="cmuted" data-i>online</span><i class="badge" id="chatUnread" hidden>0</i></button>
+      <div class="lobbybody" id="lobbyBody">
       <div class="lobbylog" id="lobbyLog" aria-live="polite"></div>
       <span class="lobbyon" id="onlineList">Online</span>
       <form class="chatrow" id="lobbyForm">
         <input id="lobbyIn" maxlength="140" autocomplete="off" enterkeyhint="send" placeholder="Fala com a galera…" data-ip="Fala com a galera…" aria-label="Mensagem pra todo mundo online">
         <button class="go" type="submit" data-i>Enviar</button>
       </form>
+      </div>
     </section>
     <div class="leftcol">
       <aside class="board" aria-label="Placar global">
         <div id="paneBoard">
           <div class="boardhead"><span class="label" data-i>Placar global · top 10</span><button class="boardx" id="boardX" type="button" aria-label="Esconder placar" aria-expanded="true">–</button></div>
           <ol id="boardList"><li class="board-msg" data-i>Carregando…</li></ol>
-          <span class="board-tip" data-i>Bate o primeiro pra tomar a coroa 👑</span>
+          <button class="boardall" id="boardAll" type="button" data-i>Ver top 10</button>
         </div>
       </aside>
-      <button class="pix-card" id="pixOpen" type="button">
+      <button class="pix-card" id="pixOpen" type="button" hidden>
         <svg class="pastel" width="54" height="33" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/><circle cx="38" cy="30" r="2.2" fill="#d98a2b"/><circle cx="56" cy="24" r="1.8" fill="#d98a2b"/><circle cx="64" cy="36" r="2" fill="#d98a2b"/></svg>
         <span class="pix-txt"><b>Me paga um pastel!</b><small id="pixSub" data-i>Pix · toca pra ver o QR</small></span>
       </button>
     </div>
-    <div class="card">
-      <div class="eyerow"><span class="eyebrow" data-i>Motor 2 tempos · 80 cc</span><span class="eyetools"><button class="musicbtn" id="musicBtn" type="button" aria-pressed="true"></button><span class="langs" id="langs" role="group" aria-label="Idioma"></span></span></div>
-      <h1>Grau 80cc</h1>
+    <div class="card lcard">
+      <header class="lhead">
+        <h1 class="llogo"><img src="img/logo-grau80cc.webp" alt="Grau 80cc" width="565" height="203" draggable="false"></h1>
+        <div class="ltools">
+          <button class="ibtn" id="newsBtn" type="button" aria-label="Últimas novidades" data-ia="Últimas novidades" title="Últimas novidades"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7L12 17.3 5.8 20.9l1.6-7L2 9.2l7.1-.6z"/></svg><i class="ndot" id="newsDot" hidden></i></button>
+          <button class="ibtn" id="helpBtn" type="button" aria-label="Ajuda" data-ia="Ajuda" title="Ajuda"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 16h-2v-2h2zm2.1-7.7l-.9.9c-.7.7-1.2 1.3-1.2 2.8h-2v-.5c0-1.1.5-2.1 1.2-2.8l1.2-1.3c.4-.4.6-.9.6-1.4a2 2 0 00-4 0H8a4 4 0 018 0c0 .9-.4 1.7-.9 2.3z"/></svg></button>
+          <button class="ibtn" id="setBtn" type="button" aria-label="Configurações" data-ia="Configurações" title="Configurações"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.4 13a7.5 7.5 0 000-2l2.1-1.6-2-3.5-2.5 1a7 7 0 00-1.7-1L15 3h-4l-.4 2.9a7 7 0 00-1.7 1l-2.5-1-2 3.5L6.6 11a7.5 7.5 0 000 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1L11 21h4l.4-2.9c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg></button>
+        </div>
+      </header>
       <button class="iostip" id="iosTip" type="button" hidden><span data-i>No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início</span> <b aria-hidden="true">×</b></button>
-      <p data-i>Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.</p>
-      <span class="pbline" id="pbLine" hidden></span>
-      <span class="hint" data-i>A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.</span>
-      <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
-      <div class="garage" id="garage"></div>
-      <div class="actions">
-        <button class="go" id="goStart" type="button" data-i>Modo Motoca</button>
-        <button class="go alt" id="goFree" type="button" data-i>Modo Livre</button>
-        <!-- dentro de uma sala: só dá pra começar a rodada ou sair (os modos sozinho somem) -->
-        <button class="go" id="goBora" type="button" data-i hidden>Bora!</button>
-        <button class="go alt" id="goLeave" type="button" data-i hidden>Sair da sala</button>
-        <button class="go alt" id="goMulti" type="button">Multiplayer</button>
-        <button class="go alt" id="goCtl" type="button" data-i>Controles</button>
-        <button class="go alt" id="goAch" type="button" data-i>Minhas conquistas</button>
+      <div class="lprofile">
+        <div class="lwho"><span class="label" data-i>Piloto</span><b id="lNick"></b></div>
+        <span class="pbline" id="pbLine" hidden></span>
       </div>
-      <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
-      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button><button class="go alt" id="tipToggle" type="button"></button><button class="go alt" id="newsBtn" type="button" data-i>Últimas novidades</button><button class="go alt" id="fbBtn" type="button" data-i>Dê teu feedback</button></div>
-      <ul class="how" id="howList">
-        <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
-        <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
-        <li><b data-i>Ponto</b><span data-i>Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.</span></li>
-        <li><b data-i>Giro</b><span data-i>Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.</span></li>
-        <li><b data-i>Freio</b><span data-i>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
-        <li><b data-i>Motoca</b><span data-i>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
-        <li><b data-i>Livre</b><span data-i>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
-        <li><b data-i>Multi</b><span data-i>Cria uma sala e manda o código, ou entra com o código de um parceiro (até 7). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Passou no Agenor de caramelo, volta pra moto. Quando todo mundo cai, começa outra rodada.</span></li>
-        <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
-        <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
-      </ul>
-      <p class="ficcao" data-i>As instituições, corporações e personagens deste jogo são fictícios. Qualquer semelhança com órgãos reais é coincidência.</p>
+      <nav class="lnav" id="lNav" aria-label="Lobby">
+        <button type="button" id="navPlay" aria-pressed="true" data-i>Jogar</button>
+        <button type="button" id="navGarage" aria-pressed="false" data-i>Garagem</button>
+        <button type="button" id="goAch">Conquistas</button>
+        <button type="button" id="navRank" data-i>Ranking</button>
+      </nav>
+      <div class="lpane" id="pPlay">
+        <div class="actions lmodes">
+          <button class="mode mmain" id="goStart" type="button"><span class="mtag" data-i>Competitivo</span><b data-i>Modo Motoca</b><small data-i>Supera teus limites e disputa o placar mundial.</small></button>
+          <button class="mode mfree" id="goFree" type="button"><b data-i>Modo Livre</b><small data-i>Treina o equilíbrio sem pressão.</small></button>
+          <button class="mode mmulti" id="goMulti" type="button"><b>Multiplayer</b><small data-i>Cria uma sala e chama a galera.</small></button>
+          <!-- dentro de uma sala: só dá pra começar a rodada ou sair (os modos sozinho somem) -->
+          <button class="go" id="goBora" type="button" data-i hidden>Bora!</button>
+          <button class="go alt" id="goLeave" type="button" data-i hidden>Sair da sala</button>
+        </div>
+        <button class="lagenor" id="agenorBtn" type="button"><svg class="pastel" width="34" height="21" viewBox="0 0 100 62" aria-hidden="true"><path d="M6 54 Q50 -18 94 54 Z" fill="#f3b54a"/><path d="M14 50 Q50 -4 86 50" fill="none" stroke="#d98a2b" stroke-width="3" stroke-dasharray="2 5"/><path d="M6 54 H94" stroke="#c97a22" stroke-width="6" stroke-linecap="round"/></svg><span><b data-i>Pastel do Agenor</b><small data-i>Apoio, caramelos especiais e conselhos</small></span></button>
+      </div>
+      <div class="lpane" id="pGarage" hidden>
+        <div class="gcats" id="gCats" role="group" aria-label="Categorias da garagem"></div>
+        <div class="garage" id="garage"></div>
+      </div>
+      <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
     </div>
   </div>
 
@@ -978,6 +1121,66 @@ html.kid #grow-dog { display: none !important; }
     <button class="go" id="fbSend" type="submit" data-i>Enviar</button>
     <span class="pixm-msg" id="fbOut" aria-live="polite"></span>
   </form>
+</div>
+<div class="pixm" id="setModal" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
+  <div class="pixm-card lmodal">
+    <button class="pixm-x" id="setClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="setTitle" data-i>Configurações</h2>
+    <div class="srow"><span class="label" data-i>Som</span><div class="stog"><button class="musicbtn" id="musicBtn" type="button" aria-pressed="true"></button><button class="musicbtn" id="setSound" type="button"></button></div></div>
+    <div class="srow"><span class="label" data-i>Idioma</span><span class="langs" id="langs" role="group" aria-label="Idioma"></span></div>
+    <div class="srow" id="setNickRow"><span class="label" data-i>Apelido</span><form class="chatrow" id="setNickForm"><input id="setNick" maxlength="16" autocomplete="nickname" aria-label="Apelido"><button class="go" type="submit" data-i>Salvar</button></form><span class="pixm-msg" id="setNickMsg" aria-live="polite"></span></div>
+    <div class="srow"><span class="label" data-i>Comandos</span><button class="go alt" id="goCtl" type="button" data-i>Controles</button></div>
+    <div class="srow"><span class="label" data-i>Dicas</span><button class="go alt" id="tipToggle" type="button"></button></div>
+  </div>
+</div>
+<div class="pixm" id="helpModal" role="dialog" aria-modal="true" aria-labelledby="helpTitle" hidden>
+  <div class="pixm-card lmodal helpcard">
+    <button class="pixm-x" id="helpClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="helpTitle" data-i>Ajuda</h2>
+    <span class="label" data-i>Tutoriais</span>
+    <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button></div>
+    <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
+    <ul class="how" id="howList">
+        <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
+        <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
+        <li><b data-i>Ponto</b><span data-i>Perto de 75° a moto se equilibra sozinha (o medidor em cima da cabeça fica verde). Passou disso, ela vira pra trás.</span></li>
+        <li><b data-i>Giro</b><span data-i>Soltou o acelerador, o motor perde giro devagar. Voltou a acelerar, a força volta na hora.</span></li>
+        <li><b data-i>Freio</b><span data-i>Freio traseiro: dedo na metade esquerda da tela, ↓, S ou botão direito do mouse. Baixa a frente, e quanto mais rápido, mais forte.</span></li>
+        <li><b data-i>Motoca</b><span data-i>Conquistas e desafios. Encostou a roda da frente ou virou pra trás, acabou a volta. Empinada de menos de 3 m não conta, dá pra subir de novo.</span></li>
+        <li><b data-i>Livre</b><span data-i>Sem conquistas nem desafios, só o recorde. Encosta a frente e sobe de novo quantas vezes quiser; só acaba se virar pra trás.</span></li>
+        <li><b data-i>Multi</b><span data-i>Cria uma sala e manda o código, ou entra com o código de um parceiro (até 7). Cada um vê os próprios desafios. Encostou a frente, o grau zera; virou pra trás, vira caramelo e corre atrás de quem ainda tá empinando. Passou no Agenor de caramelo, volta pra moto. Quando todo mundo cai, começa outra rodada.</span></li>
+        <li><b data-i>Puxa</b><span data-i>A ou o botão Puxa: o motoca levanta e joga o quadril pra trás, a frente ganha um tranco leve. Segurando, ele fica em pé e o grau se equilibra mais baixo, perto de 67°.</span></li>
+        <li><b data-i>Pausa</b><span data-i>Botão Pausa. Esc volta pra esta tela, pra trocar o visual.</span></li>
+      </ul>
+    <span class="label" data-i>Comunidade</span>
+    <div class="tutrow"><button class="go alt" id="newsBtn2" type="button" data-i>Últimas novidades</button><button class="go alt" id="fbBtn" type="button" data-i>Dê teu feedback</button></div>
+    <p class="ficcao" data-i>As instituições, corporações e personagens deste jogo são fictícios. Qualquer semelhança com órgãos reais é coincidência.</p>
+  </div>
+</div>
+<div class="pixm" id="agModal" role="dialog" aria-modal="true" aria-labelledby="agTitle" hidden>
+  <div class="pixm-card agcard">
+    <div class="awning" aria-hidden="true"></div>
+    <button class="pixm-x" id="agClose" type="button" aria-label="Fechar">×</button>
+    <img class="agdog" src="img/caramelo.webp" alt="" width="360" height="455">
+    <h2 id="agTitle" data-i>Pastel do Agenor</h2>
+    <p data-i>Chega mais, parceiro! Tá servido?</p>
+    <div class="agacts">
+      <button class="go" id="agPix" type="button" data-i>Me paga um pastel!</button>
+      <button class="go alt" id="agDogs" type="button" data-i>Caramelos especiais</button>
+      <button class="go alt" id="agTips" type="button" data-i>Conselhos do Agenor</button>
+    </div>
+    <span class="pixm-msg" id="agNote"></span>
+  </div>
+</div>
+<div class="pixm" id="rankModal" role="dialog" aria-modal="true" aria-labelledby="rankTitle" hidden>
+  <div class="pixm-card rankcard">
+    <button class="pixm-x" id="rankClose" type="button" aria-label="Fechar">×</button>
+    <img class="rcrown" src="img/logo-coroa.webp" alt="" width="420" height="233">
+    <h2 id="rankTitle" data-i>Placar mundial</h2>
+    <div class="rking" id="rankKing"></div>
+    <ol class="rlist" id="rankList"></ol>
+    <span class="pixm-msg" data-i>Top 10 do Modo Motoca, em metros de grau. Bateu um desses? No fim da volta dá pra registrar teu nome.</span>
+  </div>
 </div>
 <div class="pixm agem" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle" hidden>
   <form class="pixm-card mpcard" id="ageForm">
@@ -1435,6 +1638,65 @@ html.kid #grow-dog { display: none !important; }
     'Não deu pra enviar. Tenta de novo.': ['Couldn\'t send. Try again.', 'No se pudo enviar. Intenta de nuevo.'],
     'Valeu! Teu feedback chegou.': ['Thanks! We got your feedback.', '¡Gracias! Tu opinión llegó.']
   });
+  Object.assign(I18N, {
+    'Piloto': ['Rider', 'Piloto'],
+    'Jogar': ['Play', 'Jugar'],
+    'Garagem': ['Garage', 'Garaje'],
+    'Conquistas': ['Achievements', 'Logros'],
+    'Ranking': ['Ranking', 'Ranking'],
+    'Competitivo': ['Competitive', 'Competitivo'],
+    'Supera teus limites e disputa o placar mundial.': ['Push your limits and fight for the world leaderboard.', 'Supera tus límites y pelea por el ranking mundial.'],
+    'Treina o equilíbrio sem pressão.': ['Practice your balance, no pressure.', 'Entrena el equilibrio sin presión.'],
+    'Cria uma sala e chama a galera.': ['Create a room and call your friends.', 'Crea una sala y llama a la banda.'],
+    'Pastel do Agenor': ['Agenor\'s Pastel', 'Pastel de Agenor'],
+    'Apoio, caramelos especiais e conselhos': ['Support, special strays and tips', 'Apoyo, perritos especiales y consejos'],
+    'Últimas novidades': ['What\'s new', 'Novedades'],
+    'Ajuda': ['Help', 'Ayuda'],
+    'Configurações': ['Settings', 'Ajustes'],
+    'Som': ['Sound', 'Sonido'],
+    'Idioma': ['Language', 'Idioma'],
+    'Apelido': ['Nickname', 'Apodo'],
+    'Salvar': ['Save', 'Guardar'],
+    'Salvo!': ['Saved!', '¡Guardado!'],
+    'Comandos': ['Controls', 'Comandos'],
+    'Dicas': ['Tips', 'Consejos'],
+    'Efeitos: on': ['Effects: on', 'Efectos: sí'],
+    'Efeitos: off': ['Effects: off', 'Efectos: no'],
+    'Tutoriais': ['Tutorials', 'Tutoriales'],
+    'Comunidade': ['Community', 'Comunidad'],
+    '(convidado)': ['(guest)', '(invitado)'],
+    'Chat': ['Chat', 'Chat'],
+    'online': ['online', 'en línea'],
+    'Ver top 10': ['See top 10', 'Ver top 10'],
+    'Placar mundial': ['World leaderboard', 'Ranking mundial'],
+    'Rei do Grau': ['King of the Wheelie', 'Rey del Caballito'],
+    'Top 10 do Modo Motoca, em metros de grau. Bateu um desses? No fim da volta dá pra registrar teu nome.': ['Motoca Mode top 10, in wheelie meters. Beat one of these? Enter your name at the end of the run.', 'Top 10 del Modo Motoca, en metros de caballito. ¿Superaste a uno? Al final de la vuelta puedes registrar tu nombre.'],
+    'Chega mais, parceiro! Tá servido?': ['Come on in, buddy! Hungry?', '¡Pasa, compadre! ¿Gustas?'],
+    'Me paga um pastel!': ['Buy me a pastel!', '¡Invítame un pastel!'],
+    'Caramelos especiais': ['Special strays', 'Perritos especiales'],
+    'Conselhos do Agenor': ['Agenor\'s advice', 'Consejos de Agenor'],
+    'Os conselhos e os caramelos estão sempre aqui.': ['The advice and the strays are always here.', 'Los consejos y los perritos siempre están aquí.'],
+    'Cada pastel é uma compra única pela Google Play e libera um caramelo especial. Só visual.': ['Each pastel is a one-time Google Play purchase that unlocks a special stray. Cosmetic only.', 'Cada pastel es una compra única en Google Play y desbloquea un perrito especial. Solo visual.'],
+    'Pix de qualquer valor, se quiser. O jogo é todo liberado.': ['A Pix of any amount, if you want. The whole game is free.', 'Un Pix de cualquier valor, si quieres. El juego es todo gratis.'],
+    'Motoca': ['Bike', 'Moto'],
+    'Roupa': ['Clothes', 'Ropa'],
+    'Mochila': ['Backpack', 'Mochila'],
+    'Caramelo': ['Stray', 'Perrito'],
+    'Ver conquistas': ['See achievements', 'Ver logros'],
+    'Na Garagem tu escolhe bike, cor, capacete, roupa, mochila e caramelo, e vê na hora no teu piloto. Item com cadeado mostra como libera.': ['In the Garage you pick bike, color, helmet, clothes, backpack and stray, and see it on your rider right away. Locked items show how to unlock them.', 'En el Garaje eliges bici, color, casco, ropa, mochila y perrito, y lo ves al instante en tu piloto. Los ítems con candado muestran cómo se desbloquean.'],
+    'Tua coleção de conquistas!': ['Your achievement collection!', '¡Tu colección de logros!'],
+    'Acompanha o que já liberou, o que falta e compartilha com a galera.': ['Track what you\'ve unlocked, what\'s left, and share it with friends.', 'Mira lo que ya desbloqueaste, lo que falta y compártelo con la banda.'],
+    'O placar mostra os maiores graus do mundo. Treina e tenta chegar lá!': ['The leaderboard shows the longest wheelies in the world. Practice and try to get there!', 'El ranking muestra los caballitos más largos del mundo. ¡Practica e intenta llegar!'],
+    'O placar mostra os maiores graus do mundo (o top 10 completo fica em Ranking). Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.': ['The leaderboard shows the longest wheelies in the world (the full top 10 is in Ranking). Made the top 10 in Motoca Mode? Enter your name at the end of the run.', 'El ranking muestra los caballitos más largos del mundo (el top 10 completo está en Ranking). ¿Entraste al top 10 en el Modo Motoca? Al final de la vuelta puedes registrar tu nombre.'],
+    'Nas Configurações: música, efeitos, idioma, apelido, dicas do Agenor e os Controles (tela toda ou botões, teclas, controle de videogame).': ['In Settings: music, effects, language, nickname, Agenor\'s tips and Controls (whole screen or buttons, keys, gamepad).', 'En Ajustes: música, efectos, idioma, apodo, consejos de Agenor y los Controles (pantalla completa o botones, teclas, mando).'],
+    'Ficou com dúvida?': ['Got questions?', '¿Tienes dudas?'],
+    'Na Ajuda estão os tutoriais, as instruções completas, as novidades e o canal de feedback.': ['Help has the tutorials, full instructions, what\'s new and the feedback channel.', 'En Ayuda están los tutoriales, las instrucciones completas, las novedades y el canal de opiniones.'],
+    'Passa no Pastel do Agenor!': ['Stop by Agenor\'s Pastel!', '¡Pasa por el Pastel de Agenor!'],
+    'Lá tem os conselhos do Agenor e os caramelos especiais.': ['There you\'ll find Agenor\'s advice and the special strays.', 'Ahí están los consejos de Agenor y los perritos especiales.'],
+    'Conselhos, caramelos especiais e, se quiser apoiar, um pastel pela Google Play (é só visual e opcional).': ['Advice, special strays and, if you want to support, a pastel on Google Play (cosmetic and optional).', 'Consejos, perritos especiales y, si quieres apoyar, un pastel en Google Play (es solo visual y opcional).'],
+    'Conselhos, caramelos especiais e, se quiser apoiar, um Pix de qualquer valor. É opcional: o jogo é todo liberado.': ['Advice, special strays and, if you want to support, a Pix of any amount. Optional: the whole game is free.', 'Consejos, perritos especiales y, si quieres apoyar, un Pix de cualquier valor. Es opcional: el juego es todo gratis.'],
+    'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver o tour de novo? Tá na Ajuda.': ['Pick your bike, find the balance and show you are a wheelie master! Want the tour again? It is in Help.', '¡Elige tu moto, encuentra el equilibrio y demuestra que eres un crack del caballito! ¿Quieres ver el tour de nuevo? Está en Ayuda.']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1684,11 +1946,18 @@ html.kid #grow-dog { display: none !important; }
       if (!['Tab', 'Enter', 'NumpadEnter', 'Space'].includes(e.code)) e.preventDefault();
       return;
     }
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+      // digitando num campo: as teclas são do campo, mas o Esc fecha o modal onde ele está
+      const m = e.code === 'Escape' && e.target.closest && e.target.closest('.pixm');
+      const close = m && { fbModal: closeFb, setModal: closeSettings, mpModal: closeMp, ageModal: null }[m.id];
+      if (close) { e.preventDefault(); close(); }
+      return;
+    }
     if (!$('ctlModal').hidden) { if (e.code === 'Escape') { e.preventDefault(); closeCtl(); } return; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
+    for (const [m, f] of [['setModal', closeSettings], ['helpModal', closeHelp], ['agModal', closeAgenor], ['rankModal', closeRank]]) if (e.code === 'Escape' && !$(m).hidden) { e.preventDefault(); f(); return; }
     if (e.code === 'Escape' && !$('newsModal').hidden) { e.preventDefault(); closeNews(); return; }
     if (e.code === 'Escape' && !$('fbModal').hidden) { e.preventDefault(); closeFb(); return; }
     if (e.code === 'Escape' && !$('shModal').hidden) { e.preventDefault(); closeShare(); return; }
@@ -1711,7 +1980,7 @@ html.kid #grow-dog { display: none !important; }
   // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
   // tela inicial; só na tela inicial ele devolve false e o Android sai do app
   window.grauBack = () => {
-    for (const [id, close] of [['newsModal', closeNews], ['fbModal', closeFb], ['shModal', closeShare], ['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
+    for (const [id, close] of [['setModal', closeSettings], ['helpModal', closeHelp], ['agModal', closeAgenor], ['rankModal', closeRank], ['newsModal', closeNews], ['fbModal', closeFb], ['shModal', closeShare], ['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
       if (!$(id).hidden) { close(); return true; }
     }
     if (!$('ageModal').hidden) return false;
@@ -1774,7 +2043,7 @@ html.kid #grow-dog { display: none !important; }
     // na tela inicial, tocar na faixa "Pastel Solidário" abre o QR do Pix
     if (s.mode === 'ready' && pixRect) {
       const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
-      if (px >= pixRect.x && px <= pixRect.x + pixRect.w && py >= pixRect.y && py <= pixRect.y + pixRect.h) { e.preventDefault(); openPix(); return; }
+      if (px >= pixRect.x && px <= pixRect.x + pixRect.w && py >= pixRect.y && py <= pixRect.y + pixRect.h) { e.preventDefault(); openAgenor(); return; }
     }
     e.preventDefault(); wakeAudio();
     try { cv.setPointerCapture(e.pointerId); } catch (_) {}
@@ -4227,8 +4496,9 @@ html.kid #grow-dog { display: none !important; }
         const prev = arrow('‹', -1), next = arrow('›', 1);
         const sync = () => { prev.disabled = box.scrollLeft < 4; next.disabled = box.scrollLeft + box.clientWidth > box.scrollWidth - 4; };
         box.addEventListener('scroll', sync, { passive: true });
-        sl.append(prev, box, next); row.append(lab, sl); $('garage').appendChild(row);
-        r = lookRows[k] = { row, box, lab, sync, fresh: true };
+        const req = document.createElement('div'); req.className = 'greq'; req.hidden = true; req.setAttribute('aria-live', 'polite');
+        sl.append(prev, box, next); row.append(lab, sl, req); $('garage').appendChild(row);
+        r = lookRows[k] = { row, box, lab, sync, req, fresh: true };
       }
       const keep = r.box.scrollLeft;
       r.box.textContent = '';
@@ -4244,13 +4514,15 @@ html.kid #grow-dog { display: none !important; }
         if (locked && typeof o.lock === 'string' && o.lock.startsWith('doa_')) { // caramelo especial: no app abre a doação; no site só avisa
           const ps = PASTEIS.find(p => 'doa_' + p.id === o.lock);
           b.title = T('Libera com o') + ' ' + T(ps.nome) + (NATIVE ? '' : ' · ' + T('só no app da Play Store'));
-          if (!NATIVE) b.disabled = true;
+          if (!NATIVE) { b.classList.add('locked'); b.setAttribute('aria-disabled', 'true'); b.dataset.req = b.title; }
           else { b.addEventListener('click', e => { e.stopImmediatePropagation(); openPix(); }, true); }
-        } else if (locked && o.lock === 'teste') { b.disabled = true; b.title = T('Presente pra quem joga o teste fechado do app');
-        } else if (locked) { const ach = ACHS.find(a => a.id === lockMain(o)); b.disabled = true; b.title = T('Libera com a conquista') + ' ' + ach.name + ' (' + ach.why + ')'; }
+        } else if (locked && o.lock === 'teste') { b.classList.add('locked'); b.setAttribute('aria-disabled', 'true'); b.title = b.dataset.req = T('Presente pra quem joga o teste fechado do app');
+        } else if (locked) { const ach = ACHS.find(a => a.id === lockMain(o)); b.classList.add('locked'); b.setAttribute('aria-disabled', 'true'); b.title = b.dataset.req = T('Libera com a conquista') + ' ' + ach.name + ' (' + ach.why + ')'; b.dataset.ach = '1'; }
         b.setAttribute('aria-pressed', String(pick[k] === id));
         b.addEventListener('click', () => {
-          pick[k] = id;
+          if (b.classList.contains('locked')) { showReq(r, b); return; } // bloqueado: mostra como libera, não equipa
+          r.req.hidden = true;
+          pick[k] = id; track('item_equipped', { k, id });
           if (k === 'model' && o.def) pick.frame = o.def; // cada modelo chega na cor de fábrica
           try { localStorage.setItem('grau80-look', JSON.stringify(pick)); } catch (e) {}
           renderGarage();
@@ -4268,7 +4540,26 @@ html.kid #grow-dog { display: none !important; }
       r.sync();
     }
   }
-  renderGarage();
+  function showReq(r, b) {
+    r.req.hidden = false; r.req.textContent = '';
+    r.req.append('🔒 ' + (b.dataset.req || ''));
+    if (b.dataset.ach) { const go = document.createElement('button'); go.type = 'button'; go.textContent = T('Ver conquistas'); go.addEventListener('click', () => openAch()); r.req.append(go); }
+    track('locked_item_viewed');
+  }
+  // categorias da garagem (as mesmas linhas de sempre, agrupadas)
+  const GCATS = [['motoca', 'Motoca', ['model', 'frame']], ['piloto', 'Piloto', ['helmet', 'cabeca']], ['roupa', 'Roupa', ['jersey', 'shorts']], ['mochila', 'Mochila', ['bag']], ['caramelo', 'Caramelo', ['dog']]];
+  let gCat = 'motoca';
+  function renderGCats() {
+    const box = $('gCats'); box.textContent = '';
+    for (const [id, lab] of GCATS) {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = T(lab); b.setAttribute('aria-pressed', String(id === gCat));
+      b.addEventListener('click', () => { gCat = id; renderGCats(); track('garage_category_selected', { id }); });
+      box.append(b);
+    }
+    const show = GCATS.find(c => c[0] === gCat)[2];
+    for (const k in lookRows) lookRows[k].row.hidden = !show.includes(k);
+  }
+  renderGarage(); renderGCats();
 
   function applyLang() {
     document.documentElement.lang = LANG === 'pt' ? 'pt-BR' : LANG;
@@ -4285,6 +4576,8 @@ html.kid #grow-dog { display: none !important; }
       box.appendChild(b);
     }
     renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl(); renderPB();
+    if (LOBBY_OK) { renderGCats(); renderNick(); renderChatTab(); }
+    document.querySelectorAll('[data-ia]').forEach(el => { el.setAttribute('aria-label', T(el.dataset.ia)); el.title = T(el.dataset.ia); });
     if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
     if (TUT.on) tutRender();
     if ($('tipToggle').textContent) $('tipToggle').textContent = T(tipsOn ? 'Dicas do Agenor: ligadas' : 'Dicas do Agenor: desligadas');
@@ -5018,12 +5311,13 @@ html.kid #grow-dog { display: none !important; }
   const lobby = rtChannel('grau80-saguao', {
     onJoin: () => rtTrack(lobby, { nome: netName() }),
     onPresence: renderOnline,
-    ev: { chat: m => { chatIn($('lobbyLog'), m); } }
+    ev: { chat: m => { if (chatIn($('lobbyLog'), m) && !chatOpen) { chatUnread++; renderChatTab(); } } }
   });
   function renderOnline() {
     const names = Object.values(lobby.presence).map(x => showName(clean(x && x.nome, 16)) || '?');
     $('onlineList').textContent = names.length > 1 ? T('Online') + ' (' + names.length + '): ' + names.join(', ') : T('Só tu online agora.');
     $('onlineList').title = names.join(', ');
+    $('chatOnline').textContent = String(Math.max(1, names.length));
   }
   // instruções de como jogar: fechadas por padrão; abriu, fica aberto até fechar de novo
   function setHow(open) {
@@ -5108,6 +5402,7 @@ html.kid #grow-dog { display: none !important; }
     rtTrack(lobby, { nome: netName() });
     if (room.ch) rtTrack(room.ch, roomMeta());
     renderRoom();
+    if (typeof renderNick === 'function') renderNick();
   }
   $('mpName').addEventListener('change', e => setName(e.target.value));
   $('mpName').placeholder = guest;
@@ -5155,7 +5450,7 @@ html.kid #grow-dog { display: none !important; }
       c.setAttribute('aria-label', (on ? T('Liberada') : T('Bloqueada')) + ': ' + (hide ? T('Conquista secreta') : a.old ? a.name : T(a.name)));
       c.append(m, inf); grid.append(c);
     }
-    $('goAch').textContent = T('Minhas conquistas') + ' ' + got + '/' + L.length;
+    $('goAch').textContent = T('Conquistas') + ' ' + got + '/' + L.length;
   }
   function openAch() { renderAchModal(); $('achModal').hidden = false; track('achievements_opened'); $('achClose').focus(); }
   function closeAch() { $('achModal').hidden = true; }
@@ -5321,9 +5616,11 @@ html.kid #grow-dog { display: none !important; }
     fixes: ['Minimizou o app: o jogo pausa e a música para.']
   };
   let newsSeen = ''; try { newsSeen = localStorage.getItem('grau80-novidades') || ''; } catch (e) {}
-  const markNews = () => { newsSeen = NEWS.id; try { localStorage.setItem('grau80-novidades', NEWS.id); } catch (e) {} };
+  const markNews = () => { newsSeen = NEWS.id; try { localStorage.setItem('grau80-novidades', NEWS.id); } catch (e) {} $('newsDot').hidden = true; };
   if (!VETERANO && newsSeen !== NEWS.id) markNews(); // jogador novo não recebe a tela de novidades
   const newsPending = () => newsSeen !== NEWS.id;
+  $('newsDot').hidden = !newsPending();
+  $('newsBtn2').addEventListener('click', () => { closeHelp(); openNews(false); });
   function openNews(auto) {
     $('newsVer').textContent = T('Versão') + ' ' + NEWS.ver; $('newsTitle').textContent = NEWS.title;
     const fill = (id, L) => { const ul = $(id); ul.textContent = ''; for (const t of L) ul.append(Object.assign(document.createElement('li'), { textContent: T(t) })); };
@@ -5344,7 +5641,7 @@ html.kid #grow-dog { display: none !important; }
   const fbTech = () => ['v' + APP_BUILD, NATIVE ? 'app Android' : 'navegador', touchDev ? T('celular') : T('computador'), LANG, gameMode].join(' · ');
   function openFb() { $('fbTechTxt').textContent = fbTech(); $('fbOut').textContent = ''; $('fbModal').hidden = false; $('fbCat').focus(); track('feedback_opened'); }
   function closeFb() { $('fbModal').hidden = true; }
-  $('fbBtn').addEventListener('click', openFb); $('fbClose').addEventListener('click', closeFb);
+  $('fbBtn').addEventListener('click', () => { closeHelp(); openFb(); }); $('fbClose').addEventListener('click', closeFb);
   $('fbModal').addEventListener('click', e => { if (e.target === $('fbModal')) closeFb(); });
   $('fbForm').addEventListener('submit', async e => {
     e.preventDefault();
@@ -5366,10 +5663,83 @@ html.kid #grow-dog { display: none !important; }
     finally { $('fbSend').disabled = false; }
   });
 
+  // ---------- lobby: abas, perfil, configurações, ajuda, Pastel do Agenor, ranking e chat ----------
+  function setPane(p) {
+    $('pPlay').hidden = p !== 'play'; $('pGarage').hidden = p !== 'garage';
+    $('navPlay').setAttribute('aria-pressed', String(p === 'play')); $('navGarage').setAttribute('aria-pressed', String(p === 'garage'));
+    track('navigation_selected', { p }); if (p === 'garage') track('garage_opened');
+  }
+  $('navPlay').addEventListener('click', () => setPane('play'));
+  $('navGarage').addEventListener('click', () => setPane('garage'));
+  function renderNick() {
+    const el = $('lNick'); el.textContent = '';
+    if (KID || !myName) { el.append(guest + ' '); el.append(Object.assign(document.createElement('small'), { textContent: T(KID ? '' : '(convidado)') })); }
+    else el.textContent = myName;
+    $('setNickRow').hidden = KID;
+  }
+  // modal genérico: abre, guarda quem tinha o foco e devolve ao fechar
+  let modalBack = null;
+  function openModal(id, focusId) { modalBack = document.activeElement; $(id).hidden = false; ($(focusId) || $(id).querySelector('button')).focus(); }
+  function closeModal(id) { if ($(id).hidden) return; $(id).hidden = true; if (modalBack && modalBack.focus) modalBack.focus({ preventScroll: true }); }
+  function openSettings() { $('setNick').value = KID ? '' : myName; $('setNick').placeholder = guest; $('setNickMsg').textContent = ''; setSoundLabel(); openModal('setModal', 'setClose'); track('settings_opened'); }
+  const closeSettings = () => closeModal('setModal');
+  function setSoundLabel() { $('setSound').textContent = T(muted ? 'Efeitos: off' : 'Efeitos: on'); $('setSound').setAttribute('aria-pressed', String(!muted)); }
+  $('setSound').addEventListener('click', () => { $('mute').click(); setSoundLabel(); });
+  $('setNickForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const v = clean($('setNick').value, 16);
+    if (v && NOME_RUIM(v)) { $('setNickMsg').textContent = T('Esse nome não pode. Escolhe outro.'); return; }
+    setName(v); renderNick(); $('setNickMsg').textContent = T('Salvo!');
+  });
+  function openHelp() { setHow(true); openModal('helpModal', 'helpClose'); track('help_center_opened'); }
+  const closeHelp = () => closeModal('helpModal');
+  function openAgenor() {
+    $('agNote').textContent = KID ? T('Os conselhos e os caramelos estão sempre aqui.') : NATIVE ? T('Cada pastel é uma compra única pela Google Play e libera um caramelo especial. Só visual.') : T('Pix de qualquer valor, se quiser. O jogo é todo liberado.');
+    openModal('agModal', 'agClose'); track('agenor_shop_opened');
+  }
+  const closeAgenor = () => closeModal('agModal');
+  $('agPix').addEventListener('click', () => { closeAgenor(); openPix(); });
+  $('agDogs').addEventListener('click', () => { closeAgenor(); setPane('garage'); gCat = 'caramelo'; renderGCats(); });
+  $('agTips').addEventListener('click', () => { closeAgenor(); openHelp(); });
+  function renderRank() {
+    const king = $('rankKing'), ol = $('rankList'); king.textContent = ''; ol.textContent = '';
+    const me = n => myName && n.trim().toLowerCase() === myName.trim().toLowerCase();
+    if (!board || !board.length) { ol.append(Object.assign(document.createElement('li'), { className: 'msg', textContent: T(board ? 'Ninguém ainda. Bora ser o primeiro!' : 'Sem conexão com o placar.') })); return; }
+    const k = board[0];
+    king.append(Object.assign(document.createElement('span'), { className: 'label', textContent: '👑 ' + T('Rei do Grau') }), Object.assign(document.createElement('b'), { textContent: k.nome }), Object.assign(document.createElement('span'), { textContent: Number(k.metros).toFixed(1) + ' m' }));
+    board.slice(1).forEach((x, i) => {
+      const li = document.createElement('li'); if (me(x.nome)) li.className = 'me';
+      li.append(Object.assign(document.createElement('i'), { textContent: (i + 2) + 'º' }), Object.assign(document.createElement('b'), { textContent: x.nome }), Object.assign(document.createElement('span'), { textContent: Number(x.metros).toFixed(1) + ' m' }));
+      ol.append(li);
+    });
+  }
+  function openRank() { renderRank(); openModal('rankModal', 'rankClose'); track('ranking_expanded'); loadBoard().then(() => { if (!$('rankModal').hidden) renderRank(); }); }
+  const closeRank = () => closeModal('rankModal');
+  for (const [b, f] of [['setBtn', openSettings], ['helpBtn', openHelp], ['agenorBtn', openAgenor], ['navRank', openRank], ['boardAll', openRank]]) $(b).addEventListener('click', f);
+  for (const [b, f] of [['setClose', closeSettings], ['helpClose', closeHelp], ['agClose', closeAgenor], ['rankClose', closeRank]]) $(b).addEventListener('click', f);
+  for (const [m, f] of [['setModal', closeSettings], ['helpModal', closeHelp], ['agModal', closeAgenor], ['rankModal', closeRank]]) $(m).addEventListener('click', e => { if (e.target === $(m)) f(); });
+  // chat global recolhível (preferência guardada); conta online e mensagens não lidas enquanto fechado
+  let chatOpen = false, chatUnread = 0;
+  try { chatOpen = localStorage.getItem('grau80-chat') === '1'; } catch (e) {}
+  function renderChatTab() {
+    $('lobby').classList.toggle('closed', !chatOpen);
+    $('chatTab').setAttribute('aria-expanded', String(chatOpen));
+    $('chatUnread').hidden = chatOpen || !chatUnread; $('chatUnread').textContent = chatUnread > 9 ? '9+' : String(chatUnread);
+  }
+  $('chatTab').addEventListener('click', () => {
+    chatOpen = !chatOpen; if (chatOpen) chatUnread = 0;
+    try { localStorage.setItem('grau80-chat', chatOpen ? '1' : '0'); } catch (e) {}
+    renderChatTab(); track(chatOpen ? 'chat_expanded' : 'chat_collapsed');
+    if (chatOpen) $('lobbyLog').scrollTop = $('lobbyLog').scrollHeight;
+  });
+  var LOBBY_OK = true;
+  try { renderAchModal(); } catch (e) {}
+  renderNick(); renderChatTab(); track('lobby_opened');
+
   // ---------- onboarding: tutorial de menus e tutorial de como jogar ----------
   // Versão de cada tutorial: subir o número faz todo mundo (novo e antigo) ver de novo. Visto ou pulado grava a versão;
   // fechar o jogo no meio não grava. Os dois são independentes.
-  const TUT_V = { menu: 1, jogo: 1 }, TUT_KEY = 'grau80-tutorial';
+  const TUT_V = { menu: 2, jogo: 1 }, TUT_KEY = 'grau80-tutorial';
   const tutSeen = { menu: 0, jogo: 0 };
   try { const o = JSON.parse(localStorage.getItem(TUT_KEY) || '{}') || {}; tutSeen.menu = +o.menuTutorialVersion || 0; tutSeen.jogo = +o.gameplayTutorialVersion || 0; } catch (e) {}
   function tutMark(k) {
@@ -5379,18 +5749,18 @@ html.kid #grow-dog { display: none !important; }
   }
   const TUT_MENU = [
     { t: 'Bem-vindo ao Grau 80cc!', d: 'Domina a motoca, monta teu visual, desafia a galera e disputa um lugar entre os melhores graus do mundo!' },
-    { el: '#garage', t: 'Deixa a motoca do teu jeito!', d: 'Aqui tu escolhe a bike, a cor, o capacete, a roupa, a mochila e o caramelo. Bike nova libera com as conquistas.' },
     { el: '#goStart', t: 'Até onde tu consegue ir?', d: 'Modo Motoca: sozinho e com desafios na rua. Segura a frente no alto o máximo de metros e tenta entrar no placar mundial.' },
     { el: '#goFree', t: 'Treina sem pressão!', d: 'Modo Livre: sem desafios. Encostou a frente, sobe de novo quantas vezes quiser. Bom pra testar as motos e pegar o jeito.' },
     { el: '#goMulti', t: 'Chama a galera!', d: 'Cria uma sala, manda o código e joga com até 7 na mesma rua.' },
-    { el: '.leftcol .board', t: 'Teu nome entre os melhores!', d: () => KID ? 'O placar mostra os 10 maiores graus do mundo. Treina e tenta chegar lá!'
-      : 'O placar mostra os 10 maiores graus do mundo. Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.' },
-    { el: '#goCtl', t: 'Joga do teu jeito!', d: () => touchDev ? 'Em Controles: tela toda ou botões, lado e área do acelerador, tamanho dos botões e lugar do botão Puxa.'
-      : 'Em Controles: tela toda ou botões, lado do acelerador, tamanho e lugar do botão Puxa, teclas do teclado e controle de videogame.' },
-    { el: '.eyetools', t: 'Tuas preferências!', d: 'Aqui liga e desliga a música e troca o idioma. Na partida, o botão Pausa para tudo e o Som liga ou desliga os efeitos.' },
-    { el: '#pixOpen', t: 'Curtiu? Apoia o projeto!', d: () => NATIVE ? 'Compra um pastel pela Google Play: cada um libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.'
-      : 'Me paga um pastel com um Pix de qualquer valor e ajuda o Grau 80cc a evoluir. É opcional: o jogo é todo liberado.' },
-    { el: '#tutRow', t: 'Agora é contigo!', d: 'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver de novo? Tá aqui embaixo de Como jogar.', last: 'Bora jogar!' }
+    { el: '#navGarage', t: 'Deixa a motoca do teu jeito!', d: 'Na Garagem tu escolhe bike, cor, capacete, roupa, mochila e caramelo, e vê na hora no teu piloto. Item com cadeado mostra como libera.' },
+    { el: '#goAch', t: 'Tua coleção de conquistas!', d: 'Acompanha o que já liberou, o que falta e compartilha com a galera.' },
+    { el: '.leftcol .board', t: 'Teu nome entre os melhores!', d: () => KID ? 'O placar mostra os maiores graus do mundo. Treina e tenta chegar lá!'
+      : 'O placar mostra os maiores graus do mundo (o top 10 completo fica em Ranking). Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.' },
+    { el: '#setBtn', t: 'Joga do teu jeito!', d: 'Nas Configurações: música, efeitos, idioma, apelido, dicas do Agenor e os Controles (tela toda ou botões, teclas, controle de videogame).' },
+    { el: '#helpBtn', t: 'Ficou com dúvida?', d: 'Na Ajuda estão os tutoriais, as instruções completas, as novidades e o canal de feedback.' },
+    { el: '#agenorBtn', t: 'Passa no Pastel do Agenor!', d: () => KID ? 'Lá tem os conselhos do Agenor e os caramelos especiais.'
+      : NATIVE ? 'Conselhos, caramelos especiais e, se quiser apoiar, um pastel pela Google Play (é só visual e opcional).' : 'Conselhos, caramelos especiais e, se quiser apoiar, um Pix de qualquer valor. É opcional: o jogo é todo liberado.' },
+    { t: 'Agora é contigo!', d: 'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver o tour de novo? Tá na Ajuda.', last: 'Bora jogar!' }
   ];
   // bot: o que o piloto automático demonstra em cada etapa (ver tutBot)
   const TUT_JOGO = [
@@ -5413,6 +5783,7 @@ html.kid #grow-dog { display: none !important; }
   // tour dos menus: por cima da tela inicial, pulando o que não aparece pra esse jogador (ex.: doação pra menor de 13)
   function tutMenu() {
     if (TUT.on || s.mode !== 'ready' || ui.start.hidden) return;
+    setPane('play');
     tutStartCommon('menu', TUT_MENU.filter(st => !st.el || tutVis(st.el)));
     tutRender();
   }
@@ -5476,8 +5847,10 @@ html.kid #grow-dog { display: none !important; }
   $('tutNext').addEventListener('click', tutNext);
   $('tutBack').addEventListener('click', () => tutGo(-1));
   $('tutSkip').addEventListener('click', tutSkip);
-  $('tutMenuBtn').addEventListener('click', () => { if (room.code) { flash(T('Sai da sala pra ver o tutorial')); return; } tutMenu(); });
+  $('tutMenuBtn').addEventListener('click', () => {
+    closeHelp(); setPane('play'); if (room.code) { flash(T('Sai da sala pra ver o tutorial')); return; } tutMenu(); });
   $('tutJogoBtn').addEventListener('click', () => {
+    closeHelp();
     if (room.code) { flash(T('Sai da sala pra ver o tutorial')); return; }
     tutJogo(gameMode === 'motoca' ? 'motoca' : 'livre', false);
   });
@@ -6146,7 +6519,7 @@ html.kid #grow-dog { display: none !important; }
     const ml = 'Mic: ' + (micOn ? 'on' : 'off');
     $('micBtn').textContent = ml; $('mpMic').textContent = ml;
     $('micBtn').classList.toggle('on', micOn); $('mpMic').classList.toggle('on', micOn);
-    $('goMulti').textContent = room.code && !room.phase ? T('Sala') + ' ' + room.code : T('Multiplayer');
+    $('goMulti').querySelector('b').textContent = room.code && !room.phase ? T('Sala') + ' ' + room.code : T('Multiplayer');
     const inRoom = !!room.code && !room.phase;
     $('goStart').hidden = $('goFree').hidden = inRoom;
     $('goBora').hidden = $('goLeave').hidden = !inRoom;
@@ -6255,7 +6628,7 @@ html.kid #grow-dog { display: none !important; }
     $('padStatus').textContent = padId ? T('Controle conectado:') + ' ' + padId.replace(/\s*\(.*$/, '').slice(0, 48)
       : T('Nenhum controle conectado. Liga o controle e aperta qualquer botão.');
   }
-  for (const id of ['goCtl', 'goCtl2']) $(id).addEventListener('click', openCtl);
+  for (const id of ['goCtl', 'goCtl2']) $(id).addEventListener('click', () => { if (typeof closeSettings === 'function') closeSettings(); openCtl(); });
   $('ctlClose').addEventListener('click', closeCtl);
   $('ctlOk').addEventListener('click', closeCtl);
   $('ctlModal').addEventListener('pointerdown', e => { if (e.target === $('ctlModal')) closeCtl(); });
