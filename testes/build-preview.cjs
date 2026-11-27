@@ -17,7 +17,8 @@ const SHIM = `<script>
   try {
     var raw = window.localStorage, P = 'previa:';
     if (!raw.getItem(P + '__copiado')) {
-      for (var i = 0; i < raw.length; i++) { var k = raw.key(i); if (k && k.indexOf('grau80-') === 0) raw.setItem(P + k, raw.getItem(k)); }
+      var ks = []; for (var i = 0; i < raw.length; i++) { var k = raw.key(i); if (k && k.indexOf('grau80-') === 0) ks.push(k); } // lista antes: copiar no meio muda os índices
+      ks.forEach(function (k) { raw.setItem(P + k, raw.getItem(k)); });
       raw.setItem(P + '__copiado', '1');
     }
     var shim = {
