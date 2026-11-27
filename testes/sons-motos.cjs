@@ -33,7 +33,7 @@ const wav = (samples, sr) => {
     p.on('request', q => q.url().startsWith('http://127.0.0.1') ? q.continue() : q.respond({ status: 404, body: '' }));
     await p.evaluateOnNewDocument(model => {
       window.WebSocket = class { constructor() { this.readyState = 0; } send() {} close() {} };
-      localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-musica', 'off');
+      localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-musica', 'off');
       localStorage.setItem('grau80-ach', JSON.stringify({ grau30: 1, grau100: 1, grau200: 1, grau300: 1, grau500: 1, grau700: 1, grau2000: 1, grau3000: 1, grau5000: 1 }));
       localStorage.setItem('grau80-look', JSON.stringify({ model }));
       const orig = AudioNode.prototype.connect;

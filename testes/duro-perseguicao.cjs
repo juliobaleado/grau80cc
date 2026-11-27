@@ -23,7 +23,7 @@ const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  
     await p.evaluateOnNewDocument(lang => {
       window.WebSocket = class { constructor() { this.readyState = 0; } send() {} close() {} };
       try {
-        localStorage.setItem('grau80-nome', 'Teste'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-nasc', '1990');
+        localStorage.setItem('grau80-nome', 'Teste'); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-nasc', '1990');
         localStorage.setItem('grau80-musica', 'off'); localStorage.setItem('grau80-lang', lang);
       } catch (e) {}
       let seed = 12345; Math.random = () => ((seed = (seed * 1103515245 + 12345) >>> 0) / 4294967296);

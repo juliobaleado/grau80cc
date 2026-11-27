@@ -13,7 +13,7 @@ const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'te
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const BASE = { 'grau80-nasc': '1990', 'grau80-nome': 'Zezinho', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}',
+const BASE = { 'grau80-nasc': '1990', 'grau80-nome': 'Zezinho', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}',
   'grau80-ach': JSON.stringify({ grau30: true, w_azeitona: true }), 'grau80-best': '312.40', 'grau80-best-livre': '50.00', 'grau80-stats': '{"runs":40}' };
 const saveImg = (url, f) => fs.writeFileSync(path.join(OUT, f), Buffer.from(url.split(',')[1], 'base64'));
 
