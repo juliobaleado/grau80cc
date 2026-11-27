@@ -9,7 +9,7 @@ fs.mkdirSync(OUT, { recursive: true });
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
 html = html.slice(0, j) + 'window.__t={get s(){return s},begin,finish,room,TUT,get KID(){return KID},get rideShot(){return rideShot},get shSnap(){return shSnap}};\n' + html.slice(j);
-const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); r.end(html); }).listen(8858);
+const srv = http.createServer((q, r) => { const u = q.url.split('?')[0]; if (u.startsWith('/img/') && fs.existsSync(path.join(__dirname, '..', u))) { r.writeHead(200, { 'content-type': 'image/webp' }); return r.end(fs.readFileSync(path.join(__dirname, '..', u))); } r.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); r.end(html); }).listen(8858);
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
@@ -28,7 +28,8 @@ const saveImg = (url, f) => fs.writeFileSync(path.join(OUT, f), Buffer.from(url.
     await p.evaluateOnNewDocument((save, native) => {
       window.WebSocket = class { send() {} close() {} };
       window.__log = { share: null, open: null, clip: null, nat: null };
-      navigator.canShare = () => true; navigator.share = async d => { window.__log.share = { files: (d.files || []).length, text: d.text }; };
+      navigator.canShare = () => true; navigator.share = async d => { window.__log.share = { files: (d.files || []).length, text: d.text, noToque: !!window.__toque }; };
+      document.addEventListener('click', () => { window.__toque = true; setTimeout(() => { window.__toque = false; }, 0); }, true);
       try { Object.defineProperty(navigator, 'clipboard', { value: { writeText: async t => { window.__log.clip = t; } } }); } catch (e) {}
       window.open = u => { window.__log.open = u; return null; };
       if (native) window.Capacitor = { isNativePlatform: () => true, getPlatform: () => 'android', registerPlugin: n => n === 'GrauShare'
@@ -54,6 +55,7 @@ const saveImg = (url, f) => fs.writeFileSync(path.join(OUT, f), Buffer.from(url.
   saveImg(await p.$eval('#shImg', e => e.src), 'recorde-stories.png');
   await p.click('#shShare'); await wait(300);
   let L = await log(p);
+  ok(L.share && L.share.noToque, 'abre a janela de compartilhar do Android direto no toque (sem espera antes)', L.share);
   ok(L.share && L.share.files === 1 && /312.4 m/.test(L.share.text) && L.share.text.includes('juliobaleado.github.io/grau80cc') && !L.share.text.includes('Zezinho'), 'compartilha imagem + texto (recorde e link, sem o apelido no texto)', L.share);
   await p.click('#shWa'); await wait(100); L = await log(p);
   ok(L.open && L.open.startsWith('https://wa.me/?text=') && !L.open.includes('Zezinho'), 'WhatsApp com a mensagem pronta, sem dado pessoal na URL', L.open && L.open.slice(0, 60));
@@ -71,6 +73,18 @@ const saveImg = (url, f) => fs.writeFileSync(path.join(OUT, f), Buffer.from(url.
     __t.s.th = 1.7; __t.finish('flip'); await new Promise(r => setTimeout(r, 1300)); document.getElementById('goShare').click(); await new Promise(r => setTimeout(r, 500));
     return { tinha, usou: __t.shSnap === __t.rideShot }; });
   ok(foto.tinha && foto.usou, 'compartilhar recorde usa o quadro de quando ainda estava empinando', foto);
+  const pics = await p.evaluate(() => [...document.querySelectorAll('#shPic button')].filter(b => !b.hidden).map(b => b.textContent + (b.getAttribute('aria-selected') === 'true' ? '*' : '')));
+  ok(JSON.stringify(pics) === '["Empinando*","Caindo","Caramelo"]', 'escolhe a foto: empinando (padrão), caindo ou o Caramelo', pics);
+  const src0 = await p.$eval('#shImg', e => e.src);
+  await p.click('#shPic button[data-p="caramelo"]'); await wait(300);
+  const src1 = await p.$eval('#shImg', e => e.src);
+  ok(src1 !== src0 && await p.$eval('#shPic button[data-p="caramelo"]', b => b.getAttribute('aria-selected') === 'true'), 'foto do Caramelo troca a imagem');
+  saveImg(src1, 'recorde-caramelo.png');
+  await p.click('#shPic button[data-p="cena"]'); await wait(300);
+  ok(await p.evaluate(() => __t.shSnap !== __t.rideShot), 'foto "Caindo" usa a cena da queda');
+  saveImg(await p.$eval('#shImg', e => e.src), 'recorde-caindo.png');
+  await p.click('#shShare'); await wait(300);
+  ok((await log(p)).share.files === 1, 'compartilha a foto escolhida');
   await p.keyboard.press('Escape'); await p.evaluate(() => document.getElementById('goGarage').click()); await wait(300);
   console.log('— conquista e coleção');
   await p.click('#goAch'); await wait(300);
