@@ -7,7 +7,9 @@ const fs = require('fs'), path = require('path');
 const ROOT = path.join(__dirname, '..');
 const OUT = path.join(ROOT, 'lobby');
 const commit = process.argv[2] || 'local';
-let h = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+let h = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').replace(/
+/g, '
+'); // o checkout no Windows pode trazer CRLF
 const rep = (a, b) => { const n = h.split(a).length - 1; if (n !== 1) throw new Error(`gancho ${n}x: ${a.slice(0, 70)}`); h = h.replace(a, () => b); };
 const SHIM = `<script>
 // ===== PRÉVIA ISOLADA (commit ${commit}) =====
