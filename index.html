@@ -1043,9 +1043,15 @@ html.kid #grow-dog { display: none !important; }
       ['Turn the music on or off and change the language here. During a run, Pause stops everything and Sound turns the effects on or off.',
        'Aquí prendes o apagas la música y cambias el idioma. En la partida, Pausa detiene todo y Sonido prende o apaga los efectos.'],
     'Curtiu? Apoia o projeto!': ['Enjoying it? Support the project!', '¿Te gusta? ¡Apoya el proyecto!'],
-    'Escolhe um pastel na Google Play: libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.':
-      ['Pick a pastel on Google Play: it unlocks a special stray dog and helps Grau 80cc grow. Cosmetic only and optional.',
-       'Elige un pastel en Google Play: desbloquea un perrito especial y ayuda a que Grau 80cc crezca. Es solo visual y opcional.'],
+    'Compra um pastel pela Google Play: cada um libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.':
+      ['Buy a pastel on Google Play: each one unlocks a special stray dog and helps Grau 80cc grow. Cosmetic only and optional.',
+       'Compra un pastel en Google Play: cada uno desbloquea un perrito especial y ayuda a que Grau 80cc crezca. Es solo visual y opcional.'],
+    'Em Controles: tela toda ou botões, lado e área do acelerador, tamanho dos botões e lugar do botão Puxa.':
+      ['In Controls: whole screen or buttons, throttle side and area, button size and spot of the Pull button.',
+       'En Controles: pantalla completa o botones, lado y área del acelerador, tamaño de los botones y lugar del botón Tirón.'],
+    'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial.':
+      ['The Pause button stops the run: from there you can resume, change controls or go back to the start screen.',
+       'El botón Pausa detiene la partida: desde ahí sigues, cambias los controles o vuelves al inicio.'],
     'Me paga um pastel com um Pix de qualquer valor e ajuda o Grau 80cc a evoluir. É opcional: o jogo é todo liberado.':
       ['Buy me a pastel with a Pix of any amount and help Grau 80cc grow. Optional: the whole game is free.',
        'Invítame un pastel con un Pix de cualquier valor y ayuda a que Grau 80cc crezca. Es opcional: el juego es todo gratis.'],
@@ -4427,15 +4433,17 @@ html.kid #grow-dog { display: none !important; }
     $('onlineList').textContent = names.length > 1 ? T('Online') + ' (' + names.length + '): ' + names.join(', ') : T('Só tu online agora.');
     $('onlineList').title = names.join(', ');
   }
-  // instruções de como jogar: abertas na primeira vez; fechou, fica fechado até abrir de novo
+  // instruções de como jogar: fechadas por padrão; abriu, fica aberto até fechar de novo
   function setHow(open) {
     $("howList").hidden = !open;
     $("howX").setAttribute("aria-expanded", String(open));
     $("howXt").textContent = T(open ? "Fechar instruções" : "Como jogar");
     $("howXi").textContent = open ? "▴" : "▾";
   }
-  $("howX").addEventListener("click", () => { const open = $("howList").hidden; setHow(open); try { localStorage.setItem("grau80-instrucoes", open ? "" : "fechado"); } catch (e) {} });
-  try { if (localStorage.getItem("grau80-instrucoes")) setHow(false); } catch (e) {}
+  $("howX").addEventListener("click", () => { const open = $("howList").hidden; setHow(open); try { localStorage.setItem("grau80-instrucoes", open ? "aberto" : "fechado"); } catch (e) {} });
+  // fechado por padrão (o tutorial explica); fica aberto só pra quem abriu
+  let howOpen = false; try { howOpen = localStorage.getItem("grau80-instrucoes") === "aberto"; } catch (e) {}
+  setHow(howOpen);
   // tela de idade (pergunta neutra, sem ano pré-escolhido; responde uma vez e fica guardado no aparelho)
   // + apelido: o mesmo nome do placar global e do multiplayer (grau80-nome). Só pergunta o que falta: quem já tem o ano
   // não vê o ano de novo; quem já tem nome vê o campo preenchido só se ainda faltar o ano. Menor de 13 não usa nome
@@ -4531,9 +4539,10 @@ html.kid #grow-dog { display: none !important; }
     { el: '#goMulti', t: 'Chama a galera!', d: 'Cria uma sala, manda o código e joga com até 7 na mesma rua.' },
     { el: '.leftcol .board', t: 'Teu nome entre os melhores!', d: () => KID ? 'O placar mostra os 10 maiores graus do mundo. Treina e tenta chegar lá!'
       : 'O placar mostra os 10 maiores graus do mundo. Entrou no top 10 no Modo Motoca? No fim da volta dá pra registrar teu nome.' },
-    { el: '#goCtl', t: 'Joga do teu jeito!', d: 'Em Controles: tela toda ou botões, lado do acelerador, tamanho e lugar do botão Puxa, teclas do teclado e controle de videogame.' },
+    { el: '#goCtl', t: 'Joga do teu jeito!', d: () => touchDev ? 'Em Controles: tela toda ou botões, lado e área do acelerador, tamanho dos botões e lugar do botão Puxa.'
+      : 'Em Controles: tela toda ou botões, lado do acelerador, tamanho e lugar do botão Puxa, teclas do teclado e controle de videogame.' },
     { el: '.eyetools', t: 'Tuas preferências!', d: 'Aqui liga e desliga a música e troca o idioma. Na partida, o botão Pausa para tudo e o Som liga ou desliga os efeitos.' },
-    { el: '#pixOpen', t: 'Curtiu? Apoia o projeto!', d: () => NATIVE ? 'Escolhe um pastel na Google Play: libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.'
+    { el: '#pixOpen', t: 'Curtiu? Apoia o projeto!', d: () => NATIVE ? 'Compra um pastel pela Google Play: cada um libera um caramelo especial e ajuda o Grau 80cc a evoluir. É só visual e opcional.'
       : 'Me paga um pastel com um Pix de qualquer valor e ajuda o Grau 80cc a evoluir. É opcional: o jogo é todo liberado.' },
     { el: '#tutRow', t: 'Agora é contigo!', d: 'Escolhe tua motoca, acha o equilíbrio e mostra que tu é fera no grau! Quer ver de novo? Tá aqui embaixo de Como jogar.', last: 'Bora jogar!' }
   ];
@@ -4545,7 +4554,8 @@ html.kid #grow-dog { display: none !important; }
     { bot: 'drop', t: 'A frente tá caindo? Dá um puxão!', d: 'A roda da frente começou a baixar? O Puxa dá um tranco pra cima e o acelerador segura o grau de novo.' },
     { bot: 'brk', t: 'Freou demais? Corrige com um puxão!', d: 'Freada forte derruba a frente rápido. Um puxão segura a queda e dá tempo de acelerar de novo.' },
     { bot: 'hold', el: '#dist', t: 'Quanto mais longe, melhor!', d: 'O número grande conta os metros do grau. No Modo Motoca, entrou no top 10 mundial, bota teu nome no placar. O Modo Livre guarda só o teu recorde.' },
-    { bot: 'hold', el: '#pauseBtn', t: 'Precisa de uma pausa?', d: 'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial. No teclado, Esc volta direto pro início.' },
+    { bot: 'hold', el: '#pauseBtn', t: 'Precisa de uma pausa?', d: () => touchDev ? 'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial.'
+      : 'O botão Pausa para a partida: dali tu continua, troca os controles ou volta pra tela inicial. No teclado, Esc volta direto pro início.' },
     { bot: 'hold', t: 'Agora é tua vez!', d: 'Acelera, puxa, acha o equilíbrio e segura a roda no alto o máximo de metros que der.', last: 'Vamos dar grau!' }
   ];
   const tutVis = sel => { const e = document.querySelector(sel); return !!e && e.getClientRects().length > 0; };
