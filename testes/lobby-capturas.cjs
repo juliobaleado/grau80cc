@@ -35,13 +35,13 @@ const VPS = (process.env.VPS || '1920x1080,1440x900,1366x768,1280x720,1024x768,8
     await shot('1-lobby');
     const has = id => p.$('#' + id);
     if (await has('navGarage')) {
-      await p.click('#navGarage'); await new Promise(r => setTimeout(r, 300)); await shot('2-garagem');
+      await p.evaluate(() => document.getElementById('navGarage').click()); await new Promise(r => setTimeout(r, 300)); await shot('2-garagem');
       await p.evaluate(() => { const l = [...document.querySelectorAll('#pGarage .sw.locked')].find(x => x.offsetParent); if (l) l.click(); }); await new Promise(r => setTimeout(r, 200)); await shot('3-garagem-bloqueado');
-      await p.click('#navPlay');
+      await p.evaluate(() => document.getElementById('navPlay').click());
       for (const [btn, n, close] of [['navRank', '4-ranking', 'rankClose'], ['setBtn', '5-config', 'setClose'], ['helpBtn', '6-ajuda', 'helpClose'], ['agenorBtn', '7-agenor', 'agClose'], ['goAch', '8-conquistas', 'achClose']]) {
-        await p.click('#' + btn); await new Promise(r => setTimeout(r, 400)); await shot(n); await p.click('#' + close); await new Promise(r => setTimeout(r, 150));
+        await p.evaluate(id => document.getElementById(id).click(), btn); await new Promise(r => setTimeout(r, 400)); await shot(n); await p.evaluate(id => document.getElementById(id).click(), close); await new Promise(r => setTimeout(r, 150));
       }
-      await p.click('#chatTab'); await new Promise(r => setTimeout(r, 200)); await shot('9-chat-aberto');
+      await p.evaluate(() => document.getElementById('chatTab').click()); await new Promise(r => setTimeout(r, 200)); await shot('9-chat-aberto');
     }
     await p.close();
   }

@@ -34,12 +34,14 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
     return { p, errs };
   }
   console.log('— jogar sem rolar, em toda a matriz');
-  for (const [w, hh, touch] of [[1920, 1080], [1440, 900], [1366, 768], [1280, 720], [1024, 768], [768, 1024], [844, 390, true], [667, 375, true], [390, 844], [360, 800]]) {
+  for (const [w, hh, touch] of [[1920, 1080], [1440, 900], [1366, 768], [1280, 720], [1024, 768], [768, 1024], [844, 390, true], [667, 375, true], [390, 844], [360, 800], [568, 320, true], [640, 360, true], [740, 360, true], [500, 700], [760, 600]]) {
     const { p, errs } = await session(SAVE, { vw: w, vh: hh, touch });
     const r = await p.evaluate(() => {
       const vis = id => { const e = document.getElementById(id), k = e.getBoundingClientRect(); return k.width > 0 && k.top >= 0 && k.bottom <= innerHeight + 1 && k.left >= 0 && k.right <= innerWidth + 1; };
       return { motoca: vis('goStart'), livre: vis('goFree'), multi: vis('goMulti'), nav: vis('lNav'), horiz: document.documentElement.scrollWidth <= innerWidth + 1, rec: /412.3/.test(document.getElementById('pbLine').textContent) };
     });
+    const fr = await p.evaluate(() => { const c = __t.cam, k = document.querySelector('.lcard').getBoundingClientRect(); const bb = c && c.S ? { l: c.bx - 1.0 * c.S, r: c.bx + 1.6 * c.S, t: c.yc - 3.4 * c.S, b: c.yc + 0.1 * c.S } : null; const bd = document.querySelector('.leftcol .board').getBoundingClientRect(); const fora = q => !q.width || bb.r <= q.left + 1 || bb.l >= q.right - 1 || bb.b <= q.top + 1 || bb.t >= q.bottom - 1; return !!bb && bb.l >= 0 && bb.t >= 0 && (bb.r <= k.left + 1 || bb.b <= k.top + 1) && fora(bd); });
+    ok(fr, `${w}x${hh}: o painel e o placar não cobrem o motoqueiro`);
     ok(r.motoca && r.livre && r.multi && r.nav && r.horiz && r.rec, `${w}x${hh}: modos, abas e recorde à vista sem rolar; sem rolagem horizontal`, r);
     if (errs.length) ok(false, 'erro de página', errs);
     await p.close();
@@ -67,8 +69,9 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
   ok(/não pode/.test(await p.$eval('#setNickMsg', e => e.textContent)) && await p.evaluate(() => __t.myName === 'Veterano'), 'apelido proibido barrado');
   await p.$eval('#setNick', e => { e.value = 'Novo Nome'; }); await p.click('#setNickForm .go'); await wait(100);
   ok(await p.evaluate(() => __t.myName === 'Novo Nome' && localStorage.getItem('grau80-nome') === 'Novo Nome' && document.getElementById('lNick').textContent === 'Novo Nome'), 'apelido salvo (mesmo nome do placar) e perfil atualizado');
-  const m0 = await p.evaluate(() => __t.muted); await p.click('#setSound'); await wait(100);
-  ok(await p.evaluate(m => __t.muted === !m && localStorage.getItem('grau80-mute') === (m ? '0' : '1'), m0), 'Efeitos liga/desliga o som (mesma preferência do botão Som)');
+  const m0 = await p.evaluate(() => [__t.muted, localStorage.getItem('grau80-musica')]); await p.click('#setSound'); await wait(100);
+  ok(await p.evaluate(m => __t.muted === m[0] && localStorage.getItem('grau80-musica') === m[1] && localStorage.getItem('grau80-efeitos') === '0' && /off/.test(document.getElementById('setSound').textContent), m0), 'Efeitos desliga só os efeitos (música e Som geral intactos)');
+  await p.click('#setSound'); await wait(100); ok(await p.evaluate(() => localStorage.getItem('grau80-efeitos') === '1'), 'Efeitos liga de novo');
   await p.evaluate(() => [...document.querySelectorAll('#langs button')].find(x => /EN/.test(x.textContent)).click()); await wait(200);
   ok(await p.$eval('#navPlay', e => e.textContent) === 'Play' && await p.$eval('#setTitle', e => e.textContent) === 'Settings', 'idioma troca a interface toda');
   await p.evaluate(() => [...document.querySelectorAll('#langs button')].find(x => /PT/.test(x.textContent)).click()); await wait(100);
@@ -129,12 +132,12 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
     const gg = await p.evaluate(() => {
       const gar = document.getElementById('garage'); gar.scrollTop = gar.scrollHeight; const R = e => e.getBoundingClientRect();
       const items = [...gar.querySelectorAll('.grow:not([hidden]) .sw')]; const last = items[items.length - 1]; const foot = R(document.querySelector('.gfoot')), gr = R(gar);
-      const c = __t.cam;
-      return { lastOk: R(last).bottom <= gr.bottom + 1 && R(last).bottom <= foot.top + 1, footOk: foot.bottom <= innerHeight + 1, qp: getComputedStyle(document.getElementById('quickPlay')).display,
-        bike: c && c.l ? { esq: Math.round(c.x - 1.0 * c.S), dir: Math.round(c.x + 1.5 * c.S), painel: Math.round(c.l) } : null };
+      const c = __t.cam, k = document.querySelector('.lcard').getBoundingClientRect(); const bb = c && c.S ? { l: c.bx - 1.0 * c.S, r: c.bx + 1.6 * c.S, t: c.yc - 3.4 * c.S, b: c.yc + 0.1 * c.S } : null;
+      const livre = !!bb && bb.l >= 0 && bb.t >= 0 && (bb.r <= k.left || bb.b <= k.top);
+      return { livre, bb: bb && Object.fromEntries(Object.entries(bb).map(([a, v]) => [a, Math.round(v)])), card: [Math.round(k.left), Math.round(k.top)], lastOk: R(last).bottom <= gr.bottom + 1 && R(last).bottom <= foot.top + 1, footOk: foot.bottom <= innerHeight + 1, qp: getComputedStyle(document.getElementById('quickPlay')).display };
     });
     ok(gg.lastOk && gg.footOk && gg.qp === 'none', `${w}x${hh}: garagem com rodapé Jogar reservado, último item alcançável, sem botão flutuante por cima`, gg);
-    ok(!gg.bike || (gg.bike.esq >= 0 && gg.bike.dir <= gg.bike.painel), `${w}x${hh}: piloto e moto inteiros fora do painel durante a garagem`, gg.bike);
+    ok(gg.livre, `${w}x${hh}: piloto e moto inteiros fora do painel durante a garagem`, gg.bb);
     await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-garagem.png`) });
     await p.click('#navPlay');
     for (const [btn, modal] of [['navRank', 'rankModal'], ['goAch', 'achModal'], ['helpBtn', 'helpModal'], ['setBtn', 'setModal'], ['goMulti', 'mpModal'], ['agenorBtn', 'agModal']]) {

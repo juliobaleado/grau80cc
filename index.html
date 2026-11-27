@@ -759,7 +759,7 @@ html.kid .lagenor small { visibility: hidden; }
 #pGarage .grow[hidden] { display: none; }
 #pGarage .slider { grid-template-columns: 1fr; }
 #pGarage .slider .arr { display: none; }
-#pGarage .chips-sel { flex-wrap: wrap; overflow: visible; }
+#pGarage .chips-sel { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
 #pGarage .sw:not(.dot) { position: relative; }
 #pGarage .sw[aria-pressed="true"]:not(.dot)::after { content: "✓"; margin-left: 2px; color: var(--sodium); font-weight: 700; }
 .sw.locked { opacity: .55; border-style: dashed; }
@@ -2180,6 +2180,8 @@ html.kid #agPix { display: none; }
   }
 
   // ---------- som: 2 tempos sintetizado ----------
+  // fxOff: Configurações › Efeitos desliga só motor e efeitos (o canal sfx); a música segue. O botão Som do HUD continua mudo geral.
+  let fxOff = false; try { fxOff = localStorage.getItem('grau80-efeitos') === '0'; } catch (e) {}
   let ac = null, nodes = null, muted = false, sfx = null; // sfx: motor e efeitos (calam na tela inicial, onde só toca a música)
   try { muted = localStorage.getItem('grau80-mute') === '1'; } catch (e) {}
   ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
@@ -2187,7 +2189,7 @@ html.kid #agPix { display: none; }
     if (ac) { if (ac.state === 'suspended' && !muted && !away) ac.resume(); return; }
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
-      sfx = ac.createGain(); sfx.connect(ac.destination);
+      sfx = ac.createGain(); sfx.gain.value = fxOff ? 0 : 1; sfx.connect(ac.destination);
       const o1 = ac.createOscillator(); o1.type = 'sawtooth';
       const o2 = ac.createOscillator(); o2.type = 'square';
       const g2 = ac.createGain(); g2.gain.value = 0.35;
@@ -3528,15 +3530,25 @@ html.kid #agPix { display: none; }
 
   function render() {
     C.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const S = Math.max(42, Math.min(120, H / 6.6, W / 5.2));
-    const yC = Math.round(H * 0.78);
-    const groundY = yC - 0.32 * S;
+    let S = Math.max(42, Math.min(120, H / 6.6, W / 5.2));
+    let yC = Math.round(H * 0.78);
     let BX = W * 0.36;
-    if (LOBBY_CAM && s.mode === 'ready' && !ui.start.hidden && LOBBY_CAM.l > 0) {
-      const want = Math.min(W * 0.36, LOBBY_CAM.l * 0.5);
-      LOBBY_CAM.x = LOBBY_CAM.x ? LOBBY_CAM.x + (want - LOBBY_CAM.x) * 0.15 : want;
-      BX = LOBBY_CAM.x; LOBBY_CAM.S = S;
+    // lobby: o painel nunca cobre o motoqueiro. Painel à direita → a moto vai pro meio da área livre à esquerda;
+    // painel embaixo → a rua sobe pra cima do painel. Se não couber, a cena encolhe (só na tela inicial; a partida volta ao normal)
+    const lob = LOBBY_CAM && s.mode === 'ready' && !ui.start.hidden && LOBBY_CAM.r;
+    if (lob) {
+      const r = LOBBY_CAM.r;
+      if (r.l > W * 0.2) {
+        S = Math.min(S, Math.max(24, r.l / 3.1));
+        const want = Math.min(W * 0.36, r.l * 0.42);
+        LOBBY_CAM.x = LOBBY_CAM.x ? LOBBY_CAM.x + (want - LOBBY_CAM.x) * 0.15 : want; BX = LOBBY_CAM.x;
+      } else if (r.t > H * 0.22) {
+        S = Math.min(S, Math.max(24, (r.t - 64) / 3.8)); // folga em cima pro placar recolhido
+        yC = Math.min(yC, Math.round(r.t - 0.3 * S));
+      }
+      LOBBY_CAM.S = S; LOBBY_CAM.bx = BX; LOBBY_CAM.yc = yC;
     } else if (LOBBY_CAM) LOBBY_CAM.x = 0;
+    const groundY = yC - 0.32 * S;
     const sx = wx => BX + (wx - s.x) * S;
     const sy = wy => yC - wy * S;
 
@@ -5740,8 +5752,12 @@ html.kid #agPix { display: none; }
   function closeModal(id) { if ($(id).hidden) return; $(id).hidden = true; if (modalBack && modalBack.focus) modalBack.focus({ preventScroll: true }); }
   function openSettings() { $('setNick').value = KID ? '' : myName; $('setNick').placeholder = guest; $('setNickMsg').textContent = ''; setSoundLabel(); openModal('setModal', 'setClose'); track('settings_opened'); }
   const closeSettings = () => closeModal('setModal');
-  function setSoundLabel() { $('setSound').textContent = T(muted ? 'Efeitos: off' : 'Efeitos: on'); $('setSound').setAttribute('aria-pressed', String(!muted)); }
-  $('setSound').addEventListener('click', () => { $('mute').click(); setSoundLabel(); });
+  function setSoundLabel() { $('setSound').textContent = T(fxOff ? 'Efeitos: off' : 'Efeitos: on'); $('setSound').setAttribute('aria-pressed', String(!fxOff)); }
+  $('setSound').addEventListener('click', () => {
+    fxOff = !fxOff; try { localStorage.setItem('grau80-efeitos', fxOff ? '0' : '1'); } catch (e) {}
+    wakeAudio(); if (sfx) sfx.gain.setTargetAtTime(fxOff ? 0 : 1, ac.currentTime, 0.03);
+    setSoundLabel();
+  });
   $('setNickForm').addEventListener('submit', e => {
     e.preventDefault();
     const v = clean($('setNick').value, 16);
@@ -5796,10 +5812,20 @@ html.kid #agPix { display: none; }
   const updPanel = () => {
     const r = lcard.getBoundingClientRect();
     LOBBY_CAM.l = r.width && r.left > innerWidth * 0.3 ? r.left : 0;
+    LOBBY_CAM.r = r.width ? { l: r.left, t: r.top, r: r.right, b: r.bottom } : null;
     document.documentElement.style.setProperty('--panelW', Math.round(Math.max(0, innerWidth - r.left)) + 'px');
   };
   if (window.ResizeObserver) new ResizeObserver(updPanel).observe(lcard);
-  addEventListener('resize', updPanel); updPanel();
+  // tela baixa ou estreita: o placar começa recolhido (só o título) pra não ficar em cima do motoqueiro; tocar no + abre
+  let boardAuto = null;
+  const autoBoard = () => {
+    const small = innerHeight <= 420 || innerWidth <= 760;
+    if (small === boardAuto) return; boardAuto = small;
+    let pref = false; try { pref = !!localStorage.getItem('grau80-placar-min'); } catch (e) {}
+    const b = $('boardX').closest('.board'), min = small || pref;
+    b.classList.toggle('min', min); $('boardX').textContent = min ? '+' : '–'; $('boardX').setAttribute('aria-expanded', String(!min));
+  };
+  addEventListener('resize', () => { updPanel(); autoBoard(); }); updPanel(); autoBoard();
   $('gPlay').addEventListener('click', () => ($('goStart').hidden ? $('goBora') : $('goStart')).click());
   // modais: indica que tem mais conteúdo embaixo enquanto der pra rolar
   const updMore = c => c.classList.toggle('more', c.scrollHeight - c.scrollTop - c.clientHeight > 6);
