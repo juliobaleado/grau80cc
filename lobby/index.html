@@ -659,8 +659,6 @@ html.kid #grow-dog { display: none !important; }
 .achc .areward { color: var(--sodium); }
 .achprog { height: 5px; border-radius: 3px; background: rgba(243, 239, 230, .12); overflow: hidden; margin-top: 3px; }
 .achprog i { display: block; height: 100%; background: var(--ok); }
-#achActs { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; }
-#achActs .go { flex: 1 1 200px; margin: 0; font-size: 17px; padding: 9px 14px 11px; }
 .achc .ashare { align-self: flex-start; margin-top: 4px; font: 700 11px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium);
   background: none; border: 1px solid rgba(255, 181, 71, .5); border-radius: 2px; padding: 5px 8px; min-height: 30px; cursor: pointer; }
 .ach .label::before { content: "★ "; }
@@ -760,7 +758,7 @@ html.kid .lagenor small { visibility: hidden; }
 #pGarage .grow[hidden] { display: none; }
 #pGarage .slider { grid-template-columns: 1fr; }
 #pGarage .slider .arr { display: none; }
-#pGarage .chips-sel { flex-wrap: wrap; overflow: visible; }
+#pGarage .chips-sel { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
 #pGarage .sw:not(.dot) { position: relative; }
 #pGarage .sw[aria-pressed="true"]:not(.dot)::after { content: "✓"; margin-left: 2px; color: var(--sodium); font-weight: 700; }
 .sw.locked { opacity: .55; border-style: dashed; }
@@ -844,7 +842,7 @@ html.kid #agPix { display: none; }
 .pixm-card.more::after { content: ""; position: sticky; bottom: -14px; display: block; flex: none; height: 30px; margin: -30px -16px -14px; pointer-events: none;
   background: linear-gradient(rgba(13, 27, 34, 0), rgba(13, 27, 34, .97) 70%); }
 /* V1.1 · garagem como coleção: equipado, disponível, bloqueado, especial; cores em grade; rodapé Jogar reservado */
-#pGarage .garage { padding: 0 4px 6px 0; max-height: min(46vh, 320px); }
+#pGarage .garage { box-sizing: border-box; padding: 0 4px 54px 0; max-height: min(52vh, 380px); }
 #pGarage .sw:not(.dot) { min-height: 40px; padding: 6px 12px 6px 8px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--line); transition: transform .15s var(--ease), border-color .15s; }
 #pGarage .sw:not(.dot):hover { border-color: rgba(255, 181, 71, .55); }
 #pGarage .sw[aria-pressed="true"]:not(.dot) { background: rgba(255, 181, 71, .14); border-color: var(--sodium); box-shadow: 0 0 0 2px rgba(255, 181, 71, .25); }
@@ -872,12 +870,24 @@ html.kid #agPix { display: none; }
   .pixm-card, .pixm-card.mpcard, .pixm-card.ctlcard { display: flex; flex-direction: column; align-items: stretch; text-align: left; }
   .pixm-card h2 { font-size: 22px; }
   .mode small { font-size: 12px; } .lagenor small { font-size: 11px; } .lnav button { font-size: 12px; }
-  #pGarage .garage { max-height: calc(100dvh - 228px); }
+  #pGarage .garage { max-height: calc(100dvh - 196px); }
   .lcard:has(#pGarage:not([hidden])) .lprofile { display: none; }
   #pGarage .sw:not(.dot) { min-height: 34px; padding: 4px 10px 4px 6px; }
   #pGarage .sw.dot { width: 32px; height: 32px; } #pGarage .sw.dot i { width: 22px; height: 22px; }
   .agdog { width: 150px; }
 }
+#pixModal .pixm-card, #doaModal .pixm-card { align-items: center; text-align: center; }
+#pixModal .pixm-card > *, #doaModal .pixm-card > .pixm-msg { align-self: center; }
+#pixModal .pixm-card .pixm-x, #doaModal .pixm-card .pixm-x { align-self: flex-end; }
+/* garagem: "Jogar" compacto no canto, e a lista ganha um respiro no fim da altura do botão (nada fica embaixo dele) */
+#pGarage { position: relative; }
+.gfoot { position: absolute; right: 4px; bottom: 4px; padding: 0; z-index: 2; }
+.gfoot .go { flex: none; font-size: 16px; padding: 8px 18px 10px; min-height: 40px; box-shadow: 0 6px 18px rgba(0, 0, 0, .45); }
+#pGarage .garage { padding-bottom: 54px; }
+/* conquistas: compartilhar pequeno ao lado do progresso, a lista fica com mais espaço */
+.achhead { flex-wrap: wrap; }
+.achhead #achActs { display: flex; flex-direction: row; gap: 6px; margin-left: auto; }
+.achhead #achActs .go { flex: none; font-size: 12px; padding: 5px 10px 6px; min-height: 30px; letter-spacing: .04em; }
 @media (prefers-reduced-motion: reduce) { .lpane, .ndot, .sw.pop { animation: none; } .mode, .ibtn { transition: none; } }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
@@ -926,7 +936,7 @@ html.kid #agPix { display: none; }
 }
 </style>
 
-<div style="position:fixed;z-index:70;top:max(6px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);pointer-events:none;font:700 11px/1 'Barlow Condensed',sans-serif;letter-spacing:.16em;color:#0b1a22;background:#6fd08c;padding:4px 8px;border-radius:3px">PRÉVIA DO LOBBY · 8be5847</div>
+<div style="position:fixed;z-index:70;top:max(6px,env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);pointer-events:none;font:700 11px/1 'Barlow Condensed',sans-serif;letter-spacing:.16em;color:#0b1a22;background:#6fd08c;padding:4px 8px;border-radius:3px">PRÉVIA DO LOBBY · df6121f</div>
 <div class="game" id="game">
   <canvas id="cv"></canvas>
 
@@ -1121,10 +1131,9 @@ html.kid #agPix { display: none; }
   <div class="pixm-card achcard">
     <button class="pixm-x" id="achClose" type="button" aria-label="Fechar">×</button>
     <h2 id="achTitle" data-i>Minhas conquistas</h2>
-    <div class="achhead"><span id="achCount"></span><div class="achbar" aria-hidden="true"><i id="achBar"></i></div></div>
+    <div class="achhead"><span id="achCount"></span><div class="achbar" aria-hidden="true"><i id="achBar"></i></div><div class="actions" id="achActs"></div></div>
     <div class="tabs achtabs" id="achTabs" role="tablist"></div>
     <div class="achgrid" id="achGrid"></div>
-    <div class="actions" id="achActs"></div>
   </div>
 </div>
 <div class="pixm" id="shModal" role="dialog" aria-modal="true" aria-labelledby="shTitle" hidden>
@@ -1342,7 +1351,7 @@ html.kid #agPix { display: none; }
 </div>
 
 <script>
-// ===== PRÉVIA ISOLADA (commit 8be5847) =====
+// ===== PRÉVIA ISOLADA (commit df6121f) =====
 (function () {
   window.GRAU_PREVIEW = true;
   // 1) dados do aparelho separados: tudo vai pra "previa:<chave>"; na 1ª abertura copia o save real (só leitura)
@@ -2211,6 +2220,8 @@ html.kid #agPix { display: none; }
   }
 
   // ---------- som: 2 tempos sintetizado ----------
+  // fxOff: Configurações › Efeitos desliga só motor e efeitos (o canal sfx); a música segue. O botão Som do HUD continua mudo geral.
+  let fxOff = false; try { fxOff = localStorage.getItem('grau80-efeitos') === '0'; } catch (e) {}
   let ac = null, nodes = null, muted = false, sfx = null; // sfx: motor e efeitos (calam na tela inicial, onde só toca a música)
   try { muted = localStorage.getItem('grau80-mute') === '1'; } catch (e) {}
   ui.mute.textContent = T(muted ? 'Som: desligado' : 'Som: ligado');
@@ -2218,7 +2229,7 @@ html.kid #agPix { display: none; }
     if (ac) { if (ac.state === 'suspended' && !muted && !away) ac.resume(); return; }
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
-      sfx = ac.createGain(); sfx.connect(ac.destination);
+      sfx = ac.createGain(); sfx.gain.value = fxOff ? 0 : 1; sfx.connect(ac.destination);
       const o1 = ac.createOscillator(); o1.type = 'sawtooth';
       const o2 = ac.createOscillator(); o2.type = 'square';
       const g2 = ac.createGain(); g2.gain.value = 0.35;
@@ -2674,7 +2685,7 @@ html.kid #agPix { display: none; }
     $('hudMode').textContent = modeLabel();
     wakeAudio();
     const last = s.last; // "Última" continua mostrando a empinada da rodada anterior
-    s = fresh(); s.last = last; s.prevBest = best; // recorde antes desta volta (pra celebração e comparação)
+    s = fresh(); s.last = last; s.prevBest = best; if (rideShot) rideShot.ok = false; // foto de recorde é sempre desta volta // recorde antes desta volta (pra celebração e comparação)
     askTicket();
     s.mode = 'ride';
     paused = false;
@@ -3559,15 +3570,25 @@ html.kid #agPix { display: none; }
 
   function render() {
     C.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const S = Math.max(42, Math.min(120, H / 6.6, W / 5.2));
-    const yC = Math.round(H * 0.78);
-    const groundY = yC - 0.32 * S;
+    let S = Math.max(42, Math.min(120, H / 6.6, W / 5.2));
+    let yC = Math.round(H * 0.78);
     let BX = W * 0.36;
-    if (LOBBY_CAM && s.mode === 'ready' && !ui.start.hidden && LOBBY_CAM.l > 0) {
-      const want = Math.min(W * 0.36, LOBBY_CAM.l * 0.5);
-      LOBBY_CAM.x = LOBBY_CAM.x ? LOBBY_CAM.x + (want - LOBBY_CAM.x) * 0.15 : want;
-      BX = LOBBY_CAM.x; LOBBY_CAM.S = S;
+    // lobby: o painel nunca cobre o motoqueiro. Painel à direita → a moto vai pro meio da área livre à esquerda;
+    // painel embaixo → a rua sobe pra cima do painel. Se não couber, a cena encolhe (só na tela inicial; a partida volta ao normal)
+    const lob = LOBBY_CAM && s.mode === 'ready' && !ui.start.hidden && LOBBY_CAM.r;
+    if (lob) {
+      const r = LOBBY_CAM.r;
+      if (r.l > W * 0.2) {
+        S = Math.min(S, Math.max(24, r.l / 3.1));
+        const want = Math.min(W * 0.36, r.l * 0.42);
+        LOBBY_CAM.x = LOBBY_CAM.x ? LOBBY_CAM.x + (want - LOBBY_CAM.x) * 0.15 : want; BX = LOBBY_CAM.x;
+      } else if (r.t > H * 0.22) {
+        S = Math.min(S, Math.max(24, (r.t - 64) / 3.8)); // folga em cima pro placar recolhido
+        yC = Math.min(yC, Math.round(r.t - 0.3 * S));
+      }
+      LOBBY_CAM.S = S; LOBBY_CAM.bx = BX; LOBBY_CAM.yc = yC;
     } else if (LOBBY_CAM) LOBBY_CAM.x = 0;
+    const groundY = yC - 0.32 * S;
     const sx = wx => BX + (wx - s.x) * S;
     const sy = wy => yC - wy * S;
 
@@ -5552,6 +5573,14 @@ html.kid #agPix { display: none; }
   const SITE = 'https://juliobaleado.github.io/grau80cc/';
   const GShare = NATIVE && window.Capacitor && window.Capacitor.registerPlugin ? window.Capacitor.registerPlugin('GrauShare') : null;
   let shNow = null, shFmt = 'sq', shSnap = null;
+  // quadro da última empinada boa (atualizado a cada 0,4 s com a frente no alto); o compartilhar do recorde usa ele
+  let rideShot = null, rideShotT = 0;
+  function keepRideShot() {
+    if (s.mode !== 'ride' || !s.active || s.th < 0.35 || s.th > 1.45 || TUT.on) return;
+    const now = performance.now(); if (now - rideShotT < 400) return; rideShotT = now;
+    if (!rideShot || rideShot.width !== cv.width || rideShot.height !== cv.height) { rideShot = document.createElement('canvas'); rideShot.width = cv.width; rideShot.height = cv.height; }
+    try { rideShot.getContext('2d').drawImage(cv, 0, 0); rideShot.ok = true; } catch (e) {}
+  }
   function snapScene() { const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; try { c.getContext('2d').drawImage(cv, 0, 0); } catch (e) {} return c; }
   function wrapText(g, txt, maxW) {
     const out = []; let line = '';
@@ -5592,7 +5621,7 @@ html.kid #agPix { display: none; }
   }
   const nick = () => (!KID && myName ? myName : '');
   async function openShare(d) {
-    shNow = d; shSnap = snapScene();
+    shNow = d; shSnap = d.ev === 'personal_best' && rideShot && rideShot.ok ? rideShot : snapScene();
     try { await Promise.all(['400 60px "Bowlby One"', '700 30px "Barlow Condensed"', '600 30px "Barlow Condensed"'].map(f => document.fonts.load(f))); } catch (e) {}
     $('shCode').hidden = !d.code; $('shSave').hidden = !!GShare; $('shMsg').textContent = '';
     $('shTitle').textContent = T(d.title || 'Compartilhar');
@@ -5771,8 +5800,12 @@ html.kid #agPix { display: none; }
   function closeModal(id) { if ($(id).hidden) return; $(id).hidden = true; if (modalBack && modalBack.focus) modalBack.focus({ preventScroll: true }); }
   function openSettings() { $('setNick').value = KID ? '' : myName; $('setNick').placeholder = guest; $('setNickMsg').textContent = ''; setSoundLabel(); openModal('setModal', 'setClose'); track('settings_opened'); }
   const closeSettings = () => closeModal('setModal');
-  function setSoundLabel() { $('setSound').textContent = T(muted ? 'Efeitos: off' : 'Efeitos: on'); $('setSound').setAttribute('aria-pressed', String(!muted)); }
-  $('setSound').addEventListener('click', () => { $('mute').click(); setSoundLabel(); });
+  function setSoundLabel() { $('setSound').textContent = T(fxOff ? 'Efeitos: off' : 'Efeitos: on'); $('setSound').setAttribute('aria-pressed', String(!fxOff)); }
+  $('setSound').addEventListener('click', () => {
+    fxOff = !fxOff; try { localStorage.setItem('grau80-efeitos', fxOff ? '0' : '1'); } catch (e) {}
+    wakeAudio(); if (sfx) sfx.gain.setTargetAtTime(fxOff ? 0 : 1, ac.currentTime, 0.03);
+    setSoundLabel();
+  });
   $('setNickForm').addEventListener('submit', e => {
     e.preventDefault();
     const v = clean($('setNick').value, 16);
@@ -5827,10 +5860,20 @@ html.kid #agPix { display: none; }
   const updPanel = () => {
     const r = lcard.getBoundingClientRect();
     LOBBY_CAM.l = r.width && r.left > innerWidth * 0.3 ? r.left : 0;
+    LOBBY_CAM.r = r.width ? { l: r.left, t: r.top, r: r.right, b: r.bottom } : null;
     document.documentElement.style.setProperty('--panelW', Math.round(Math.max(0, innerWidth - r.left)) + 'px');
   };
   if (window.ResizeObserver) new ResizeObserver(updPanel).observe(lcard);
-  addEventListener('resize', updPanel); updPanel();
+  // tela baixa ou estreita: o placar começa recolhido (só o título) pra não ficar em cima do motoqueiro; tocar no + abre
+  let boardAuto = null;
+  const autoBoard = () => {
+    const small = innerHeight <= 420 || innerWidth <= 760;
+    if (small === boardAuto) return; boardAuto = small;
+    let pref = false; try { pref = !!localStorage.getItem('grau80-placar-min'); } catch (e) {}
+    const b = $('boardX').closest('.board'), min = small || pref;
+    b.classList.toggle('min', min); $('boardX').textContent = min ? '+' : '–'; $('boardX').setAttribute('aria-expanded', String(!min));
+  };
+  addEventListener('resize', () => { updPanel(); autoBoard(); }); updPanel(); autoBoard();
   $('gPlay').addEventListener('click', () => ($('goStart').hidden ? $('goBora') : $('goStart')).click());
   // modais: indica que tem mais conteúdo embaixo enquanto der pra rolar
   const updMore = c => c.classList.toggle('more', c.scrollHeight - c.scrollTop - c.clientHeight > 6);
@@ -6804,7 +6847,7 @@ html.kid #agPix { display: none; }
     if (hidden) { stepRemotes(dt); mpTick(dt); updateAudio(); return; } // escondido: só a física, a rede e o som
     if (W !== cv.clientWidth || H !== cv.clientHeight) resize();
     pollPad(); stepRemotes(dt); mpTick(dt);
-    render(); updateHud(); updateAudio();
+    render(); updateHud(); updateAudio(); keepRideShot();
   }
   function frame(t) { if (!bgW && !away) tick(t, false); else if (!bgW) last = t; requestAnimationFrame(frame); } // minimizado: não processa nem desenha
   // com a aba escondida o navegador para o requestAnimationFrame e segura os timers; o relógio de um worker não é segurado
