@@ -8,12 +8,12 @@ const OUT = process.argv[2] || path.join(ROOT, 'play-store', 'frases');
 fs.mkdirSync(OUT, { recursive: true });
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
-html = html.slice(0, j) + 'window.__t={get s(){return s},begin,finish,END_FRASES,pickEndFrase,endRecent,I18N,TUT,tutJogo};\n' + html.slice(j);
+html = html.slice(0, j) + 'window.__t={stats,get best(){return best},get s(){return s},begin,finish,END_FRASES,pickEndFrase,endRecent,I18N,TUT,tutJogo};\n' + html.slice(j);
 const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); r.end(html); }).listen(8856);
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}' };
+const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}', 'grau80-stats': '{"runs":50}', 'grau80-best': '5000.00' };
 
 (async () => {
   const b = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: 'new', args: ['--mute-audio'] });
@@ -43,7 +43,7 @@ const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes
     Object.assign(out, { rare: rare / 20000, wrong, rep });
     return out;
   });
-  ok(r.n[0] === 25 && r.n[1] === 19 && r.n[2] === 8, 'grupos: 25 caiu pra trás, 19 frente no chão, 8 raras', r.n);
+  ok(r.n[0] === 27 && r.n[1] === 22 && r.n[2] === 8, 'grupos: 27 caiu pra trás, 22 frente no chão, 8 raras', r.n);
   ok(r.azeitona, '"Piloto de azeitona!" continua entre as frases');
   ok(!r.semTrad.length, 'todas com tradução em inglês e espanhol', r.semTrad);
   ok(r.rare > 0.022 && r.rare < 0.038, 'raras saem por volta de 3%', +(r.rare * 100).toFixed(2));
@@ -60,6 +60,20 @@ const SAVE = { 'grau80-nasc': '1990', 'grau80-nome': 'Teste', 'grau80-instrucoes
     ok(f.ok && f.a === f.b && f.vis, `${how}: frase do grupo certo, sorteada uma vez só`, f.a);
     await p.evaluate(() => document.getElementById('goGarage').click()); await wait(300);
   }
+  // iniciante (menos de 20 voltas) não recebe frase rara
+  const ini = await p.evaluate(() => { const r = __t.stats.runs; __t.stats.runs = 3; let n = 0; for (let i = 0; i < 3000; i++) if (__t.END_FRASES.rare.includes(__t.pickEndFrase('flip'))) n++; __t.stats.runs = r; return n; });
+  ok(ini === 0, 'quem está começando não recebe frase rara', ini);
+  // recorde pessoal sem top 10: celebra com comparação, título sem tirar sarro, e grava
+  const pb = await p.evaluate(async () => { __t.begin('motoca'); __t.s.active = true; __t.s.wDist = 6000; __t.finish('flip'); await new Promise(r => setTimeout(r, 1100));
+    return { t: document.getElementById('endTitle').textContent, pb: !document.getElementById('endPB').hidden, txt: document.getElementById('pbText').textContent,
+      conf: !!document.querySelector('.confetti'), gravado: localStorage.getItem('grau80-best') }; });
+  ok(pb.pb && pb.t === 'Tá evoluindo!' && /antes: 5000.0 m · melhorou 1000.0 m/.test(pb.txt) && pb.conf && pb.gravado === '6000.00', 'novo recorde pessoal: celebração, comparação e gravação', pb);
+  await p.evaluate(() => document.getElementById('goGarage').click()); await wait(300);
+  const cmp = await p.evaluate(async () => { __t.begin('motoca'); __t.s.active = true; __t.s.wDist = 100; __t.finish('landed'); await new Promise(r => setTimeout(r, 1100));
+    return { pb: !document.getElementById('endPB').hidden, cmp: document.getElementById('endCmp').textContent, linha: null }; });
+  ok(!cmp.pb && cmp.cmp === 'Faltou 5900.0 m pro teu recorde (6000.0 m)', 'sem recorde: mostra quanto faltou', cmp.cmp);
+  await p.evaluate(() => document.getElementById('goGarage').click()); await wait(300);
+  ok(/Teu recorde · Motoca 6000.0 m · Livre/.test(await p.$eval('#pbLine', e => e.textContent)), 'tela inicial mostra o recorde pessoal de cada modo');
   // desafio continua com a frase própria
   const des = await p.evaluate(() => { __t.begin('motoca'); __t.s.law.car = { state: 'chase' }; __t.s.active = true; __t.s.wDist = 40; __t.finish('landed'); return document.getElementById('endTitle').textContent; });
   ok(des === 'Pegaro os lanche', 'perseguição do D.U.R.O. mantém a frase do desafio', des);

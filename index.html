@@ -425,7 +425,8 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   #endScreen .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; row-gap: 5px; max-width: 660px; align-items: start; }
   #endScreen .card > * { grid-column: 1; }
   #endEyebrow { grid-row: 1; } #endTitle { grid-row: 2; } #endTitle.long { font-size: 19px; } #endLabel { grid-row: 3; } #endDist { grid-row: 4; }
-  #endRecord { grid-row: 5; justify-self: start; } #endScreen .meta { grid-row: 6; }
+  #endRecord { grid-row: 5; justify-self: start; } #endScreen .meta { grid-row: 6; } #endPB { grid-row: 5; } #endCmp { grid-row: 7; }
+  .pb { padding: 4px 8px; } .pb b { font-size: 16px; } .pb span, .pbcmp { font-size: 12px; }
   #endScreen .gsend { grid-column: 2; grid-row: 1 / span 3; }
   #endScreen .pix-mini { grid-column: 2; grid-row: 4; align-self: center; }
   #endScreen .actions { grid-column: 2; grid-row: 5 / span 2; align-self: end; }
@@ -620,6 +621,21 @@ html.kid #grow-dog { display: none !important; }
   .mpfeed { font-size: 12px; }
   .mpchat { bottom: 8px; padding: 5px; }
 }
+/* recorde pessoal: linha na tela inicial, celebração e comparação no fim da volta */
+.pbline { font-size: 15px; font-weight: 600; color: var(--muted); letter-spacing: .02em; }
+.pbline b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.pb { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border: 1px solid var(--ok); border-radius: 3px; background: rgba(111, 208, 140, .1);
+  animation: pbIn .55s cubic-bezier(.2, 1.6, .4, 1); }
+.pb b { font: 400 22px/1.05 var(--display); color: var(--ok); }
+.pb span { font-size: 15px; line-height: 1.25; color: var(--ink); }
+.pbcmp { font-size: 15px; color: var(--muted); }
+.pbcmp b { color: var(--ink); }
+.pb[hidden], .pbcmp[hidden], .pbline[hidden] { display: none; }
+@keyframes pbIn { from { transform: scale(.7); opacity: 0; } }
+.confetti { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
+.confetti i { position: absolute; top: -14px; width: 8px; height: 13px; border-radius: 2px; animation: conf 1.9s ease-in forwards; }
+@keyframes conf { to { transform: translate(var(--dx), 108vh) rotate(var(--r)); } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .pb { animation: none; } }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -740,6 +756,7 @@ html.kid #grow-dog { display: none !important; }
       <h1>Grau 80cc</h1>
       <button class="iostip" id="iosTip" type="button" hidden><span data-i>No iPhone, pra jogar em tela cheia: Compartilhar › Adicionar à Tela de Início</span> <b aria-hidden="true">×</b></button>
       <p data-i>Saindo do Pastel do Agenor de bike motorizada e a mochila de entrega nas costas. Faz as conquistas pra liberar bike nova na garagem. Segura a frente no alto o máximo de metros que der.</p>
+      <span class="pbline" id="pbLine" hidden></span>
       <span class="hint" data-i>A moto já está ligada: segura Espaço ou clica e segura na rua pra acelerar e cortar o giro parado.</span>
       <div class="ach-list" id="achList" hidden><span class="label">Conquistas</span><span id="achItems"></span></div>
       <div class="garage" id="garage"></div>
@@ -777,6 +794,8 @@ html.kid #grow-dog { display: none !important; }
       <span class="label" id="endLabel">Distância empinando</span>
       <div class="result" id="endDist">0.0<small> m</small></div>
       <span class="record" id="endRecord" hidden data-i>Novo recorde</span>
+      <div class="pb" id="endPB" hidden><b id="pbTitle" data-i>Novo recorde pessoal!</b><span id="pbText"></span></div>
+      <span class="pbcmp" id="endCmp" hidden></span>
       <form class="gsend" id="gSend" hidden>
         <span class="label" data-i>Entrou no top 10 global! Bota teu nome</span>
         <div class="gsend-row">
@@ -1148,6 +1167,21 @@ html.kid #grow-dog { display: none !important; }
     'Sua tentativa foi encaminhada ao departamento de vergonha.': ['Your attempt has been forwarded to the Department of Shame.', 'Tu intento fue enviado al departamento de vergüenza.']
   });
   Object.assign(I18N, { 'Frente no chão': ['Front wheel down', 'Rueda al piso'], 'Passou do ponto': ['Went past the point', 'Te pasaste del punto'] });
+  Object.assign(I18N, {
+    'Deu grau, virou caramelo.': ['Popped a wheelie, became a stray.', 'Hizo caballito, terminó de perrito.'],
+    'Virou uma tartaruga.': ['Turtled.', 'Quedó como tortuga.'],
+    'Esqueceu que era pra dar grau?': ['Forgot this was a wheelie game?', '¿Te olvidaste de que había que hacer caballito?'],
+    'Grau ou entrega de iFood?': ['Wheelie or food delivery?', '¿Caballito o delivery de comida?'],
+    'Passeio encerrado, piloto.': ['Ride over, pilot.', 'Paseo terminado, piloto.'],
+    'Tá evoluindo!': ['You\'re getting better!', '¡Estás mejorando!'],
+    'Novo recorde pessoal!': ['New personal best!', '¡Nuevo récord personal!'],
+    'antes:': ['before:', 'antes:'],
+    'melhorou': ['improved', 'mejoraste'],
+    'Teu primeiro recorde:': ['Your first record:', 'Tu primer récord:'],
+    'Faltou': ['Just', 'Te faltaron'],
+    'pro teu recorde': ['short of your best', 'para tu récord'],
+    'Teu recorde': ['Your best', 'Tu récord']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1250,6 +1284,15 @@ html.kid #grow-dog { display: none !important; }
     : T(gameMode === 'livre' ? 'Grau · livre' : 'Grau · motoca') + (cheat ? T(' · teste') : '');
   const bests = { motoca: 0, livre: 0 };
   for (const m in BEST_KEY) { try { bests[m] = parseFloat(localStorage.getItem(BEST_KEY[m])) || 0; } catch (e) {} }
+  // estatísticas do jogador, só no aparelho (contam a partir desta versão; nada é inventado pra trás):
+  // runs = voltas reais que terminaram, quedas = fins de volta no Motoca/sala, curtas = voltas seguidas com grau < 1 s,
+  // posRec = a última volta bateu recorde, maxWT = maior grau em segundos, reasons = motivo das últimas voltas
+  const STATS_KEY = 'grau80-stats';
+  const stats = { runs: 0, quedas: 0, curtas: 0, posRec: false, maxWT: 0, reasons: [] };
+  try { const o = JSON.parse(localStorage.getItem(STATS_KEY) || '{}') || {}; for (const k in stats) if (typeof o[k] === typeof stats[k]) stats[k] = o[k]; } catch (e) {}
+  const saveStats = () => { try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch (e) {} };
+  // pontos de integração do analytics (fila/analytics-v1.md): não coleta nem envia nada até essa fase ser aprovada
+  const track = () => {};
   let best = bests[gameMode];
 
   const input = { gas: false, brake: false };
@@ -1522,7 +1565,7 @@ html.kid #grow-dog { display: none !important; }
     const last = s.last;
     s = fresh(); s.last = last; paused = false;
     ui.pause.hidden = true; ui.end.hidden = true; ui.start.hidden = false;
-    loadBoard();
+    loadBoard(); renderPB();
     keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput();
     $('goStart').focus();
     mpHud();
@@ -1960,7 +2003,7 @@ html.kid #grow-dog { display: none !important; }
     $('hudMode').textContent = modeLabel();
     wakeAudio();
     const last = s.last; // "Última" continua mostrando a empinada da rodada anterior
-    s = fresh(); s.last = last;
+    s = fresh(); s.last = last; s.prevBest = best; // recorde antes desta volta (pra celebração e comparação)
     askTicket();
     s.mode = 'ride';
     paused = false;
@@ -2023,7 +2066,9 @@ html.kid #grow-dog { display: none !important; }
       'Virou estampa de camisa.',
       'Chama o XAMU!',
       'Passou Mertiolate, tá novo!',
-      'É Bração!'
+      'É Bração!',
+      'Deu grau, virou caramelo.',
+      'Virou uma tartaruga.'
     ],
     landed: [
       'Tá economizando pneu traseiro?',
@@ -2044,7 +2089,10 @@ html.kid #grow-dog { display: none !important; }
       'A coragem acabou antes da gasolina.',
       'Carteira de habilitação aprovada.',
       'Categoria: entregador de pão.',
-      'O puxão ficou pra próxima.'
+      'O puxão ficou pra próxima.',
+      'Esqueceu que era pra dar grau?',
+      'Grau ou entrega de iFood?',
+      'Passeio encerrado, piloto.'
     ],
     rare: [
       'O Agenor já tá preparando o orçamento.',
@@ -2059,7 +2107,7 @@ html.kid #grow-dog { display: none !important; }
   };
   const endRecent = [];
   function pickEndFrase(kind) {
-    const pool = Math.random() < 0.03 ? END_FRASES.rare : END_FRASES[kind];
+    const pool = stats.runs >= 20 && Math.random() < 0.03 ? END_FRASES.rare : END_FRASES[kind];
     const free = pool.filter(f => !endRecent.includes(f));
     const list = free.length ? free : pool;
     const f = list[Math.floor(Math.random() * list.length)];
@@ -2307,13 +2355,16 @@ html.kid #grow-dog { display: none !important; }
     recordWheelie();
     ui.endEyebrow.textContent = T(END_TEXT[msg][0]);
     // sorteada uma vez só, aqui no fim da volta
-    s.endFrase = msg === 'flip' || msg === 'landed' ? pickEndFrase(msg) : END_TEXT[msg][1];
+    const pb = s.newRecord && !cheat; // bateu o recorde pessoal: a frase não tira sarro
+    if (!cheat && !TUT.on) { stats.runs++; stats.reasons = stats.reasons.concat(how).slice(-5); saveStats(); }
+    s.endFrase = pb ? 'Tá evoluindo!' : msg === 'flip' || msg === 'landed' ? pickEndFrase(msg) : END_TEXT[msg][1];
     ui.endTitle.textContent = T(s.endFrase);
     ui.endTitle.classList.toggle('long', T(s.endFrase).length > 24);
     $('endLabel').textContent = T(gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando');
     $('endCountRow').hidden = gameMode !== 'livre';
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
-    ui.endRecord.hidden = !s.newRecord;
+    ui.endRecord.hidden = !s.newRecord || pb;
+    showPB(pb);
     ui.endCount.textContent = s.count;
     ui.endBest.textContent = best.toFixed(1) + ' m';
     ui.endTop.textContent = Math.round(s.top * 3.6) + ' km/h';
@@ -2322,6 +2373,53 @@ html.kid #grow-dog { display: none !important; }
     $('gSend').hidden = !canSend;
     $('gBtn').disabled = false; $('gName').disabled = false; $('gMsg').textContent = '';
     setTimeout(() => { if (s.mode === 'over' || s.mode === 'dog') { ui.end.hidden = false; $('goAgain').focus(); } }, 900);
+  }
+
+  // recorde pessoal no fim da volta: celebra quando bate (uma vez, nesta tela) ou mostra quanto faltou
+  function showPB(pb) {
+    const prev = s.prevBest || 0, cmp = $('endCmp');
+    $('endPB').hidden = !pb; cmp.hidden = true;
+    if (pb) {
+      $('pbText').textContent = prev > 0
+        ? s.runBest.toFixed(1) + ' m · ' + T('antes:') + ' ' + prev.toFixed(1) + ' m · ' + T('melhorou') + ' ' + (s.runBest - prev).toFixed(1) + ' m'
+        : T('Teu primeiro recorde:') + ' ' + s.runBest.toFixed(1) + ' m';
+      confetti(); recSound(); track('personal_best_celebrated');
+    } else if (best > 0 && s.runBest >= 0) {
+      const falta = Math.max(0.1, best - s.runBest);
+      cmp.innerHTML = ''; cmp.append(T('Faltou') + ' ', Object.assign(document.createElement('b'), { textContent: falta.toFixed(1) + ' m' }), ' ' + T('pro teu recorde') + ' (' + best.toFixed(1) + ' m)');
+      cmp.hidden = false;
+    }
+  }
+  function confetti() {
+    const box = document.createElement('div'), cols = ['#ffb547', '#6fd08c', '#d8432f', '#bcd0db', '#f3efe6'];
+    box.className = 'confetti';
+    for (let i = 0; i < 32; i++) {
+      const c = document.createElement('i');
+      c.style.left = (Math.random() * 100) + '%'; c.style.background = cols[i % cols.length];
+      c.style.setProperty('--dx', (Math.random() * 160 - 80) + 'px'); c.style.setProperty('--r', (Math.random() * 900 - 450) + 'deg');
+      c.style.animationDelay = (Math.random() * 0.5) + 's';
+      box.append(c);
+    }
+    document.body.append(box); setTimeout(() => box.remove(), 2600);
+  }
+  function recSound() { // fanfarra curtinha (respeita o Som desligado)
+    if (!nodes || muted) return;
+    const t = ac.currentTime;
+    [659, 784, 988, 1319].forEach((f, i) => {
+      const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = f;
+      const g = ac.createGain(), t0 = t + i * 0.11;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + (i === 3 ? 0.6 : 0.2));
+      o.connect(g).connect(sfx); o.start(t0); o.stop(t0 + 0.65);
+    });
+  }
+  // linha do recorde pessoal na tela inicial (cada modo tem o seu)
+  function renderPB() {
+    const el = $('pbLine'); if (!el) return;
+    el.textContent = '';
+    if (!(bests.motoca > 0 || bests.livre > 0)) { el.hidden = true; return; }
+    el.append(T('Teu recorde') + ' · ' + T('Motoca') + ' ', Object.assign(document.createElement('b'), { textContent: bests.motoca.toFixed(1) + ' m' }),
+      ' · ' + T('Livre') + ' ', Object.assign(document.createElement('b'), { textContent: bests.livre.toFixed(1) + ' m' }));
+    el.hidden = false;
   }
 
   // ---------- simulação ----------
@@ -2403,7 +2501,7 @@ html.kid #grow-dog { display: none !important; }
       }
       if (riding && s.mode === 'ride') {
         if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; if (gameMode === 'multi') rearm(); }
-        if (s.active) { s.wTime += h; s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
+        if (s.active) { s.wTime += h; s.maxWT = Math.max(s.maxWT || 0, s.wTime); s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
         if (s.th > CRASH) { if (TUT.on) tutCrash(); else finish('flip'); }
       }
     } else if (s.mode === 'dog') {
@@ -3825,7 +3923,7 @@ html.kid #grow-dog { display: none !important; }
       b.addEventListener('click', () => { LANG = id; try { localStorage.setItem('grau80-lang', id); } catch (e) {} applyLang(); });
       box.appendChild(b);
     }
-    renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl();
+    renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl(); renderPB();
     if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
     if (TUT.on) tutRender();
   }
