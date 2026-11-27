@@ -425,7 +425,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   #endScreen .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; row-gap: 5px; max-width: 660px; align-items: start; }
   #endScreen .card > * { grid-column: 1; }
   #endEyebrow { grid-row: 1; } #endTitle { grid-row: 2; } #endTitle.long { font-size: 19px; } #endLabel { grid-row: 3; } #endDist { grid-row: 4; }
-  #endRecord { grid-row: 5; justify-self: start; } #endScreen .meta { grid-row: 6; } #endPB { grid-row: 5; } #endCmp { grid-row: 7; }
+  #endRecord { grid-row: 5; justify-self: start; } #endScreen .meta { grid-row: 6; } #endPB { grid-row: 5; } #endCmp { grid-row: 7; } #endScreen .gsend { grid-row: 1 / span 2; } #endTip { grid-column: 2; grid-row: 3; } .tip { padding: 4px 8px; } .tip #tipText { font-size: 12px; } .tipoff { min-height: 22px; padding: 0; font-size: 11px; }
   .pb { padding: 4px 8px; } .pb b { font-size: 16px; } .pb span, .pbcmp { font-size: 12px; }
   #endScreen .gsend { grid-column: 2; grid-row: 1 / span 3; }
   #endScreen .pix-mini { grid-column: 2; grid-row: 4; align-self: center; }
@@ -673,6 +673,12 @@ html.kid #grow-dog { display: none !important; }
   .shcard h2 { font-size: 22px; } .shcard .tabs { align-self: start; }
   .shcard .actions { justify-content: flex-start; }
 }
+/* dica do Agenor no fim da volta */
+.tip { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px; border-left: 3px solid var(--sodium); background: rgba(255, 181, 71, .07); border-radius: 0 3px 3px 0; }
+.tip[hidden] { display: none; }
+.tip .label { color: var(--sodium); }
+.tip #tipText { font-size: 15px; line-height: 1.3; color: var(--ink); }
+.tipoff { align-self: flex-start; background: none; border: 0; padding: 4px 0; min-height: 28px; font: 600 12px var(--hud); letter-spacing: .06em; color: var(--muted); text-decoration: underline; cursor: pointer; }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -808,7 +814,7 @@ html.kid #grow-dog { display: none !important; }
         <button class="go alt" id="goAch" type="button" data-i>Minhas conquistas</button>
       </div>
       <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
-      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button></div>
+      <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button><button class="go alt" id="tipToggle" type="button"></button></div>
       <ul class="how" id="howList">
         <li><b data-i>Acelera</b><span data-i>Segura o dedo na metade direita da tela, Espaço, ↑ ou clique.</span></li>
         <li><b data-i>Giro</b><span data-i>O 2 tempos só tem força na faixa laranja do conta-giros. Entrou no giro, a frente sobe.</span></li>
@@ -834,6 +840,7 @@ html.kid #grow-dog { display: none !important; }
       <span class="record" id="endRecord" hidden data-i>Novo recorde</span>
       <div class="pb" id="endPB" hidden><b id="pbTitle" data-i>Novo recorde pessoal!</b><span id="pbText"></span></div>
       <span class="pbcmp" id="endCmp" hidden></span>
+      <div class="tip" id="endTip" hidden><span class="label" data-i>Dica do Agenor</span><span id="tipText"></span><button class="tipoff" id="tipOff" type="button" data-i>Não mostrar mais dicas</button></div>
       <form class="gsend" id="gSend" hidden>
         <span class="label" data-i>Entrou no top 10 global! Bota teu nome</span>
         <div class="gsend-row">
@@ -1329,6 +1336,25 @@ html.kid #grow-dog { display: none !important; }
     'Confere teu nome e toca em Entrar.': ['Check your name and tap Join.', 'Revisa tu nombre y toca Entrar.'],
     'Modo Livre': ['Free Mode', 'Modo Libre'],
     'Modo Motoca': ['Motoca Mode', 'Modo Motoca']
+  });
+  Object.assign(I18N, {
+    'Tá inclinando demais? Dá toquinhos no freio.': ['Leaning too far? Tap the brake.', '¿Te inclinas demasiado? Dale toquecitos al freno.'],
+    'Não espera passar do ponto pra começar a frear.': ['Don\'t wait to go past the point before braking.', 'No esperes a pasarte del punto para empezar a frenar.'],
+    'O segredo não é só puxar. É saber a hora de frear.': ['The secret isn\'t just pulling. It\'s knowing when to brake.', 'El secreto no es solo tirar. Es saber cuándo frenar.'],
+    'Equilíbrio, jovem. Equilíbrio!': ['Balance, kid. Balance!', '¡Equilibrio, joven. Equilibrio!'],
+    'Quando a roda começar a baixar, recupera com um puxão.': ['When the front starts dropping, recover with a pull.', 'Cuando la rueda empiece a bajar, recupérala con un tirón.'],
+    'Freou demais? Um puxão ajuda a recuperar o equilíbrio.': ['Braked too much? A pull helps you get your balance back.', '¿Frenaste de más? Un tirón ayuda a recuperar el equilibrio.'],
+    'Não espera a roda encostar no chão pra corrigir.': ['Don\'t wait for the wheel to touch down to correct.', 'No esperes a que la rueda toque el piso para corregir.'],
+    'Mantém o giro na faixa laranja e acha o ponto de equilíbrio.': ['Keep the revs in the orange band and find the balance point.', 'Mantén las vueltas en la franja naranja y encuentra el punto de equilibrio.'],
+    'O Modo Livre é ótimo pra treinar.': ['Free Mode is great for practice.', 'El Modo Libre es ideal para practicar.'],
+    'Experimenta ajustar os comandos em Controles.': ['Try adjusting the controls in Controls.', 'Prueba ajustar los comandos en Controles.'],
+    'Ficou com dúvida? Revê o Tutorial de como jogar, embaixo de Como jogar.': ['Not sure? Rewatch the How to play tutorial, under How to play.', '¿Dudas? Vuelve a ver el Tutorial de cómo jugar, debajo de Cómo jugar.'],
+    'Domina o equilíbrio antes de mirar no placar mundial.': ['Master the balance before going for the world leaderboard.', 'Domina el equilibrio antes de apuntar al ranking mundial.'],
+    'Dica do Agenor': ['Agenor\'s tip', 'Consejo de Agenor'],
+    'Não mostrar mais dicas': ['Don\'t show tips anymore', 'No mostrar más consejos'],
+    'Dicas do Agenor: ligadas': ['Agenor\'s tips: on', 'Consejos de Agenor: sí'],
+    'Dicas do Agenor: desligadas': ['Agenor\'s tips: off', 'Consejos de Agenor: no'],
+    'Dicas desligadas. Dá pra ligar de novo embaixo de Como jogar.': ['Tips off. Turn them back on under How to play.', 'Consejos apagados. Puedes prenderlos debajo de Cómo jugar.']
   });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
@@ -2582,7 +2608,7 @@ html.kid #grow-dog { display: none !important; }
     $('endCountRow').hidden = gameMode !== 'livre';
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
     ui.endRecord.hidden = !s.newRecord || pb;
-    showPB(pb);
+    showPB(pb); showTip(how);
     $('goShare').hidden = gameMode === 'multi';
     ui.endCount.textContent = s.count;
     ui.endBest.textContent = best.toFixed(1) + ' m';
@@ -2630,6 +2656,40 @@ html.kid #grow-dog { display: none !important; }
       g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + (i === 3 ? 0.6 : 0.2));
       o.connect(g).connect(sfx); o.start(t0); o.stop(t0 + 0.65);
     });
+  }
+  // Dicas do Agenor: no fim da volta, sobre o erro que acabou de acontecer (o que se repete tem prioridade). Toda volta
+  // nas 10 primeiras, depois cada vez menos; nunca as 3 últimas de novo; dá pra desligar.
+  const TIPS = {
+    flip: ['Tá inclinando demais? Dá toquinhos no freio.', 'Não espera passar do ponto pra começar a frear.', 'O segredo não é só puxar. É saber a hora de frear.', 'Equilíbrio, jovem. Equilíbrio!'],
+    landed: ['Quando a roda começar a baixar, recupera com um puxão.', 'Freou demais? Um puxão ajuda a recuperar o equilíbrio.', 'Não espera a roda encostar no chão pra corrigir.', 'Mantém o giro na faixa laranja e acha o ponto de equilíbrio.'],
+    ini: ['O Modo Livre é ótimo pra treinar.', 'Experimenta ajustar os comandos em Controles.', 'Ficou com dúvida? Revê o Tutorial de como jogar, embaixo de Como jogar.', 'Domina o equilíbrio antes de mirar no placar mundial.']
+  };
+  let tipsOn = true, tipRecent = [];
+  try { tipsOn = localStorage.getItem('grau80-dicas') !== '0'; } catch (e) {}
+  function pickTip(how) {
+    if (!tipsOn || cheat || TUT.on || gameMode === 'multi') return '';
+    const r = stats.runs;
+    let p = r <= 10 ? 1 : r <= 30 ? 0.5 : r <= 80 ? 0.25 : 0.1;
+    if (Math.max(bests.motoca, bests.livre) > 300) p *= 0.5; // quem já manda bem vê menos
+    if (Math.random() >= p) return '';
+    const recur = stats.reasons.length >= 3 && stats.reasons.slice(-3).every(x => x === how);
+    let pool = TIPS[how] || TIPS.landed;
+    if (!recur && r <= 15 && Math.random() < 0.4) pool = TIPS.ini;
+    const free = pool.filter(t => !tipRecent.includes(t)), list = free.length ? free : pool;
+    const t = list[Math.floor(Math.random() * list.length)];
+    tipRecent = tipRecent.concat(t).slice(-3);
+    return t;
+  }
+  function showTip(how) {
+    const t = pickTip(how);
+    $('endTip').hidden = !t; $('tipText').textContent = t ? T(t) : '';
+    if (t) track('agenor_tip_viewed');
+  }
+  function setTips(on) {
+    tipsOn = on; try { localStorage.setItem('grau80-dicas', on ? '1' : '0'); } catch (e) {}
+    $('tipToggle').textContent = T(on ? 'Dicas do Agenor: ligadas' : 'Dicas do Agenor: desligadas');
+    $('tipToggle').setAttribute('aria-pressed', String(on));
+    if (!on) { $('endTip').hidden = true; track('agenor_tips_disabled'); }
   }
   // linha do recorde pessoal na tela inicial (cada modo tem o seu)
   function renderPB() {
@@ -4145,6 +4205,7 @@ html.kid #grow-dog { display: none !important; }
     renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl(); renderPB();
     if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
     if (TUT.on) tutRender();
+    if ($('tipToggle').textContent) $('tipToggle').textContent = T(tipsOn ? 'Dicas do Agenor: ligadas' : 'Dicas do Agenor: desligadas');
     if (typeof renderAchModal === 'function' && $('goAch')) { try { renderAchModal(); } catch (e) {} }
   }
   applyLang();
@@ -5136,6 +5197,9 @@ html.kid #grow-dog { display: none !important; }
     track('multiplayer_invite_generated');
   }
   $('goShare').addEventListener('click', () => shareRecord());
+  $('tipOff').addEventListener('click', () => { setTips(false); flash(T('Dicas desligadas. Dá pra ligar de novo embaixo de Como jogar.')); });
+  $('tipToggle').addEventListener('click', () => setTips(!tipsOn));
+  setTips(tipsOn);
   $('mpInvite').addEventListener('click', shareInvite);
   // modal de conquistas: compartilhar o recorde e a coleção
   $('achActs').append(Object.assign(document.createElement('button'), { className: 'go alt', type: 'button', id: 'achShareRec' }), Object.assign(document.createElement('button'), { className: 'go', type: 'button', id: 'achShareAll' }));
