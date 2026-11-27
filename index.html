@@ -231,6 +231,7 @@ canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block
 .card h1, .card h2 { margin: 0; font-family: var(--display); font-weight: 400; color: var(--sodium); line-height: .95; text-wrap: balance; }
 .card h1 { font-size: clamp(44px, 12vw, 72px); }
 .card h2 { font-size: clamp(32px, 9vw, 46px); }
+#endTitle.long { font-size: clamp(24px, 6.5vw, 34px); }
 .card p { margin: 0; font-size: 19px; line-height: 1.35; font-weight: 500; }
 .eyerow { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .langs { display: flex; gap: 4px; }
@@ -423,7 +424,7 @@ button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
   /* tela de fim em duas colunas: resultado à esquerda, nome/Pix/botões à direita */
   #endScreen .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; row-gap: 5px; max-width: 660px; align-items: start; }
   #endScreen .card > * { grid-column: 1; }
-  #endEyebrow { grid-row: 1; } #endTitle { grid-row: 2; } #endLabel { grid-row: 3; } #endDist { grid-row: 4; }
+  #endEyebrow { grid-row: 1; } #endTitle { grid-row: 2; } #endTitle.long { font-size: 19px; } #endLabel { grid-row: 3; } #endDist { grid-row: 4; }
   #endRecord { grid-row: 5; justify-self: start; } #endScreen .meta { grid-row: 6; }
   #endScreen .gsend { grid-column: 2; grid-row: 1 / span 3; }
   #endScreen .pix-mini { grid-column: 2; grid-row: 4; align-self: center; }
@@ -1092,6 +1093,61 @@ html.kid #grow-dog { display: none !important; }
       ['Throttle, pull, find the balance and keep the wheel up for as many meters as you can.',
        'Acelera, tira, encuentra el equilibrio y mantén la rueda arriba la mayor cantidad de metros posible.']
   });
+  Object.assign(I18N, {
+    'A gravidade venceu.': ['Gravity wins.', 'Ganó la gravedad.'],
+    'Foi de caramelo.': ['Turned into a stray.', 'Se volvió perrito.'],
+    'O asfalto cobrou.': ['The asphalt sent the bill.', 'El asfalto pasó la factura.'],
+    'Menos emoção, campeão.': ['Easy there, champ.', 'Menos emoción, campeón.'],
+    'Mais um cliente do Agenor.': ['Another customer for Agenor\'s.', 'Otro cliente para Agenor.'],
+    'Freguês do asfalto.': ['Asphalt regular.', 'Cliente fijo del asfalto.'],
+    'Piloto de azeitona!': ['Olive-pit rider!', '¡Piloto de aceituna!'],
+    'Foi buscar petróleo?': ['Digging for oil?', '¿Fuiste a buscar petróleo?'],
+    'O grau era pra cima, não pra trás.': ['Wheelies go up, not back.', 'El caballito era para arriba, no para atrás.'],
+    'Abraçou o asfalto.': ['Hugged the asphalt.', 'Abrazaste el asfalto.'],
+    'Quase entrou em órbita.': ['Almost reached orbit.', 'Casi entras en órbita.'],
+    'A NASA perdeu um astronauta.': ['NASA lost an astronaut.', 'La NASA perdió un astronauta.'],
+    'Mandou um grau de 180°.': ['That was a 180° wheelie.', 'Mandaste un caballito de 180°.'],
+    'O freio era de enfeite?': ['Was the brake just for show?', '¿El freno era de adorno?'],
+    'A motoca ficou, a dignidade foi embora.': ['The bike stayed. Your dignity left.', 'La moto se quedó, la dignidad se fue.'],
+    'Grau premium, pouso econômico.': ['Premium wheelie, budget landing.', 'Caballito premium, aterrizaje económico.'],
+    'O Caramelo de Patinete faria melhor.': ['The Scooter stray would do better.', 'El Perro en patinete lo haría mejor.'],
+    'A humildade veio pelo asfalto.': ['Humility arrived via asphalt.', 'La humildad llegó por el asfalto.'],
+    'Tá procurando sinal de Wi-Fi no céu?': ['Looking for Wi-Fi in the sky?', '¿Buscando Wi-Fi en el cielo?'],
+    'Do chão não passa!': ['Can\'t fall lower than the ground!', '¡Más abajo que el piso no se puede!'],
+    'Foi de Vasco.': ['Straight to relegation.', 'Se fue al descenso.'],
+    'Virou estampa de camisa.': ['You\'re a T-shirt print now.', 'Quedaste de estampado de remera.'],
+    'Chama o XAMU!': ['Call an ambulance!', '¡Llamen a la ambulancia!'],
+    'Passou Mertiolate, tá novo!': ['A little iodine and good as new!', '¡Un poco de mertiolate y como nuevo!'],
+    'É Bração!': ['All arms, no brakes!', '¡Puro brazo!'],
+    'Tá economizando pneu traseiro?': ['Saving the rear tire?', '¿Ahorrando goma trasera?'],
+    'E o grau, cadê?': ['Where did the wheelie go?', '¿Y el caballito, dónde está?'],
+    'Belo passeio de domingo.': ['Lovely Sunday ride.', 'Lindo paseo de domingo.'],
+    'Duas rodas? Que desperdício!': ['Two wheels? What a waste!', '¿Dos ruedas? ¡Qué desperdicio!'],
+    'Até o Caramelo de Patinete empina mais.': ['Even the Scooter stray wheelies harder.', 'Hasta el Perro en patinete levanta más.'],
+    'A roda da frente tava com saudade do chão.': ['The front wheel missed the ground.', 'La rueda de adelante extrañaba el piso.'],
+    'Nadou... Nadou... e morreu na praia.': ['So close... and yet so far.', 'Nadó, nadó... y se ahogó en la orilla.'],
+    'Faltou vitamina no motor.': ['The engine skipped its vitamins.', 'Al motor le faltaron vitaminas.'],
+    'Grau de baixa altitude.': ['Low-altitude wheelie.', 'Caballito de baja altura.'],
+    'A suspensão agradece.': ['The suspension says thanks.', 'La suspensión te lo agradece.'],
+    'O chão chamou e tu atendeu.': ['The ground called and you picked up.', 'El piso llamó y atendiste.'],
+    'Medo de altura?': ['Scared of heights?', '¿Miedo a las alturas?'],
+    'Sua motoca tem medo de voar.': ['Your bike is scared of flying.', 'Tu moto le tiene miedo a volar.'],
+    'Parabéns pela direção defensiva.': ['Congrats on the defensive driving.', 'Felicitaciones por el manejo defensivo.'],
+    'Grau em horário comercial.': ['Office-hours wheelie.', 'Caballito en horario de oficina.'],
+    'A coragem acabou antes da gasolina.': ['Ran out of guts before gas.', 'Se acabó el coraje antes que la nafta.'],
+    'Carteira de habilitação aprovada.': ['Driver\'s license: approved.', 'Licencia de conducir aprobada.'],
+    'Categoria: entregador de pão.': ['Category: bread delivery.', 'Categoría: repartidor de pan.'],
+    'O puxão ficou pra próxima.': ['The pull is for next time.', 'El tirón quedó para la próxima.'],
+    'O Agenor já tá preparando o orçamento.': ['Agenor\'s already writing up the repair quote.', 'Agenor ya está preparando el presupuesto.'],
+    'O Caramelo de Patinete solicitou sua demissão.': ['The Scooter stray has requested your resignation.', 'El Perro en patinete pidió tu renuncia.'],
+    'Você desbloqueou absolutamente nada.': ['You unlocked absolutely nothing.', 'Desbloqueaste absolutamente nada.'],
+    'Nenhuma habilidade foi encontrada nesta partida.': ['No skill was found in this run.', 'No se encontró ninguna habilidad en esta partida.'],
+    'O desenvolvedor pede desculpas pela sua falta de habilidade.': ['The developer apologizes for your lack of skill.', 'El desarrollador pide disculpas por tu falta de habilidad.'],
+    'Não foi lag. A gente conferiu.': ['It wasn\'t lag. We checked.', 'No fue lag. Lo revisamos.'],
+    'Pode botar a culpa no controle. A gente deixa.': ['Go ahead, blame the controller. We\'ll allow it.', 'Échale la culpa al control. Te dejamos.'],
+    'Sua tentativa foi encaminhada ao departamento de vergonha.': ['Your attempt has been forwarded to the Department of Shame.', 'Tu intento fue enviado al departamento de vergüenza.']
+  });
+  Object.assign(I18N, { 'Frente no chão': ['Front wheel down', 'Rueda al piso'], 'Passou do ponto': ['Went past the point', 'Te pasaste del punto'] });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1938,6 +1994,78 @@ html.kid #grow-dog { display: none !important; }
     uno: ['O Uno ganhou o racha', 'Levou Benga']
   };
   // how = o que aconteceu com a moto ('flip' ou 'landed'); a mensagem muda se a gangue estava na cola
+  // Frase de fim de grau: caiu pra trás (flip) ou encostou a frente (landed). 97% vem do grupo do motivo, 3% das raras;
+  // nunca repete uma das 3 últimas. Os desafios (caramelos, D.U.R.O., Uno, ladrões) seguem com a frase própria.
+  // Pra acrescentar frase: põe aqui (em português) e a tradução no I18N logo abaixo.
+  const END_FRASES = {
+    flip: [
+      'A gravidade venceu.',
+      'Foi de caramelo.',
+      'O asfalto cobrou.',
+      'Menos emoção, campeão.',
+      'Mais um cliente do Agenor.',
+      'Freguês do asfalto.',
+      'Piloto de azeitona!',
+      'Foi buscar petróleo?',
+      'O grau era pra cima, não pra trás.',
+      'Abraçou o asfalto.',
+      'Quase entrou em órbita.',
+      'A NASA perdeu um astronauta.',
+      'Mandou um grau de 180°.',
+      'O freio era de enfeite?',
+      'A motoca ficou, a dignidade foi embora.',
+      'Grau premium, pouso econômico.',
+      'O Caramelo de Patinete faria melhor.',
+      'A humildade veio pelo asfalto.',
+      'Tá procurando sinal de Wi-Fi no céu?',
+      'Do chão não passa!',
+      'Foi de Vasco.',
+      'Virou estampa de camisa.',
+      'Chama o XAMU!',
+      'Passou Mertiolate, tá novo!',
+      'É Bração!'
+    ],
+    landed: [
+      'Tá economizando pneu traseiro?',
+      'E o grau, cadê?',
+      'Belo passeio de domingo.',
+      'Duas rodas? Que desperdício!',
+      'Até o Caramelo de Patinete empina mais.',
+      'A roda da frente tava com saudade do chão.',
+      'Nadou... Nadou... e morreu na praia.',
+      'Faltou vitamina no motor.',
+      'Grau de baixa altitude.',
+      'A suspensão agradece.',
+      'O chão chamou e tu atendeu.',
+      'Medo de altura?',
+      'Sua motoca tem medo de voar.',
+      'Parabéns pela direção defensiva.',
+      'Grau em horário comercial.',
+      'A coragem acabou antes da gasolina.',
+      'Carteira de habilitação aprovada.',
+      'Categoria: entregador de pão.',
+      'O puxão ficou pra próxima.'
+    ],
+    rare: [
+      'O Agenor já tá preparando o orçamento.',
+      'O Caramelo de Patinete solicitou sua demissão.',
+      'Você desbloqueou absolutamente nada.',
+      'Nenhuma habilidade foi encontrada nesta partida.',
+      'O desenvolvedor pede desculpas pela sua falta de habilidade.',
+      'Não foi lag. A gente conferiu.',
+      'Pode botar a culpa no controle. A gente deixa.',
+      'Sua tentativa foi encaminhada ao departamento de vergonha.'
+    ]
+  };
+  const endRecent = [];
+  function pickEndFrase(kind) {
+    const pool = Math.random() < 0.03 ? END_FRASES.rare : END_FRASES[kind];
+    const free = pool.filter(f => !endRecent.includes(f));
+    const list = free.length ? free : pool;
+    const f = list[Math.floor(Math.random() * list.length)];
+    endRecent.push(f); if (endRecent.length > 3) endRecent.shift();
+    return f;
+  }
   // placar global (Supabase): qualquer um lê o top 10 e envia o recorde; o banco barra média acima de 90 km/h
   const SB = { url: 'https://heimruhhkkqtjbrwhcvr.supabase.co/rest/v1/placar', key: 'sb_publishable_WJcCRrGAeHAdwf34hX48Tg_NtuxUkX5' };
   let board = null, myName = '';
@@ -2178,7 +2306,10 @@ html.kid #grow-dog { display: none !important; }
     s.mode = 'over'; s.reason = how; s.dieT = 0;
     recordWheelie();
     ui.endEyebrow.textContent = T(END_TEXT[msg][0]);
-    ui.endTitle.textContent = T(END_TEXT[msg][1]);
+    // sorteada uma vez só, aqui no fim da volta
+    s.endFrase = msg === 'flip' || msg === 'landed' ? pickEndFrase(msg) : END_TEXT[msg][1];
+    ui.endTitle.textContent = T(s.endFrase);
+    ui.endTitle.classList.toggle('long', T(s.endFrase).length > 24);
     $('endLabel').textContent = T(gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando');
     $('endCountRow').hidden = gameMode !== 'livre';
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
