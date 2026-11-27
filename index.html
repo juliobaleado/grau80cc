@@ -636,6 +636,31 @@ html.kid #grow-dog { display: none !important; }
 .confetti i { position: absolute; top: -14px; width: 8px; height: 13px; border-radius: 2px; animation: conf 1.9s ease-in forwards; }
 @keyframes conf { to { transform: translate(var(--dx), 108vh) rotate(var(--r)); } }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .pb { animation: none; } }
+/* Minhas Conquistas: coleção de medalhas */
+.pixm-card.achcard { width: min(100%, 720px); align-items: stretch; text-align: left; max-height: calc(100dvh - 32px); overflow: hidden; box-sizing: border-box; }
+@media (max-height: 500px) { .pixm-card.achcard { display: flex; flex-direction: column; gap: 6px; padding-top: 10px; padding-bottom: 10px; } .pixm-card.achcard h2 { font-size: 22px; } }
+.achhead { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--muted); }
+.achhead b { color: var(--ink); }
+.achbar { flex: 1; height: 8px; border-radius: 4px; background: rgba(243, 239, 230, .12); overflow: hidden; }
+.achbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--sodium), var(--ok)); }
+.achtabs { flex: none; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.achtabs button { flex: 0 1 auto; padding: 6px 10px; min-height: 34px; }
+.achgrid { flex: 1 1 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 8px; overflow-y: auto; min-height: 0; padding-right: 2px; }
+.achc { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border: 1px solid rgba(243, 239, 230, .14); border-radius: 4px; background: rgba(243, 239, 230, .03); }
+.achc.got { border-color: rgba(255, 181, 71, .7); background: rgba(255, 181, 71, .08); }
+.achc .medal { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; font: 400 18px/1 var(--display);
+  color: var(--muted); background: rgba(243, 239, 230, .06); border: 2px dashed rgba(243, 239, 230, .25); }
+.achc.got .medal { color: var(--night); background: radial-gradient(circle at 35% 30%, #ffe6b3, var(--sodium) 58%, #c97a22); border: 2px solid #ffe6b3; box-shadow: 0 0 12px rgba(255, 181, 71, .35); }
+.achc .ainfo { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.achc b { font: 700 15px/1.12 var(--hud); color: var(--ink); }
+.achc:not(.got) b { color: rgba(243, 239, 230, .7); }
+.achc small { font-size: 13px; line-height: 1.25; color: var(--muted); }
+.achc .areward { color: var(--sodium); }
+.achprog { height: 5px; border-radius: 3px; background: rgba(243, 239, 230, .12); overflow: hidden; margin-top: 3px; }
+.achprog i { display: block; height: 100%; background: var(--ok); }
+.achc .ashare { align-self: flex-start; margin-top: 4px; font: 700 11px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium);
+  background: none; border: 1px solid rgba(255, 181, 71, .5); border-radius: 2px; padding: 5px 8px; min-height: 30px; cursor: pointer; }
+.ach .label::before { content: "★ "; }
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -768,6 +793,7 @@ html.kid #grow-dog { display: none !important; }
         <button class="go alt" id="goLeave" type="button" data-i hidden>Sair da sala</button>
         <button class="go alt" id="goMulti" type="button">Multiplayer</button>
         <button class="go alt" id="goCtl" type="button" data-i>Controles</button>
+        <button class="go alt" id="goAch" type="button" data-i>Minhas conquistas</button>
       </div>
       <button class="howx" id="howX" type="button" aria-expanded="true" aria-controls="howList"><span id="howXt">Fechar instruções</span> <b id="howXi" aria-hidden="true">▴</b></button>
       <div class="tutrow" id="tutRow"><button class="go alt" id="tutMenuBtn" type="button" data-i>Tutorial de menus</button><button class="go alt" id="tutJogoBtn" type="button" data-i>Tutorial de como jogar</button></div>
@@ -862,6 +888,16 @@ html.kid #grow-dog { display: none !important; }
     <span class="pixm-msg" data-i>Silenciado some do teu chat e fica mudo na voz. A denúncia vai pra moderação do jogo.</span>
     <span class="pixm-msg" id="modMsg" aria-live="polite"></span>
     <button class="go alt" id="modUnblock" type="button" hidden></button>
+  </div>
+</div>
+<div class="pixm" id="achModal" role="dialog" aria-modal="true" aria-labelledby="achTitle" hidden>
+  <div class="pixm-card achcard">
+    <button class="pixm-x" id="achClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="achTitle" data-i>Minhas conquistas</h2>
+    <div class="achhead"><span id="achCount"></span><div class="achbar" aria-hidden="true"><i id="achBar"></i></div></div>
+    <div class="tabs achtabs" id="achTabs" role="tablist"></div>
+    <div class="achgrid" id="achGrid"></div>
+    <div class="actions" id="achActs"></div>
   </div>
 </div>
 <div class="pixm agem" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle" hidden>
@@ -1182,6 +1218,47 @@ html.kid #grow-dog { display: none !important; }
     'pro teu recorde': ['short of your best', 'para tu récord'],
     'Teu recorde': ['Your best', 'Tu récord']
   });
+  Object.assign(I18N, {
+    'Minhas conquistas': ['My achievements', 'Mis logros'],
+    'Conquista na conta!': ['Achievement unlocked!', '¡Logro en la cuenta!'],
+    'Todas': ['All', 'Todos'],
+    'Habilidade': ['Skill', 'Habilidad'],
+    'Evolução': ['Progress', 'Evolución'],
+    'Humor': ['Humor', 'Humor'],
+    'Competição': ['Competition', 'Competencia'],
+    'Comunidade': ['Community', 'Comunidad'],
+    'Conquista secreta': ['Secret achievement', 'Logro secreto'],
+    'Libera:': ['Unlocks:', 'Desbloquea:'],
+    'de': ['of', 'de'],
+    'Liberada em': ['Unlocked on', 'Desbloqueado el'],
+    'Liberada': ['Unlocked', 'Desbloqueado'],
+    'Bloqueada': ['Locked', 'Bloqueado'],
+    'Compartilhar': ['Share', 'Compartir'],
+    'Piloto de Azeitona': ['Olive-Pit Rider', 'Piloto de Aceituna'],
+    'Cair pra trás pela primeira vez': ['Flip over for the first time', 'Darte vuelta por primera vez'],
+    'Caramelo Profissional': ['Professional Stray', 'Perrito Profesional'],
+    'Acumular 100 quedas': ['Crash 100 times', 'Acumular 100 caídas'],
+    'Cliente VIP do Agenor': ['Agenor\'s VIP Customer', 'Cliente VIP de Agenor'],
+    'Acumular 500 quedas': ['Crash 500 times', 'Acumular 500 caídas'],
+    'Duas Rodas é Luxo': ['Two Wheels Is a Luxury', 'Dos Ruedas Es un Lujo'],
+    'Segurar um grau por 10 segundos': ['Hold a wheelie for 10 seconds', 'Mantener un caballito 10 segundos'],
+    'Inimigo da Gravidade': ['Enemy of Gravity', 'Enemigo de la Gravedad'],
+    'Segurar um grau por 60 segundos': ['Hold a wheelie for 60 seconds', 'Mantener un caballito 60 segundos'],
+    'Aposentadoria do Pneu Dianteiro': ['Front Tire Retirement', 'Jubilación de la Rueda Delantera'],
+    'Segurar um grau por 300 segundos': ['Hold a wheelie for 300 seconds', 'Mantener un caballito 300 segundos'],
+    'Passeio de Domingo': ['Sunday Ride', 'Paseo de Domingo'],
+    '10 voltas seguidas com grau de menos de 1 segundo': ['10 runs in a row with wheelies under 1 second', '10 vueltas seguidas con caballitos de menos de 1 segundo'],
+    'Humildade': ['Humility', 'Humildad'],
+    'Bater o recorde e, na volta seguinte, cair com menos de 1 segundo de grau': ['Set a record, then crash with under 1 second of wheelie on the next run', 'Batir tu récord y, en la vuelta siguiente, caerte con menos de 1 segundo de caballito'],
+    'A Firma Tá Forte': ['The Crew Is Strong', 'La Banda Está Fuerte'],
+    'Jogar uma rodada do multiplayer com 7 na sala': ['Play a multiplayer round with 7 in the room', 'Jugar una ronda multijugador con 7 en la sala'],
+    'A Elite do Grau': ['Wheelie Elite', 'La Élite del Caballito'],
+    'Entrar no top 10 do placar mundial': ['Make the world top 10', 'Entrar al top 10 mundial'],
+    'Dono da Coroa': ['Owner of the Crown', 'Dueño de la Corona'],
+    'Ficar em 1º lugar no placar mundial': ['Take 1st place on the world leaderboard', 'Quedar 1º en el ranking mundial'],
+    'Eu Acredito no Projeto': ['I Believe in the Project', 'Creo en el Proyecto'],
+    'Apoiar o projeto com um pastel na Google Play': ['Support the project with a pastel on Google Play', 'Apoyar el proyecto con un pastel en Google Play']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1435,6 +1512,7 @@ html.kid #grow-dog { display: none !important; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
+    if (e.code === 'Escape' && !$('achModal').hidden) { e.preventDefault(); closeAch(); return; }
     if (e.code === 'Escape' && !$('pixModal').hidden) { e.preventDefault(); closePix(); return; }
     if (e.code === 'Escape' && !$('doaModal').hidden) { e.preventDefault(); closeDoa(); return; }
     if (e.code === 'Escape' && !$('modModal').hidden) { e.preventDefault(); closeMod(); return; }
@@ -1453,7 +1531,7 @@ html.kid #grow-dog { display: none !important; }
   // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
   // tela inicial; só na tela inicial ele devolve false e o Android sai do app
   window.grauBack = () => {
-    for (const [id, close] of [['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
+    for (const [id, close] of [['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
       if (!$(id).hidden) { close(); return true; }
     }
     if (!$('ageModal').hidden) return false;
@@ -1565,7 +1643,7 @@ html.kid #grow-dog { display: none !important; }
     const last = s.last;
     s = fresh(); s.last = last; paused = false;
     ui.pause.hidden = true; ui.end.hidden = true; ui.start.hidden = false;
-    loadBoard(); renderPB();
+    loadBoard(); renderPB(); renderAchModal();
     keys.clear(); ptrs.clear(); mouseBtns = 0; syncInput();
     $('goStart').focus();
     mpHud();
@@ -1925,9 +2003,74 @@ html.kid #grow-dog { display: none !important; }
     { id: 'grau3000', why: '3.000 m de grau', name: 'Rei da Quebrada', test: () => s.active && s.wDist >= 3000 },
     { id: 'grau5000', why: '5.000 m de grau', name: 'Ronco em dobro', test: () => s.active && s.wDist >= 5000 }
   ];
-  let unlocked = {};
+  // Conquistas do Welcome Update: só reconhecimento (não liberam nada nem mexem no placar). Ficam no mesmo grau80-ach.
+  // Contam no Modo Motoca e na sala (o Modo Livre segue "sem conquistas"); nunca no modo teste nem na demonstração.
+  // prog = [atual, meta] pra barra de progresso; secret = esconde nome e critério até liberar (estrutura pronta, nenhuma por enquanto)
+  const WACHS = [
+    { id: 'w_azeitona', cat: 'humor', name: 'Piloto de Azeitona', why: 'Cair pra trás pela primeira vez' },
+    { id: 'w_caramelo100', cat: 'humor', name: 'Caramelo Profissional', why: 'Acumular 100 quedas', prog: () => [stats.quedas, 100] },
+    { id: 'w_vip500', cat: 'humor', name: 'Cliente VIP do Agenor', why: 'Acumular 500 quedas', prog: () => [stats.quedas, 500] },
+    { id: 'w_luxo10', cat: 'habilidade', name: 'Duas Rodas é Luxo', why: 'Segurar um grau por 10 segundos', prog: () => [Math.floor(stats.maxWT), 10] },
+    { id: 'w_gravidade60', cat: 'habilidade', name: 'Inimigo da Gravidade', why: 'Segurar um grau por 60 segundos', prog: () => [Math.floor(stats.maxWT), 60] },
+    { id: 'w_aposentadoria300', cat: 'habilidade', name: 'Aposentadoria do Pneu Dianteiro', why: 'Segurar um grau por 300 segundos', prog: () => [Math.floor(stats.maxWT), 300] },
+    { id: 'w_domingo', cat: 'humor', name: 'Passeio de Domingo', why: '10 voltas seguidas com grau de menos de 1 segundo', prog: () => [stats.curtas, 10] },
+    { id: 'w_humildade', cat: 'humor', name: 'Humildade', why: 'Bater o recorde e, na volta seguinte, cair com menos de 1 segundo de grau' },
+    { id: 'w_firma7', cat: 'multi', name: 'A Firma Tá Forte', why: 'Jogar uma rodada do multiplayer com 7 na sala' },
+    { id: 'w_elite', cat: 'competicao', name: 'A Elite do Grau', why: 'Entrar no top 10 do placar mundial' },
+    { id: 'w_rei', cat: 'competicao', name: 'Dono da Coroa', why: 'Ficar em 1º lugar no placar mundial' },
+    { id: 'w_apoio', cat: 'comunidade', name: 'Eu Acredito no Projeto', why: 'Apoiar o projeto com um pastel na Google Play' }
+  ];
+  // categoria das conquistas antigas (as que liberam bike e item continuam iguais)
+  const ACH_CAT = { grau30: 'evolucao', grau2000: 'evolucao', grau3000: 'evolucao', grau5000: 'evolucao', grau100: 'habilidade', grau200: 'habilidade', grau300: 'habilidade', grau500: 'habilidade', grau700: 'habilidade' };
+  let unlocked = {}, achDates = {};
   try { unlocked = JSON.parse(localStorage.getItem('grau80-ach') || '{}') || {}; } catch (e) {}
+  try { achDates = JSON.parse(localStorage.getItem('grau80-ach-data') || '{}') || {}; } catch (e) {}
+  const saveAch = () => { try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); localStorage.setItem('grau80-ach-data', JSON.stringify(achDates)); } catch (e) {} };
   let achTimer = 0;
+  // avisos em fila: várias conquistas juntas aparecem uma depois da outra, sem parar a partida
+  const achQ = []; let achBusy = false;
+  function achShow(why, name) { achQ.push([why, name]); if (!achBusy) achNext(); }
+  function achNext() {
+    const n = achQ.shift();
+    if (!n) { achBusy = false; return; }
+    achBusy = true;
+    $('achWhy').textContent = n[0]; $('achName').textContent = n[1];
+    $('ach').classList.add('show'); achSound();
+    clearTimeout(achTimer); achTimer = setTimeout(() => { $('ach').classList.remove('show'); setTimeout(achNext, 400); }, 3600);
+  }
+  function unlockW(id) {
+    if (cheat || TUT.on || unlocked[id]) return;
+    const a = WACHS.find(x => x.id === id); if (!a) return;
+    unlocked[id] = true; achDates[id] = Date.now(); saveAch();
+    if (s) s.gotAch = true;
+    achShow(T('Conquista desbloqueada · ') + T(a.why), T(a.name));
+    track('achievement_unlocked', { id });
+    if (!$('achModal').hidden) renderAchModal();
+  }
+  // grau em segundos (Motoca e sala): roda junto com as conquistas antigas
+  function checkTimeAch() {
+    if (cheat || TUT.on || !(gameMode === 'motoca' || gameMode === 'multi')) return;
+    if (s.wTime > stats.maxWT) stats.maxWT = s.wTime;
+    if (s.wTime >= 10) unlockW('w_luxo10');
+    if (s.wTime >= 60) unlockW('w_gravidade60');
+    if (s.wTime >= 300) unlockW('w_aposentadoria300');
+  }
+  function quedaAchs(how) {
+    stats.quedas++;
+    if (how === 'flip') unlockW('w_azeitona');
+    if (stats.quedas >= 100) unlockW('w_caramelo100');
+    if (stats.quedas >= 500) unlockW('w_vip500');
+  }
+  // fim de volta no Motoca: quedas, voltas curtas seguidas e a humildade depois do recorde
+  function endAchs(how, pb) {
+    quedaAchs(how);
+    const curta = (s.maxWT || 0) < 1;
+    stats.curtas = curta ? stats.curtas + 1 : 0;
+    if (stats.curtas >= 10) unlockW('w_domingo');
+    if (stats.posRec && curta) unlockW('w_humildade');
+    stats.posRec = !!pb;
+    saveStats();
+  }
   function renderAchList() {
     // no modo teste aparecem todas, pra ver tudo que o jogo tem
     const got = cheat ? ACHS : ACHS.filter(a => unlocked[a.id]);
@@ -1943,16 +2086,13 @@ html.kid #grow-dog { display: none !important; }
       if (!a.test()) continue;
       if (cheat) s.achSeen[a.id] = true;
       else {
-        unlocked[a.id] = true;
-        try { localStorage.setItem('grau80-ach', JSON.stringify(unlocked)); } catch (e) {}
+        unlocked[a.id] = true; achDates[a.id] = Date.now(); saveAch();
       }
+      s.gotAch = true;
       const bike = Object.values(LOOKS.model.opts).find(o => o.lock && lockMain(o) === a.id);
       const item = !bike && Object.values(LOOKS.cabeca.opts).find(o => o.lock === a.id);
-      $('achWhy').textContent = T(cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? T(' · liberou a ') + bike.name : item && !cheat ? T(' · liberou o ') + T(item.name) : '');
-      $('achName').textContent = a.name;
-      $('ach').classList.add('show');
-      clearTimeout(achTimer); achTimer = setTimeout(() => $('ach').classList.remove('show'), 4500);
-      achSound(); renderAchList(); if (typeof renderGarage === 'function') renderGarage();
+      achShow(T(cheat ? 'Modo teste · ' : 'Conquista desbloqueada · ') + a.why + (bike && !cheat ? T(' · liberou a ') + bike.name : item && !cheat ? T(' · liberou o ') + T(item.name) : ''), a.name);
+      renderAchList(); if (typeof renderGarage === 'function') renderGarage();
     }
   }
   function achSound() {
@@ -2000,6 +2140,7 @@ html.kid #grow-dog { display: none !important; }
     }
     else if (!TUT.on) try { localStorage.setItem('grau80-mode', gameMode); } catch (e) {}
     best = gameMode === 'multi' ? room.best : bests[gameMode];
+    if (gameMode === 'multi' && new Set(Object.keys(room.members).concat(myId)).size >= 7) unlockW('w_firma7'); // a firma tá completa
     $('hudMode').textContent = modeLabel();
     wakeAudio();
     const last = s.last; // "Última" continua mostrando a empinada da rodada anterior
@@ -2219,6 +2360,9 @@ html.kid #grow-dog { display: none !important; }
         if (!r.ok) throw new Error(r.status);
       }
       s.sent = true; myName = nome;
+      // entrou no top 10 pelo sistema oficial do placar; 1º lugar confirmado pela lista que volta do servidor
+      unlockW('w_elite');
+      loadBoard().then(() => { if (board && board[0] && board[0].nome.trim().toLowerCase() === nome.trim().toLowerCase()) unlockW('w_rei'); });
       try { localStorage.setItem('grau80-nome', nome); } catch (e2) {}
       $('gMsg').textContent = T('Tá no placar global!');
       $('gName').disabled = true; $('gBtn').disabled = true;
@@ -2289,6 +2433,7 @@ html.kid #grow-dog { display: none !important; }
       let changed = false;
       for (const p of PASTEIS) if (got.has(p.id) !== owned.has(p.id)) { got.has(p.id) ? owned.add(p.id) : owned.delete(p.id); changed = true; }
       if (changed) { saveOwned(); renderGarage(); if (!$('doaModal').hidden) renderDoa(); }
+      if (owned.size) unlockW('w_apoio'); // compra confirmada pela Google Play (vale pra quem já tinha comprado)
     } catch (e) {}
   }
   // aviso de versão nova: o app consulta versao.json no site; se a versão dele for menor que o "minimo", pede pra
@@ -2314,7 +2459,7 @@ html.kid #grow-dog { display: none !important; }
     renderDoa(true); $('doaMsg').textContent = T('Abrindo a Google Play…');
     try {
       await Store.purchaseProduct({ productIdentifier: p.id, productType: 'inapp', quantity: 1, isConsumable: false });
-      owned.add(p.id); saveOwned();
+      owned.add(p.id); saveOwned(); unlockW('w_apoio');
       pick.dog = p.dog; try { localStorage.setItem('grau80-look', JSON.stringify(pick)); } catch (e) {}
       renderGarage();
       $('doaMsg').textContent = T('Valeu demais pelo pastel! Teu caramelo novo já tá na garagem.');
@@ -2356,8 +2501,9 @@ html.kid #grow-dog { display: none !important; }
     ui.endEyebrow.textContent = T(END_TEXT[msg][0]);
     // sorteada uma vez só, aqui no fim da volta
     const pb = s.newRecord && !cheat; // bateu o recorde pessoal: a frase não tira sarro
+    if (gameMode === 'motoca' && !cheat && !TUT.on) endAchs(how, pb);
     if (!cheat && !TUT.on) { stats.runs++; stats.reasons = stats.reasons.concat(how).slice(-5); saveStats(); }
-    s.endFrase = pb ? 'Tá evoluindo!' : msg === 'flip' || msg === 'landed' ? pickEndFrase(msg) : END_TEXT[msg][1];
+    s.endFrase = pb ? 'Tá evoluindo!' : s.gotAch ? 'Conquista na conta!' : msg === 'flip' || msg === 'landed' ? pickEndFrase(msg) : END_TEXT[msg][1];
     ui.endTitle.textContent = T(s.endFrase);
     ui.endTitle.classList.toggle('long', T(s.endFrase).length > 24);
     $('endLabel').textContent = T(gameMode === 'livre' ? 'Maior empinada da volta' : 'Distância empinando');
@@ -2501,7 +2647,7 @@ html.kid #grow-dog { display: none !important; }
       }
       if (riding && s.mode === 'ride') {
         if (!s.active && s.th > 0.08) { s.active = true; s.wStart = s.x; s.wTime = 0; if (gameMode === 'multi') rearm(); }
-        if (s.active) { s.wTime += h; s.maxWT = Math.max(s.maxWT || 0, s.wTime); s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); }
+        if (s.active) { s.wTime += h; s.maxWT = Math.max(s.maxWT || 0, s.wTime); s.wDist = s.x - s.wStart; s.top = Math.max(s.top, s.v); checkAch(); checkTimeAch(); }
         if (s.th > CRASH) { if (TUT.on) tutCrash(); else finish('flip'); }
       }
     } else if (s.mode === 'dog') {
@@ -3926,6 +4072,7 @@ html.kid #grow-dog { display: none !important; }
     renderGarage(); renderAchList(); renderBoard(); mpHud(); applyCtl(); renderPB();
     if (!$('ctlModal').hidden) { renderCtl(); renderBinds(); renderPadStatus(); }
     if (TUT.on) tutRender();
+    if (typeof renderAchModal === 'function' && $('goAch')) { try { renderAchModal(); } catch (e) {} }
   }
   applyLang();
 
@@ -4749,6 +4896,57 @@ html.kid #grow-dog { display: none !important; }
   $('mpName').addEventListener('change', e => setName(e.target.value));
   $('mpName').placeholder = guest;
 
+  // ---------- Minhas Conquistas ----------
+  const ACH_TABS = [['todas', 'Todas'], ['habilidade', 'Habilidade'], ['evolucao', 'Evolução'], ['humor', 'Humor'], ['multi', 'Multiplayer'], ['competicao', 'Competição'], ['comunidade', 'Comunidade']];
+  const ACH_ICON = { habilidade: '⚡', evolucao: '★', humor: '☺', multi: '7', competicao: '♛', comunidade: '♥' };
+  let achTab = 'todas';
+  // as antigas (nome e critério como sempre foram) + as novas, numa lista só
+  function allAchs() {
+    return ACHS.map(a => {
+      const bike = Object.values(LOOKS.model.opts).find(o => o.lock && lockMain(o) === a.id);
+      const item = !bike && Object.values(LOOKS.cabeca.opts).find(o => o.lock === a.id);
+      return { id: a.id, cat: ACH_CAT[a.id] || 'evolucao', name: a.name, why: a.why, reward: bike ? bike.name : item ? T(item.name) : '', old: true };
+    }).concat(WACHS);
+  }
+  function renderAchModal() {
+    const L = allAchs(), got = L.filter(a => unlocked[a.id]).length, pct = Math.round(100 * got / L.length);
+    $('achCount').innerHTML = ''; $('achCount').append(Object.assign(document.createElement('b'), { textContent: got + '/' + L.length }), ' · ' + pct + '%');
+    $('achBar').style.width = pct + '%';
+    const tabs = $('achTabs'); tabs.textContent = '';
+    for (const [k, lab] of ACH_TABS) {
+      if (k !== 'todas' && !L.some(a => a.cat === k)) continue;
+      const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(k === achTab)); b.textContent = T(lab);
+      b.addEventListener('click', () => { achTab = k; renderAchModal(); });
+      tabs.append(b);
+    }
+    const grid = $('achGrid'); grid.textContent = '';
+    const list = L.filter(a => achTab === 'todas' || a.cat === achTab).sort((a, b) => (unlocked[b.id] ? 1 : 0) - (unlocked[a.id] ? 1 : 0));
+    for (const a of list) {
+      const on = !!unlocked[a.id], hide = a.secret && !on;
+      const c = document.createElement('div'); c.className = 'achc' + (on ? ' got' : '');
+      const m = document.createElement('span'); m.className = 'medal'; m.textContent = on ? ACH_ICON[a.cat] || '★' : '🔒'; m.setAttribute('aria-hidden', 'true');
+      const inf = document.createElement('div'); inf.className = 'ainfo';
+      inf.append(Object.assign(document.createElement('b'), { textContent: hide ? T('Conquista secreta') : a.old ? a.name : T(a.name) }));
+      inf.append(Object.assign(document.createElement('small'), { textContent: hide ? '???' : T(a.why) }));
+      if (a.reward && !hide) inf.append(Object.assign(document.createElement('small'), { className: 'areward', textContent: T('Libera:') + ' ' + a.reward }));
+      if (!on && a.prog && !hide) {
+        const [cur, max] = a.prog(), v = Math.min(cur, max);
+        inf.append(Object.assign(document.createElement('small'), { textContent: v + ' ' + T('de') + ' ' + max }));
+        const pg = document.createElement('div'); pg.className = 'achprog'; pg.append(Object.assign(document.createElement('i'), { style: 'width:' + Math.round(100 * v / max) + '%' })); inf.append(pg);
+      }
+      if (on && achDates[a.id]) inf.append(Object.assign(document.createElement('small'), { textContent: T('Liberada em') + ' ' + new Date(achDates[a.id]).toLocaleDateString(LANG === 'pt' ? 'pt-BR' : LANG) }));
+      if (on && typeof shareAch === 'function') { const sb = document.createElement('button'); sb.type = 'button'; sb.className = 'ashare'; sb.textContent = T('Compartilhar'); sb.addEventListener('click', () => shareAch(a)); inf.append(sb); }
+      c.setAttribute('aria-label', (on ? T('Liberada') : T('Bloqueada')) + ': ' + (hide ? T('Conquista secreta') : a.old ? a.name : T(a.name)));
+      c.append(m, inf); grid.append(c);
+    }
+    $('goAch').textContent = T('Minhas conquistas') + ' ' + got + '/' + L.length;
+  }
+  function openAch() { renderAchModal(); $('achModal').hidden = false; track('achievements_opened'); $('achClose').focus(); }
+  function closeAch() { $('achModal').hidden = true; }
+  $('goAch').addEventListener('click', openAch);
+  $('achClose').addEventListener('click', closeAch);
+  $('achModal').addEventListener('click', e => { if (e.target === $('achModal')) closeAch(); });
+
   // ---------- onboarding: tutorial de menus e tutorial de como jogar ----------
   // Versão de cada tutorial: subir o número faz todo mundo (novo e antigo) ver de novo. Visto ou pulado grava a versão;
   // fechar o jogo no meio não grava. Os dois são independentes.
@@ -5311,7 +5509,7 @@ html.kid #grow-dog { display: none !important; }
   }
 
   // --- rodada: quem vira pra trás vira caramelo e corre atrás de quem ainda está empinando ---
-  function mpDie() { s.mode = 'over'; s.reason = 'flip'; s.dieT = 0; recordWheelie(); }
+  function mpDie() { s.mode = 'over'; s.reason = 'flip'; s.dieT = 0; recordWheelie(); if (!cheat && !TUT.on) { quedaAchs('flip'); saveStats(); } }
   function mpRecord(d) {
     const top = Math.max(0, ...[...remotes.values()].map(r => r.b || 0));
     const rec = d > room.best + 0.05;
