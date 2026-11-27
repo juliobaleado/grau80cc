@@ -6,7 +6,7 @@ const fs = require('fs'), http = require('http'), path = require('path');
 const ROOT = path.join(__dirname, '..');
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const j = html.lastIndexOf('})();');
-html = html.slice(0, j) + 'window.__t={get pick(){return pick},input,get myName(){return myName},get muted(){return muted},set unread(v){chatUnread=v;renderChatTab()},get KID(){return KID}};\n' + html.slice(j);
+html = html.slice(0, j) + 'window.__t={get pick(){return pick},input,get myName(){return myName},get muted(){return muted},set unread(v){chatUnread=v;renderChatTab()},get KID(){return KID},get cam(){return LOBBY_CAM}};\n' + html.slice(j);
 const srv = http.createServer((q, r) => {
   const u = q.url.split('?')[0];
   if (u.startsWith('/img/') && fs.existsSync(path.join(ROOT, u))) { r.writeHead(200, { 'content-type': 'image/webp' }); return r.end(fs.readFileSync(path.join(ROOT, u))); }
@@ -111,6 +111,53 @@ const BOARD = [{ nome: 'ReiDoGrau', metros: 2310.4 }, { nome: 'Zezinho', metros:
   await p.click('#agenorBtn'); await wait(200);
   ok(await p.evaluate(() => __t.KID && getComputedStyle(document.getElementById('agPix')).display === 'none' && getComputedStyle(document.getElementById('lobby')).display === 'none'), 'menor de 13: sem pagamento no Pastel e sem chat');
   await p.close();
+  console.log('— V1.1: telas baixas (chat, garagem, enquadramento, modais, teclado)');
+  for (const [w, hh] of [[667, 375], [844, 390], [1024, 768], [1366, 768]]) {
+    const touch = hh < 500;
+    const { p, errs } = await session({ ...SAVE, 'grau80-chat': '1' }, { vw: w, vh: hh, touch });
+    const inter = (a, b) => !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
+    const g = await p.evaluate(() => { const R = e => e.getBoundingClientRect().toJSON(); return { chat: R(document.getElementById('lobby')), card: R(document.querySelector('.lcard')), inp: R(document.getElementById('lobbyIn')) }; });
+    ok(!inter(g.chat, g.card) && g.inp.bottom <= hh + 1 && g.inp.top >= 0, `${w}x${hh}: chat aberto não cobre o lobby e o campo fica à vista`, { chat: [Math.round(g.chat.left), Math.round(g.chat.right)], card: Math.round(g.card.left) });
+    await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-chat.png`) });
+    if (touch) {
+      await p.click('#lobbyIn'); await p.setViewport({ width: w, height: Math.round(hh * 0.55), hasTouch: true, isMobile: true }); await wait(250);
+      const k = await p.evaluate(() => { const r = document.getElementById('lobbyIn').getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight + 1; });
+      ok(k, `${w}x${hh}: com o teclado aberto o campo do chat continua à vista`);
+      await p.setViewport({ width: w, height: hh, hasTouch: true, isMobile: true }); await wait(250);
+    }
+    await p.click('#chatTab'); await p.click('#navGarage'); await wait(500);
+    const gg = await p.evaluate(() => {
+      const gar = document.getElementById('garage'); gar.scrollTop = gar.scrollHeight; const R = e => e.getBoundingClientRect();
+      const items = [...gar.querySelectorAll('.grow:not([hidden]) .sw')]; const last = items[items.length - 1]; const foot = R(document.querySelector('.gfoot')), gr = R(gar);
+      const c = __t.cam;
+      return { lastOk: R(last).bottom <= gr.bottom + 1 && R(last).bottom <= foot.top + 1, footOk: foot.bottom <= innerHeight + 1, qp: getComputedStyle(document.getElementById('quickPlay')).display,
+        bike: c && c.l ? { esq: Math.round(c.x - 1.0 * c.S), dir: Math.round(c.x + 1.5 * c.S), painel: Math.round(c.l) } : null };
+    });
+    ok(gg.lastOk && gg.footOk && gg.qp === 'none', `${w}x${hh}: garagem com rodapé Jogar reservado, último item alcançável, sem botão flutuante por cima`, gg);
+    ok(!gg.bike || (gg.bike.esq >= 0 && gg.bike.dir <= gg.bike.painel), `${w}x${hh}: piloto e moto inteiros fora do painel durante a garagem`, gg.bike);
+    await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-garagem.png`) });
+    await p.click('#navPlay');
+    for (const [btn, modal] of [['navRank', 'rankModal'], ['goAch', 'achModal'], ['helpBtn', 'helpModal'], ['setBtn', 'setModal'], ['goMulti', 'mpModal'], ['agenorBtn', 'agModal']]) {
+      await p.click('#' + btn); await wait(350);
+      const r = await p.evaluate(m => {
+        const c = document.querySelector('#' + m + ' .pixm-card'), x = document.querySelector('#' + m + ' .pixm-x'); c.scrollTop = c.scrollHeight;
+        const kids = [...c.querySelectorAll('*')].filter(e => e.offsetParent && !e.closest('.pixm-x') && e.children.length === 0); const last = kids[kids.length - 1];
+        const cr = c.getBoundingClientRect(), lr = last.getBoundingClientRect(), xr = x.getBoundingClientRect();
+        return { cabe: cr.top >= 0 && cr.bottom <= innerHeight + 1, fechar: xr.top >= cr.top - 1 && xr.bottom <= innerHeight && xr.right <= innerWidth, ultimo: lr.bottom <= cr.bottom + 1, horiz: c.scrollWidth <= c.clientWidth + 1 };
+      }, modal);
+      ok(r.cabe && r.fechar && r.ultimo && r.horiz, `${w}x${hh}: ${modal} cabe, fechar sempre à vista, último item alcançável, sem rolagem lateral`, r);
+      await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-${modal}.png`) });
+      await p.keyboard.press('Escape'); await wait(150);
+    }
+    await p.evaluate(() => document.getElementById('goCtl').click()); await wait(300);
+    const cr = await p.evaluate(() => { const c = document.querySelector('#ctlModal .pixm-card'); c.scrollTop = c.scrollHeight; const R = c.getBoundingClientRect(), a = document.getElementById('ctlOk').getBoundingClientRect();
+      return { cabe: R.top >= 0 && R.bottom <= innerHeight + 1, pronto: a.bottom <= R.bottom + 1 && a.bottom <= innerHeight }; });
+    ok(cr.cabe && cr.pronto, `${w}x${hh}: Controles cabe e o Pronto é alcançável`, cr);
+    await p.screenshot({ path: path.join(ROOT, 'play-store', 'lobby', 'depois', `v11-${w}x${hh}-ctlModal.png`) });
+    await p.keyboard.press('Escape');
+    if (errs.length) ok(false, 'erro de página', errs);
+    await p.close();
+  }
   console.log(`\n${pass} ok, ${fail} falha(s)`);
   await b.close(); srv.close(); process.exit(fail ? 1 : 0);
 })();
