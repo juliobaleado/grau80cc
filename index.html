@@ -661,6 +661,18 @@ html.kid #grow-dog { display: none !important; }
 .achc .ashare { align-self: flex-start; margin-top: 4px; font: 700 11px var(--hud); letter-spacing: .1em; text-transform: uppercase; color: var(--sodium);
   background: none; border: 1px solid rgba(255, 181, 71, .5); border-radius: 2px; padding: 5px 8px; min-height: 30px; cursor: pointer; }
 .ach .label::before { content: "★ "; }
+/* compartilhar: prévia da imagem e os jeitos de mandar */
+.pixm-card.shcard { width: min(100%, 560px); max-height: calc(100dvh - 32px); overflow-y: auto; box-sizing: border-box; }
+.shcard img { display: block; width: auto; max-width: 100%; max-height: 46vh; margin: 0 auto; border-radius: 6px; box-shadow: 0 8px 26px rgba(0, 0, 0, .5); }
+.shcard .tabs { width: 100%; max-width: 320px; align-self: center; }
+.shcard .actions { justify-content: center; }
+.shcard .actions .go { font-size: 15px; padding: 8px 12px 10px; min-height: 42px; }
+@media (max-height: 500px) {
+  .pixm-card.shcard { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto 1fr auto; column-gap: 14px; width: min(100%, 720px); align-items: start; text-align: left; }
+  .shcard img { grid-row: 1 / span 4; max-height: calc(100dvh - 72px); max-width: 46vw; }
+  .shcard h2 { font-size: 22px; } .shcard .tabs { align-self: start; }
+  .shcard .actions { justify-content: flex-start; }
+}
 /* onboarding: tour dos menus (escurece tudo menos o elemento explicado) e cartão da demonstração de como jogar */
 .tut { position: fixed; inset: 0; z-index: 45; pointer-events: auto; }
 .tut[hidden] { display: none; }
@@ -839,6 +851,7 @@ html.kid #grow-dog { display: none !important; }
       <div class="actions">
         <button class="go" id="goAgain" type="button" data-i>De novo</button>
         <button class="go alt" id="goGarage" type="button" data-i>Tela inicial</button>
+        <button class="go alt" id="goShare" type="button" data-i>Compartilhar</button>
       </div>
     </div>
   </div>
@@ -900,6 +913,22 @@ html.kid #grow-dog { display: none !important; }
     <div class="actions" id="achActs"></div>
   </div>
 </div>
+<div class="pixm" id="shModal" role="dialog" aria-modal="true" aria-labelledby="shTitle" hidden>
+  <div class="pixm-card shcard">
+    <button class="pixm-x" id="shClose" type="button" aria-label="Fechar">×</button>
+    <h2 id="shTitle" data-i>Compartilhar</h2>
+    <div class="tabs" id="shFmt" role="tablist"><button type="button" role="tab" data-f="sq" data-i>Quadrado</button><button type="button" role="tab" data-f="st" data-i>Stories</button></div>
+    <img id="shImg" alt="">
+    <div class="actions">
+      <button class="go" id="shShare" type="button" data-i>Compartilhar</button>
+      <button class="go alt" id="shWa" type="button">WhatsApp</button>
+      <button class="go alt" id="shSave" type="button" data-i>Salvar imagem</button>
+      <button class="go alt" id="shLink" type="button" data-i>Copiar link</button>
+      <button class="go alt" id="shCode" type="button" hidden data-i>Copiar código</button>
+    </div>
+    <span class="pixm-msg" id="shMsg" aria-live="polite"></span>
+  </div>
+</div>
 <div class="pixm agem" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle" hidden>
   <form class="pixm-card mpcard" id="ageForm">
     <h2 id="ageTitle" data-i>Antes de jogar</h2>
@@ -942,6 +971,7 @@ html.kid #grow-dog { display: none !important; }
       <div class="actions">
         <button class="go" id="mpGo" type="button" data-i>Bora!</button>
         <button class="go alt" id="mpMic" type="button">Mic: off</button>
+        <button class="go alt" id="mpInvite" type="button" data-i>Convidar amigos</button>
         <button class="go alt" id="mpLeave" type="button" data-i>Sair da sala</button>
       </div>
       <span class="pixm-msg" id="mpRoomMsg" aria-live="polite"></span>
@@ -1259,6 +1289,47 @@ html.kid #grow-dog { display: none !important; }
     'Eu Acredito no Projeto': ['I Believe in the Project', 'Creo en el Proyecto'],
     'Apoiar o projeto com um pastel na Google Play': ['Support the project with a pastel on Google Play', 'Apoyar el proyecto con un pastel en Google Play']
   });
+  Object.assign(I18N, {
+    'Compartilhar recorde': ['Share record', 'Compartir récord'],
+    'Compartilhar coleção': ['Share collection', 'Compartir colección'],
+    'Compartilhar conquista': ['Share achievement', 'Compartir logro'],
+    'Convidar amigos': ['Invite friends', 'Invitar amigos'],
+    'Quadrado': ['Square', 'Cuadrado'],
+    'Stories': ['Stories', 'Historias'],
+    'Salvar imagem': ['Save image', 'Guardar imagen'],
+    'Copiar link': ['Copy link', 'Copiar enlace'],
+    'Copiar código': ['Copy code', 'Copiar código'],
+    'Link copiado!': ['Link copied!', '¡Enlace copiado!'],
+    'Imagem salva.': ['Image saved.', 'Imagen guardada.'],
+    'Não deu pra abrir o compartilhamento.': ['Couldn\'t open sharing.', 'No se pudo abrir para compartir.'],
+    'Esse navegador não compartilha direto: salva a imagem ou copia o link.': ['This browser can\'t share directly: save the image or copy the link.', 'Este navegador no comparte directo: guarda la imagen o copia el enlace.'],
+    'Grátis · celular e navegador': ['Free · phone and browser', 'Gratis · celular y navegador'],
+    'Recorde pessoal': ['Personal best', 'Récord personal'],
+    'Duvido tu bater meu grau!': ['Bet you can\'t beat my wheelie!', '¡A que no superas mi caballito!'],
+    'Nº': ['No.', 'N.º'],
+    'no placar mundial': ['on the world leaderboard', 'en el ranking mundial'],
+    'Piloto:': ['Rider:', 'Piloto:'],
+    'Duvido tu bater meu grau de': ['Bet you can\'t beat my', 'A que no superas mi caballito de'],
+    'no Grau 80cc!': ['wheelie in Grau 80cc!', 'en Grau 80cc!'],
+    'Conquista desbloqueada!': ['Achievement unlocked!', '¡Logro desbloqueado!'],
+    'Tu consegue?': ['Can you do it?', '¿Puedes lograrlo?'],
+    'Liberei a conquista': ['I unlocked', 'Desbloqueé el logro'],
+    'no Grau 80cc. Tu consegue?': ['in Grau 80cc. Can you?', 'en Grau 80cc. ¿Puedes?'],
+    'Minha coleção no Grau 80cc': ['My Grau 80cc collection', 'Mi colección en Grau 80cc'],
+    'conquistas': ['achievements', 'logros'],
+    'de conclusão': ['complete', 'completado'],
+    'Já liberei': ['I\'ve unlocked', 'Ya desbloqueé'],
+    'conquistas no Grau 80cc!': ['achievements in Grau 80cc!', 'logros en Grau 80cc!'],
+    'Bora dar grau?': ['Wanna pop wheelies?', '¿Hacemos caballitos?'],
+    'A galera já tá esperando!': ['The crew is waiting!', '¡La banda ya está esperando!'],
+    'Entra na minha sala do Grau 80cc.': ['Join my Grau 80cc room.', 'Entra a mi sala de Grau 80cc.'],
+    'Até 7 jogadores.': ['Up to 7 players.', 'Hasta 7 jugadores.'],
+    'Bora dar grau? Entra na minha sala do Grau 80cc com o código': ['Wanna pop wheelies? Join my Grau 80cc room with the code', '¿Hacemos caballitos? Entra a mi sala de Grau 80cc con el código'],
+    'Convite pra sala': ['Invite to room', 'Invitación a la sala'],
+    'Confere teu nome e toca em Entrar.': ['Check your name and tap Join.', 'Revisa tu nombre y toca Entrar.'],
+    'Modo Livre': ['Free Mode', 'Modo Libre'],
+    'Modo Motoca': ['Motoca Mode', 'Modo Motoca']
+  });
   Object.assign(I18N, { 'Caramelo de patinete': ['Scooter stray', 'Perro en patinete'], 'Presente pra quem joga o teste fechado do app': ['A gift for closed-test players of the app', 'Regalo para quien juega la prueba cerrada de la app'], 'Valeu por testar! Liberou o Caramelo de patinete na garagem.': ['Thanks for testing! The Scooter stray is now in the garage.', '¡Gracias por probar! El Perro en patinete ya está en el garaje.'] });
   Object.assign(I18N, { 'Cabeça': ['Head', 'Cabeza'], 'Boné pra trás + juliete': ['Backwards cap + shades', 'Gorra al revés + gafas'], ' · liberou o ': [' · unlocked: ', ' · desbloqueaste: '] });
   Object.assign(I18N, {
@@ -1512,6 +1583,7 @@ html.kid #grow-dog { display: none !important; }
     if (!$('mpModal').hidden && e.code !== 'Escape') return; // com o painel da sala aberto as teclas são dele
     if (e.key && e.key.length === 1) { typed = (typed + e.key.toLowerCase()).slice(-6); if (typed === 'agenor') { typed = ''; toggleCheat(); e.preventDefault(); return; } }
     if (e.code === 'KeyN' && cheat) { e.preventDefault(); skip100(); return; }
+    if (e.code === 'Escape' && !$('shModal').hidden) { e.preventDefault(); closeShare(); return; }
     if (e.code === 'Escape' && !$('achModal').hidden) { e.preventDefault(); closeAch(); return; }
     if (e.code === 'Escape' && !$('pixModal').hidden) { e.preventDefault(); closePix(); return; }
     if (e.code === 'Escape' && !$('doaModal').hidden) { e.preventDefault(); closeDoa(); return; }
@@ -1531,7 +1603,7 @@ html.kid #grow-dog { display: none !important; }
   // botão Voltar do Android (o MainActivity chama isso): fecha o painel aberto, pausa a corrida ou volta pra
   // tela inicial; só na tela inicial ele devolve false e o Android sai do app
   window.grauBack = () => {
-    for (const [id, close] of [['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
+    for (const [id, close] of [['shModal', closeShare], ['achModal', closeAch], ['ctlModal', closeCtl], ['pixModal', closePix], ['doaModal', closeDoa], ['modModal', closeMod], ['mpModal', closeMp]]) {
       if (!$(id).hidden) { close(); return true; }
     }
     if (!$('ageModal').hidden) return false;
@@ -2511,6 +2583,7 @@ html.kid #grow-dog { display: none !important; }
     ui.endDist.innerHTML = s.runBest.toFixed(1) + '<small> m</small>';
     ui.endRecord.hidden = !s.newRecord || pb;
     showPB(pb);
+    $('goShare').hidden = gameMode === 'multi';
     ui.endCount.textContent = s.count;
     ui.endBest.textContent = best.toFixed(1) + ' m';
     ui.endTop.textContent = Math.round(s.top * 3.6) + ' km/h';
@@ -4856,7 +4929,7 @@ html.kid #grow-dog { display: none !important; }
       }
       $('ageModal').hidden = true;
       mpHud();
-      setTimeout(maybeMenuTut, 350);
+      setTimeout(introNext, 350);
     });
     if (needYear || (!KID && !myName && !asked)) { showName(); $('ageModal').hidden = false; }
   }
@@ -4947,6 +5020,148 @@ html.kid #grow-dog { display: none !important; }
   $('achClose').addEventListener('click', closeAch);
   $('achModal').addEventListener('click', e => { if (e.target === $('achModal')) closeAch(); });
 
+  // ---------- compartilhar (sempre por iniciativa do jogador) ----------
+  // A imagem é montada num canvas com a cena do próprio jogo (moto, piloto e caramelo) + os textos. Sem dado pessoal:
+  // nada de idade, id interno ou nome de criança; o apelido só aparece se o jogador tiver um (e não for menor de 13).
+  const SITE = 'https://juliobaleado.github.io/grau80cc/';
+  const GShare = NATIVE && window.Capacitor && window.Capacitor.registerPlugin ? window.Capacitor.registerPlugin('GrauShare') : null;
+  let shNow = null, shFmt = 'sq', shSnap = null;
+  function snapScene() { const c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; try { c.getContext('2d').drawImage(cv, 0, 0); } catch (e) {} return c; }
+  function wrapText(g, txt, maxW) {
+    const out = []; let line = '';
+    for (const w of String(txt).split(' ')) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { out.push(line); line = w; } else line = t; }
+    if (line) out.push(line); return out;
+  }
+  function drawShare(d, fmt) {
+    const W = 1080, H = fmt === 'st' ? 1920 : 1080, c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d'), m = 80;
+    const bg = g.createLinearGradient(0, 0, W * 0.4, H); bg.addColorStop(0, '#13303a'); bg.addColorStop(0.6, '#0b1a22'); bg.addColorStop(1, '#061015');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    const glow = g.createRadialGradient(W * 0.85, -60, 10, W * 0.85, -60, W * 0.9); glow.addColorStop(0, 'rgba(255,181,71,.38)'); glow.addColorStop(1, 'rgba(255,181,71,0)');
+    g.fillStyle = glow; g.fillRect(0, 0, W, H);
+    g.textBaseline = 'alphabetic'; g.textAlign = 'left';
+    let y = fmt === 'st' ? 190 : 120;
+    g.font = '400 64px "Bowlby One"'; g.fillStyle = '#ffb547'; g.fillText('GRAU 80CC', m, y);
+    g.font = '700 30px "Barlow Condensed"'; g.fillStyle = '#8fa3ad'; g.fillText(T('Motor 2 tempos · 80 cc').toUpperCase(), m + 2, y + 44);
+    y += 130;
+    g.font = '700 38px "Barlow Condensed"'; g.fillStyle = '#6fd08c'; g.fillText(d.eyebrow.toUpperCase(), m, y); y += 74;
+    g.font = '400 ' + (d.head.length > 26 ? 58 : 70) + 'px "Bowlby One"'; g.fillStyle = '#f3efe6';
+    for (const l of wrapText(g, d.head, W - 2 * m).slice(0, 3)) { g.fillText(l, m, y); y += d.head.length > 26 ? 66 : 80; }
+    if (d.big) { y += 96; g.font = '400 ' + (d.big.length > 9 ? 120 : 150) + 'px "Bowlby One"'; g.fillStyle = '#ffb547'; g.fillText(d.big, m - 4, y); y += 30; }
+    g.font = '600 38px "Barlow Condensed"'; g.fillStyle = '#d6dde0';
+    for (const l of d.sub.filter(Boolean)) for (const w of wrapText(g, l, W - 2 * m).slice(0, 2)) { y += 50; g.fillText(w, m, y); }
+    // cena do jogo recortada (moto/piloto/caramelo), com moldura
+    const top = y + 40, bottom = H - 150, fh = bottom - top;
+    if (shSnap && fh > 160) {
+      const sw = shSnap.width, shh = shSnap.height, ar = (W - 2 * m) / fh;
+      let cw = sw * 0.62, ch = cw / ar; if (ch > shh) { ch = shh; cw = ch * ar; }
+      const cx = Math.max(0, Math.min(sw - cw, sw * 0.3 - cw / 2)), cy = Math.max(0, Math.min(shh - ch, shh * 0.62 - ch / 2));
+      g.save(); g.beginPath(); if (g.roundRect) g.roundRect(m, top, W - 2 * m, fh, 22); else g.rect(m, top, W - 2 * m, fh); g.clip();
+      g.drawImage(shSnap, cx, cy, cw, ch, m, top, W - 2 * m, fh); g.restore();
+      g.strokeStyle = 'rgba(255,181,71,.8)'; g.lineWidth = 4; g.beginPath(); if (g.roundRect) g.roundRect(m, top, W - 2 * m, fh, 22); else g.rect(m, top, W - 2 * m, fh); g.stroke();
+    }
+    g.font = '700 36px "Barlow Condensed"'; g.fillStyle = '#ffb547'; g.fillText(d.foot || SITE.replace('https://', '').replace(/\/$/, ''), m, H - 70);
+    g.textAlign = 'right'; g.fillStyle = '#8fa3ad'; g.fillText(T('Grátis · celular e navegador'), W - m, H - 70);
+    return c;
+  }
+  const nick = () => (!KID && myName ? myName : '');
+  async function openShare(d) {
+    shNow = d; shSnap = snapScene();
+    try { await Promise.all(['400 60px "Bowlby One"', '700 30px "Barlow Condensed"', '600 30px "Barlow Condensed"'].map(f => document.fonts.load(f))); } catch (e) {}
+    $('shCode').hidden = !d.code; $('shSave').hidden = !!GShare; $('shMsg').textContent = '';
+    $('shTitle').textContent = T(d.title || 'Compartilhar');
+    renderShare(); $('shModal').hidden = false; $('shShare').focus();
+    track(d.ev + '_share_started');
+  }
+  function renderShare() {
+    for (const b of $('shFmt').children) b.setAttribute('aria-selected', String(b.dataset.f === shFmt));
+    shNow.png = drawShare(shNow, shFmt).toDataURL('image/png');
+    $('shImg').src = shNow.png; $('shImg').alt = shNow.head;
+  }
+  function closeShare() { $('shModal').hidden = true; shNow = null; }
+  for (const b of $('shFmt').children) b.addEventListener('click', () => { shFmt = b.dataset.f; renderShare(); });
+  $('shClose').addEventListener('click', closeShare);
+  $('shModal').addEventListener('click', e => { if (e.target === $('shModal')) closeShare(); });
+  async function copyTxt(t, okMsg) {
+    let ok = false; try { await navigator.clipboard.writeText(t); ok = true; } catch (e) {}
+    $('shMsg').textContent = ok ? T(okMsg) : t;
+  }
+  $('shShare').addEventListener('click', async () => {
+    const d = shNow; if (!d) return;
+    track(d.ev + '_share_invoked'); // abrir o compartilhamento não quer dizer que foi publicado
+    if (GShare) { try { await GShare.share({ data: d.png.split(',')[1], text: d.text }); } catch (e) { $('shMsg').textContent = T('Não deu pra abrir o compartilhamento.'); } return; }
+    try {
+      const blob = await (await fetch(d.png)).blob(), file = new File([blob], 'grau80cc.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: d.text }); return; }
+      if (navigator.share) { await navigator.share({ text: d.text, url: d.link }); return; }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    $('shMsg').textContent = T('Esse navegador não compartilha direto: salva a imagem ou copia o link.');
+  });
+  $('shSave').addEventListener('click', () => {
+    const a = document.createElement('a'); a.href = shNow.png; a.download = 'grau80cc-' + shNow.ev + '.png'; document.body.append(a); a.click(); a.remove();
+    $('shMsg').textContent = T('Imagem salva.');
+  });
+  $('shWa').addEventListener('click', () => {
+    const u = 'https://wa.me/?text=' + encodeURIComponent(shNow.text); // só o texto da mensagem (sem nome nem dado pessoal)
+    if (NATIVE) location.href = u; else window.open(u, '_blank', 'noopener');
+  });
+  $('shLink').addEventListener('click', () => copyTxt(shNow.link, 'Link copiado!'));
+  $('shCode').addEventListener('click', () => copyTxt(shNow.code, 'Código copiado!'));
+  const modeName = m => T(m === 'livre' ? 'Modo Livre' : 'Modo Motoca');
+  // recorde pessoal (de cada modo); posição no mundo só quando confirmada pelo placar (enviada deste aparelho)
+  function shareRecord(mode) {
+    mode = mode || (gameMode === 'livre' ? 'livre' : 'motoca');
+    const rec = bests[mode] || 0, fresh = ui.start.hidden && s.newRecord;
+    const pos = mode === 'motoca' && unlocked.w_elite && board && myName ? board.findIndex(x => x.nome.trim().toLowerCase() === myName.trim().toLowerCase()) : -1;
+    openShare({ ev: 'personal_best', title: 'Compartilhar recorde', eyebrow: T(fresh ? 'Novo recorde pessoal!' : 'Recorde pessoal'), head: T('Duvido tu bater meu grau!'), big: rec.toFixed(1) + ' m',
+      sub: [modeName(mode) + ' · ' + (LOOKS.model.opts[MODEL] || {}).name, pos >= 0 ? T('Nº') + ' ' + (pos + 1) + ' ' + T('no placar mundial') : '', nick() ? T('Piloto:') + ' ' + nick() : ''],
+      text: T('Duvido tu bater meu grau de') + ' ' + rec.toFixed(1) + ' m ' + T('no Grau 80cc!') + ' ' + SITE, link: SITE });
+  }
+  function shareAch(a) {
+    openShare({ ev: 'achievement', title: 'Compartilhar conquista', eyebrow: T('Conquista desbloqueada!'), head: a.old ? a.name : T(a.name), big: '',
+      sub: [T(a.why) + '.', T('Tu consegue?'), nick() ? T('Piloto:') + ' ' + nick() : ''],
+      text: T('Liberei a conquista') + ' "' + (a.old ? a.name : T(a.name)) + '" ' + T('no Grau 80cc. Tu consegue?') + ' ' + SITE, link: SITE });
+  }
+  function shareCollection() {
+    const L = allAchs(), got = L.filter(a => unlocked[a.id]).length, pct = Math.round(100 * got / L.length);
+    openShare({ ev: 'achievement_collection', title: 'Compartilhar coleção', eyebrow: T('Minha coleção no Grau 80cc'), head: got + ' ' + T('de') + ' ' + L.length + ' ' + T('conquistas'), big: pct + '%',
+      sub: [T('de conclusão'), nick() ? T('Piloto:') + ' ' + nick() : ''], text: T('Já liberei') + ' ' + got + ' ' + T('de') + ' ' + L.length + ' ' + T('conquistas no Grau 80cc!') + ' ' + SITE, link: SITE });
+  }
+  function shareInvite() {
+    if (!room.code) return;
+    const link = SITE + '?sala=' + room.code;
+    openShare({ ev: 'multiplayer_invite', title: 'Convidar amigos', eyebrow: T('Bora dar grau?'), head: T('A galera já tá esperando!'), big: room.code, code: room.code,
+      sub: [T('Entra na minha sala do Grau 80cc.'), T('Até 7 jogadores.')], foot: link.replace('https://', ''),
+      text: T('Bora dar grau? Entra na minha sala do Grau 80cc com o código') + ' ' + room.code + ': ' + link, link });
+    track('multiplayer_invite_generated');
+  }
+  $('goShare').addEventListener('click', () => shareRecord());
+  $('mpInvite').addEventListener('click', shareInvite);
+  // modal de conquistas: compartilhar o recorde e a coleção
+  $('achActs').append(Object.assign(document.createElement('button'), { className: 'go alt', type: 'button', id: 'achShareRec' }), Object.assign(document.createElement('button'), { className: 'go', type: 'button', id: 'achShareAll' }));
+  for (const [id, pt] of [['achShareRec', 'Compartilhar recorde'], ['achShareAll', 'Compartilhar coleção']]) { const b = $(id); b.dataset.i = ''; b.dataset.pt = pt; b.textContent = T(pt); }
+  $('achShareRec').addEventListener('click', () => shareRecord(bests.motoca >= bests.livre ? 'motoca' : 'livre'));
+  $('achShareAll').addEventListener('click', shareCollection);
+  // convite por link (?sala=ABCD): depois da tela de idade, abre o Multiplayer com o código pronto; entrar é com o jogador
+  let pendingSala = '';
+  try {
+    const u = new URL(location.href), c = (u.searchParams.get('sala') || '').toUpperCase();
+    if (/^[A-Z0-9]{4}$/.test(c)) { pendingSala = c; track('multiplayer_invite_opened'); }
+    if (u.searchParams.has('sala')) { u.searchParams.delete('sala'); history.replaceState(null, '', u.pathname + u.search + u.hash); }
+  } catch (e) {}
+  // ordem do que aparece sozinho ao abrir (nunca dois por cima um do outro): idade/apelido → convite → tour
+  function introNext() {
+    if (!$('ageModal').hidden) return;
+    if (pendingSala) {
+      const c = pendingSala; pendingSala = '';
+      if (room.code) return;
+      openMp(); $('mpCode').value = c;
+      $('mpMsg').textContent = T('Convite pra sala') + ' ' + c + '. ' + T('Confere teu nome e toca em Entrar.');
+      return;
+    }
+    maybeMenuTut();
+  }
+
   // ---------- onboarding: tutorial de menus e tutorial de como jogar ----------
   // Versão de cada tutorial: subir o número faz todo mundo (novo e antigo) ver de novo. Visto ou pulado grava a versão;
   // fechar o jogo no meio não grava. Os dois são independentes.
@@ -5003,7 +5218,7 @@ html.kid #grow-dog { display: none !important; }
     if ([...document.querySelectorAll('.pixm')].some(m => !m.hidden)) return;
     tutMenu();
   }
-  setTimeout(maybeMenuTut, 700);
+  setTimeout(introNext, 700);
   // demonstração de como jogar: uma volta de verdade no modo livre (sem desafios, sem recorde, sem placar, sem conquista),
   // com o piloto automático no lugar do jogador. No fim, a partida de verdade começa no modo que ele escolheu.
   function tutJogo(mode, auto) {
