@@ -126,3 +126,54 @@ APK, copiar a pasta `img/` pra `app/www/`**.
 publicar uma prévia. Conferir: jogar pelos três cards; Garagem (categorias, equipar, tocar num item com cadeado);
 Conquistas; Ranking; ⚙ (apelido, efeitos, idioma, controles, dicas); ? (tutoriais, instruções, feedback); Pastel do Agenor
 (botão e placa no cenário); chat (abrir/fechar, reabrir o jogo); celular deitado.
+
+---
+
+# V1.1 · refinamento após avaliação visual independente (27/11/2026)
+
+**Escopo:** só acabamento, responsividade, integração com o cenário e pendências. Mesma estrutura, mesma branch, sem merge nem APK enviado.
+
+## Correções P0
+| Problema (avaliação externa, 667×375 e 844×390) | Correção | Evidência |
+|---|---|---|
+| Chat expandido cobrindo o lobby | em tela baixa vira um painel próprio na área livre à esquerda (largura calculada pelo painel); o placar some enquanto o chat está aberto | `lobby.cjs`: sem interseção chat × painel, campo à vista com teclado simulado |
+| Garagem escondendo a moto | enquadramento só do lobby: a moto vai pro meio da área livre à esquerda do painel (sem mexer em física nem coordenadas; volta ao normal na partida) | `lobby.cjs`: piloto e moto inteiros fora do painel em 667, 844, 1024, 1366 |
+| "Jogar" flutuante por cima da garagem | rodapé fixo "▶ Jogar" reservado dentro da garagem; botão flutuante some com a garagem aberta | `lobby.cjs`: último item alcançável acima do rodapé |
+
+## Refinamentos
+- **Garagem como coleção:** cards com estado equipado (borda e brilho dourados + ✓), disponível, bloqueado (tracejado, cadeado), especial (★ dourado: caramelos de apoio e de testador), cores em grade maior com anel na selecionada, microinteração curta ao equipar.
+- **Modais unificados:** mesma superfície, raio, borda, fechar redondo fixo no topo da rolagem, campos e seleção com o mesmo estilo, indicação de continuidade quando tem mais conteúdo embaixo, coluna única em tela baixa (Multiplayer, Controles, Pix, Conquistas, Ajuda, Configurações, Ranking).
+- **Tipografia:** textos secundários com mínimo de 11–12 px em tela baixa; reorganização (perfil some na garagem em tela baixa) em vez de encolher fonte.
+- **Pastel do Agenor:** ilustração nova "Caramelo saboreando pastel" (`img/caramelo-pastel.webp`, 42 KB).
+- **Prancha de componentes:** `docs/componentes.html` (CSS real do jogo) e `play-store/lobby/prancha.png`, gerados por `node testes/prancha.cjs`.
+
+## Testes
+lobby 76 (eram 34: +42 verificações geométricas de tela baixa), onboarding 81, frases 20, conquistas 28, compartilhar 23, dicas 13,
+novidades/feedback 26, marcas 44, multiplayer 15, D.U.R.O. 9, segurança 23, offline 6: **364 ok, 0 falha**. Defeitos que os testes novos
+acharam e que foram corrigidos: rodapé da garagem fora da tela em 667/844; card do Rei do Grau com rolagem lateral (largura + padding).
+
+## Performance (Chrome de computador, NÃO é aparelho real)
+`node testes/performance.cjs <index da main>`: lobby 75 FPS, p95 13,5 ms, memória 24,2 MB (main: 75 / 13,4 ms / 23,8 MB); volta 75 FPS,
+p95 13,5 ms (igual). Um quadro longo isolado na largada aparece nas duas versões, de forma intermitente: não é regressão.
+
+## Rubrica artística (autoavaliação; a externa estimou 7,1–7,2)
+Identidade 8 · hierarquia 8 · composição 7,5 · tipografia 8 · coerência 8 (+1: modais unificados) · integração com o cenário 8 (+1: moto
+enquadrada na área livre) · acabamento 7,5 · microinterações 6,5. **Média ponderada ≈ 7,7.** Ainda é autoavaliação.
+
+## Rubrica de UX
+Iniciar 9 · modos 9 · personalizar 8,5 · bloqueados 8,5 · conquistas 8 · ranking 8,5 · configurações 8 · ajuda 8 · legibilidade 8 ·
+consistência 8,5 · responsividade 8,5 · sem etapas desnecessárias 9.
+
+## Gates V1.1
+G3 lobby: passed · G4 áreas: passed · G5 responsividade: passed no navegador; **Android real: not_verified** · G2 direção artística: passed
+(prancha pronta) · G6 integração/regressão: passed · G7 qualidade artística: partial (autoavaliação; precisa de nova avaliação externa) ·
+Performance: partial (só navegador de computador).
+
+## Checklist pro Android real (validação humana)
+[ ] instalar o APK de teste local · [ ] lobby deitado: modos à vista, nada cortado · [ ] garagem: moto visível, "Jogar" no rodapé ·
+[ ] chat aberto com teclado: campo à vista, digitar não acelera · [ ] cada modal: fechar à vista, rolar até o fim · [ ] Pastel do Agenor com a
+ilustração nova · [ ] minimizar no lobby e na corrida: pausa e silêncio · [ ] FPS percebido numa volta longa · [ ] tour dos menus v2 do começo ao fim.
+
+## Pendências
+Sprites reais em miniatura na garagem (exigiria desenhar fora do canvas principal: o desenho usa um contexto fixo; ficou de fora para não
+criar um segundo renderizador); avaliação artística externa nova; teste no Android real; medir FPS no aparelho.
