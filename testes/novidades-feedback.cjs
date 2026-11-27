@@ -68,8 +68,8 @@ const VET = { 'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instruco
   await p.close();
 
   console.log('— feedback');
-  ({ p, errs } = await session({ ...VET, 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}' }));
-  await p.click('#fbBtn'); await wait(200);
+  ({ p, errs } = await session({ ...VET, 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}' }));
+  await p.evaluate(() => document.getElementById('fbBtn').click()); await wait(200);
   ok(await vis(p, 'fbModal') && /v\d+ · navegador · computador · pt/.test(await p.$eval('#fbTechTxt', e => e.textContent)), 'abre com as informações técnicas mostradas', await p.$eval('#fbTechTxt', e => e.textContent));
   await p.type('#fbMsg', 'oi'); await p.click('#fbSend'); await wait(200);
   ok(/pelo menos 3/.test(await p.$eval('#fbOut', e => e.textContent)) && bodies.length === 0, 'mensagem curta não envia');

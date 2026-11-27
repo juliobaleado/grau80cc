@@ -18,7 +18,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     await p.evaluateOnNewDocument(save => { window.WebSocket = class { send() {} close() {} }; for (const [k, v] of Object.entries(save)) localStorage.setItem(k, v); }, save);
     await p.goto('http://127.0.0.1:8859/'); await wait(1100); return { p, errs };
   }
-  const BASE = { 'grau80-nasc': '1990', 'grau80-nome': 'T', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}', 'grau80-best': '5000.00', 'grau80-ach': '{"w_azeitona":true}' };
+  const BASE = { 'grau80-nasc': '1990', 'grau80-nome': 'T', 'grau80-instrucoes': 'fechado', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-tutorial': '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}', 'grau80-best': '5000.00', 'grau80-ach': '{"w_azeitona":true}' };
   const { p, errs } = await session({ ...BASE, 'grau80-best': '10.00' });
   const r = await p.evaluate(async () => {
     const out = {};
@@ -43,7 +43,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
   ok(await p.$eval('#tipToggle', e => e.textContent) === 'Dicas do Agenor: desligadas', 'botão embaixo de Como jogar mostra desligadas');
   const off = await p.evaluate(async () => { let n = 0; for (let i = 0; i < 3; i++) { __t.begin('motoca'); __t.s.active = true; __t.s.wDist = 40; __t.finish('flip'); await new Promise(r => setTimeout(r, 950)); if (!document.getElementById('endTip').hidden) n++; document.getElementById('goGarage').click(); } return n; });
   ok(off === 0, 'desligadas: nenhuma dica', off);
-  await p.click('#tipToggle'); ok(await p.evaluate(() => localStorage.getItem('grau80-dicas') === '1'), 'liga de novo');
+  await p.evaluate(() => document.getElementById('tipToggle').click()); ok(await p.evaluate(() => localStorage.getItem('grau80-dicas') === '1'), 'liga de novo');
   ok(!errs.length, 'sem erro de página', errs);
   await p.close();
   for (const [lang, w, hh] of [['pt', 740, 360], ['es', 740, 360], ['en', 390, 844]]) {

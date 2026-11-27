@@ -18,7 +18,7 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 // dados salvos de alguém que jogou a versão anterior: mochila aiFudi, Monark liberada e escolhida, cor Ferrari,
 // conquistas até 200 m, recordes e um pastel comprado (caramelo magrelo)
 const SAVE = {
-  'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instrucoes': 'fechado', 'grau80-tutorial': '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-musica': 'off',
+  'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instrucoes': 'fechado', 'grau80-tutorial': '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}', 'grau80-nome-pedido': '1', 'grau80-novidades': 'welcome-1', 'grau80-musica': 'off',
   'grau80-look': JSON.stringify({ helmet: 'preto', jersey: 'vermelha', shorts: 'jeans', bag: 'aifode', model: 'monark', frame: 'ferrari', dog: 'magro' }),
   'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1, grau200: 1 }), 'grau80-best': '412.30', 'grau80-best-livre': '88.10',
   'grau80-doa': JSON.stringify(['mini_pastel'])

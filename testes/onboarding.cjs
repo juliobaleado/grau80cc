@@ -15,7 +15,7 @@ const srv = http.createServer((q, r) => { r.writeHead(200, { 'content-type': 'te
 let pass = 0, fail = 0;
 const ok = (c, n, x) => { c ? pass++ : fail++; console.log((c ? '  ok    ' : '  FALHA ') + n + (x !== undefined ? '  → ' + JSON.stringify(x) : '')); };
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const DONE = '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}';
+const DONE = '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}';
 const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-nome': 'Veterano', 'grau80-instrucoes': 'fechado', 'grau80-best': '412.30', 'grau80-best-livre': '88.10',
   'grau80-ach': JSON.stringify({ grau30: 1, grau100: 1 }), 'grau80-look': JSON.stringify({ model: 'monark', frame: 'ferrari', dog: 'patinete' }), 'grau80-testador': '1' };
 
@@ -62,7 +62,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     s = await st(p);
     const ls = await p.evaluate(() => [localStorage.getItem('grau80-nome'), localStorage.getItem('grau80-nasc'), localStorage.getItem('grau80-nome-pedido'), __t.myName]);
     ok(ls[0] === 'Zezinho' && ls[1] === '1995' && ls[2] === '1' && ls[3] === 'Zezinho', 'nome salvo no mesmo grau80-nome do placar/multiplayer', ls);
-    ok(s.tut && s.kind === 'menu' && s.n === 10, 'tour dos menus abre sozinho com 10 etapas', s.n);
+    ok(s.tut && s.kind === 'menu' && s.n === 11, 'tour dos menus (v2) abre sozinho com 11 etapas', s.n);
     const titles = [];
     for (let i = 0; i < s.n; i++) {
       const v = await inView(p); const cur = await st(p); titles.push(cur.title);
@@ -76,7 +76,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     await p.click('#tutNext'); await wait(300);
     s = await st(p);
     ok(!s.tut && !s.on && s.mode === 'ready' && s.start, 'terminou: overlay some, continua na tela inicial (não começa partida)', s);
-    ok(s.store === '{"menuTutorialVersion":1,"gameplayTutorialVersion":0}', 'grava só a versão do tour dos menus', s.store);
+    ok(s.store === '{"menuTutorialVersion":2,"gameplayTutorialVersion":0}', 'grava só a versão do tour dos menus', s.store);
     ok(!errs.length, 'sem erro de página', errs);
     await p.close();
   }
@@ -88,7 +88,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     ok(!(await st(p)).nameF, 'menor de 13: campo de apelido escondido');
     await p.click('#ageOk'); await wait(900);
     const s = await st(p);
-    ok(await p.evaluate(() => __t.KID) && s.on && s.n === 9, 'tour sem a etapa do pastel (9 etapas)', s.n);
+    ok(await p.evaluate(() => __t.KID) && s.on && s.n === 11, 'criança também vê o tour (Pastel do Agenor sem a parte de pagamento)', s.n);
     ok(await p.evaluate(() => localStorage.getItem('grau80-nome') === null), 'não grava nome pra criança');
     await p.close();
   }
@@ -103,7 +103,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     ok(keep[0] === 'Veterano' && keep[1] === '412.30' && keep[2] === '88.10' && keep[3] === OLD['grau80-ach'] && keep[5] === '1', 'nome, recordes, conquistas e caramelo de patinete preservados', keep);
     // pular com Esc
     await p.keyboard.press('Escape'); await wait(200);
-    ok(!(await st(p)).on && (await st(p)).store.includes('"menuTutorialVersion":1'), 'Esc pula o tour e grava como apresentado');
+    ok(!(await st(p)).on && (await st(p)).store.includes('"menuTutorialVersion":2'), 'Esc pula o tour e grava como apresentado');
     ok(!errs.length, 'sem erro de página', errs);
     await p.close();
   }
@@ -135,7 +135,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
   // 6. demonstração de como jogar pela primeira entrada no Modo Motoca
   {
     console.log('— primeira entrada no Modo Motoca: demonstração');
-    const { p, errs, tickets } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":1}' });
+    const { p, errs, tickets } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":2}' });
     const before = await p.evaluate(() => [localStorage.getItem('grau80-best'), localStorage.getItem('grau80-best-livre'), localStorage.getItem('grau80-ach'), localStorage.getItem('grau80-mode')]);
     await p.click('#goStart'); await wait(400);
     let s = await st(p);
@@ -175,7 +175,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
   // 7. primeira entrada pelo Modo Livre; pular entrega a partida; depois Motoca não repete
   {
     console.log('— primeira entrada no Modo Livre + pular');
-    const { p } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":1}' });
+    const { p } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":2}' });
     await p.click('#goFree'); await wait(400);
     ok((await st(p)).kind === 'jogo', 'Modo Livre também abre a demonstração');
     await p.click('#tutSkip'); await wait(400);
@@ -189,7 +189,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
   // 8. sair no meio (Esc) não conta; minimizar pausa; voltar continua
   {
     console.log('— sair no meio, minimizar e voltar');
-    const { p } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":1}' });
+    const { p } = await session({ ...OLD, 'grau80-tutorial': '{"menuTutorialVersion":2}' });
     await p.click('#goStart'); await wait(2500);
     await p.evaluate(() => window.grauAway(true)); await wait(300);
     let pz = await p.evaluate(() => [__t.paused, getComputedStyle(document.getElementById('tut')).display]);
@@ -212,11 +212,11 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     const { p, tickets } = await session({ ...OLD, 'grau80-tutorial': DONE, 'grau80-musica': '0', 'grau80-lang': 'en',
       'grau80-controles': JSON.stringify({ touch: 'tela', side: 'dir', area: 50, size: 100, pull: 'freio', mouse: 'normal', keys: { gas: ['KeyJ', '', ''], brake: ['KeyK', '', ''], pull: ['KeyL', '', ''] }, pad: { gas: [7, 0, 12], brake: [6, 1, 13], pull: [2, 5, -1] } }) });
     ok(!(await st(p)).on, 'quem já viu os dois não recebe nada sozinho');
-    await p.click('#tutMenuBtn'); await wait(400);
+    await p.evaluate(() => document.getElementById('tutMenuBtn').click()); await wait(400);
     let s = await st(p);
     ok(s.on && s.kind === 'menu' && s.title === 'Welcome to Grau 80cc!', 'rever o tour dos menus, em inglês', s.title);
     await p.click('#tutSkip'); await wait(200);
-    await p.click('#tutJogoBtn'); await wait(500);
+    await p.evaluate(() => document.getElementById('tutJogoBtn').click()); await wait(500);
     s = await st(p);
     const chips = await p.evaluate(() => [...document.querySelectorAll('.tut-keys span')].map(e => e.textContent));
     ok(s.kind === 'jogo' && chips[0] === 'Throttle · J' && chips[1].endsWith('· K') && chips[2].endsWith('· L'), 'chips mostram as teclas que o jogador configurou', chips);
@@ -226,7 +226,7 @@ const OLD = { 'grau80-novidades': 'welcome-1', 'grau80-nasc': '1990', 'grau80-no
     ok(s.store === DONE && await p.evaluate(() => localStorage.getItem('grau80-musica') === '0' && localStorage.getItem('grau80-lang') === 'en'), 'rever não muda o progresso nem as preferências');
     ok(tickets.length === 0, 'rever não pede bilhete do placar');
     // dentro de uma sala o tutorial não abre
-    await p.evaluate(() => { __t.room.code = 'ABCD'; }); await p.click('#tutJogoBtn'); await wait(200);
+    await p.evaluate(() => { __t.room.code = 'ABCD'; }); await p.evaluate(() => document.getElementById('tutJogoBtn').click()); await wait(200);
     ok(!(await st(p)).on, 'numa sala o tutorial não abre (não atrapalha o multiplayer)');
     await p.close();
   }

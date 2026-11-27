@@ -73,7 +73,7 @@ async function until(p, fn, arg, ms = 20000) { const t0 = Date.now(); while (Dat
     const p = await (await b.createBrowserContext()).newPage();
     await p.setViewport({ width: 320, height: 180 });
     await p.evaluateOnNewDocument((noRtc, i) => {
-      try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', 'Sim' + i); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":1,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-musica', 'off'); } catch (e) {}
+      try { localStorage.setItem('grau80-nasc', '1990'); localStorage.setItem('grau80-nome', 'Sim' + i); localStorage.setItem('grau80-instrucoes', 'fechado'); localStorage.setItem('grau80-tutorial', '{"menuTutorialVersion":2,"gameplayTutorialVersion":1}'); localStorage.setItem('grau80-nome-pedido', '1'); localStorage.setItem('grau80-novidades', 'welcome-1'); localStorage.setItem('grau80-musica', 'off'); } catch (e) {}
       if (noRtc) window.RTCPeerConnection = undefined;
     }, i < NODC, i);
     await p.goto('http://127.0.0.1:8842/', { waitUntil: 'load' });
